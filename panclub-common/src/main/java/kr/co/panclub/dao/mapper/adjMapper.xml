@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.IAdjDao">
+
+	<!--  테스트 -->
+	<select id="test" statementType="CALLABLE" parameterType="int" resultType="int">
+		SELECT #{param}
+	</select>
+	<!-- 
+		2024.09.05 supi  aos 마스터 데이터 추가삭제수정
+	 -->
+	<select id="aosAccAdd" statementType="CALLABLE"
+		parameterType="aosAccInfo" resultType="commonResult">
+		{ CALL panFi.dbo.up_aosAccAdd (
+			@i__workingType=#{workingType} , 
+			@i__logComCode=#{logComCode} , 
+			
+			@i__logUserId=#{logUserId} , 
+			@i__reqbizno=#{reqbizno} , 
+			
+			@i__wrhsyssn=#{wrhsyssn} , 
+			@i__reqregtymd=#{reqregtymd} , 
+			@i__reqmemo=#{reqmemo} , 
+			@i__accymd=#{accymd} , 
+			@i__carbdynum=#{carbdynum} , 
+			@i__mdlnm=#{mdlnm} , 
+			@i__carnum=#{carnum} , 
+			@i__autbiznm=#{autbiznm} , 
+			@i__autbizno=#{autbizno} , 
+			@i__fltrt=#{fltrt} , 
+			@i__noinspay=#{noinspay} , 
+			
+			@i__odr=#{odr} , 
+			@i__dcspay=#{dcspay} , 
+			@i__aunpatsum=#{aunpatsum} , 
+			@i__snhpatsum=#{snhpatsum} , 
+			@i__glssum=#{glssum} , 
+			@i__vatrt=#{vatrt} , 
+			@i__vat=#{vat} , 
+			@i__patsum=#{patsum} , 
+			@i__lassum=#{lassum} , 
+			@i__inpinspay=#{inpinspay} , 
+			@i__inpinspayymd=#{inpinspayymd} , 
+			
+			@i__accno=#{accno} , 
+			@i__carnm=#{carnm} , 
+			@i__esaopstusnm=#{esaopstusnm} , 
+			@i__cstnemail=#{cstnemail} , 
+			@i__cstnnm=#{cstnnm} , 
+			@i__inscd=#{inscd} , 
+			@i__insnm=#{insnm} , 
+			@i__ipscarnum=#{ipscarnum} , 
+			@i__ipsownnm=#{ipsownnm} , 
+			
+			@i__ordrank=#{ordrank} , 
+			@i__mrtgnm=#{mrtgnm} , 
+			@i__reqymd=#{reqymd} , 
+			@i__reqtm=#{reqtm} , 
+			@i__reqsn=#{reqsn} ,
+			
+			@i__custCode=#{custCode}
+		)}
+	</select>
+	<!-- 
+		2024.09.05 supi aos 부품정보 데이터 추가삭제수정
+	 -->
+	<select id="aosAccPartAdd" statementType="CALLABLE"
+		parameterType="aosAccPart" resultType="commonResult">
+		{ CALL panFi.dbo.up_aosAccPartAdd (
+			@i__workingType=#{workingType} , 
+			@i__logComCode=#{logComCode} , 
+			@i__logUserId=#{logUserId} , 
+			@i__reqbizno=#{reqbizno} , 
+			@i__wrhsyssn=#{wrhsyssn} , 
+			@i__reqSeq=#{reqSeq} , 
+			@i__buytype=#{buytype} , 
+			@i__patcrknd=#{patcrknd} , 
+			@i__patknd=#{patknd} , 
+			@i__patnum=#{patnum} , 
+			@i__patnm=#{patnm} , 
+			@i__patprc=#{patprc} , 
+			@i__qty=#{qty} , 
+			@i__itmpatsum=#{itmpatsum} , 
+			@i__dcrt=#{dcrt},
+			@i__custCode=#{custCode}
+		)}
+	</select>
+	<!-- 
+		2024.09.05 supi aos 마스터 조회
+	 -->
+	<select id="aosAccList" statementType="CALLABLE"
+		parameterType="hashMap" resultType="aosAccInfo">
+		{ CALL panFi.dbo.up_aosAccList (
+			@i__workingType=#{workingType} , 
+			@i__logComCode=#{logComCode} , 
+			@i__logUserId=#{logUserId} ,
+			
+			@i__symd1=#{symd1},
+			@i__eymd1=#{eymd1},
+			@i__ymdIgnoreYN=#{ymdIgnoreYN},
+			@i__custCode=#{custCode},
+			@i__accNo=#{accNo},
+			@i__carNum=#{carNum},
+			
+			@i__selectInsnm=#{selectInsnm},
+			@i__accStatus=#{accStatus},
+			@i__closingIncludeYN=#{closingIncludeYN},
+			
+			@i__reqbizno=#{reqbizno},
+			@i__wrhsyssn=#{wrhsyssn}
+		 
+		)}
+	</select>
+	<!-- 
+		2024.09.05 supi aos 부품 조회
+	 -->
+	<select id="aosAccPartList" statementType="CALLABLE"
+		parameterType="hashMap" resultType="aosAccPart">
+		{ CALL panFi.dbo.up_aosAccPartList (
+			@i__workingType=#{workingType} , 
+			@i__logComCode=#{logComCode} , 
+			@i__logUserId=#{logUserId} ,
+			
+			 
+			@i__reqbizno=#{reqbizno},
+			@i__wrhsyssn=#{wrhsyssn}
+		 
+		)}
+	</select>
+	<!-- 2024.09.05 supi 보험사 코드 및 이름 가져오는 통신 -->
+	<select id="aosInscdList" statementType="CALLABLE" resultType="hashMap">
+		SELECT aos_inscd , aos_insnm 
+		FROM panErp.dbo.e_cust
+		WHERE aos_inscd is not null AND aos_inscd != ''
+	</select>
+	
+	
+</mapper>

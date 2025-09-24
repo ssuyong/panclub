@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.IClubDao">
+
+	
+				
+
+	<!-- 팬클럽이용거래처목록 2023.01.09. hsg 
+	2023.07.11 hsg -b.comCode = 'ㄱ000' 추가 
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  
+	2024.09.23 supi - 관리업체 정보 추가
+	-->
+	<select id="c_custList" parameterType="HashMap"		resultType="c_cust">
+		
+	
+		SELECT a.custCode, a.masterId,	a.validYN,	a.created, a.regUserId, a.modified, a.uptUserId, a.erpYN, a.consignYN ,
+			b.custName , a.parentComCode , c.custName parentComName
+		FROM dbo.c_Cust a  WITH(NOLOCK) 
+		JOIN dbo.e_cust b  WITH(NOLOCK) ON b.comCode = 'ㄱ000' AND a.custCode = b.custCode
+		LEFT JOIN dbo.e_cust c  WITH(NOLOCK) ON c.comCode ='ㄱ000' AND a.parentComCode = c.custCode
+	</select>
+
+	<!-- 팬클럽 이용거래처 등록  2023.01.09. hsg 
+	2023.12.04 supi - 재고위탁 업체 'Y'일 경우 기초코드를 추가해주는 기능 추가하여 프로시저로 변경
+	--> 
+	<select  id="c_custAdd" statementType="CALLABLE" parameterType="HashMap" resultType ="int" >
+		{ CALL panErp.dbo.up_cCustAdd (
+		 #{c_cust.custCode },#{c_cust.masterId },#{c_cust.validYN},#{logUserId} ,#{c_cust.erpYN },#{c_cust.consignYN }  
+		)}
+	</select >
+
+	<!-- 팬클럽 이용거래처 수정  2023.01.09. hsg 
+							2024.09.23 supi - 업체정보 수정 프로시저화
+	-->
+	<select id="c_custUpt" statementType="CALLABLE" parameterType="HashMap" resultType="int">
+		{ CALL panErp.dbo.up_cCustUpt (
+		 '',#{logComCode} , #{logUserId} , #{c_cust.custCode} , #{c_cust.masterId} , #{c_cust.validYN }  , #{c_cust.erpYN }  ,  #{c_cust.consignYN }, #{c_cust.parentComCode}  
+		)}
+	 
+	</select>
+
+	<!-- 팬클럽 이용거래처 수정 -->
+<!-- 	<delete id="c_custDel" parameterType="HashMap">
+		DELETE FROM panErp.dbo.c_Cust
+		WHERE custCode = #{c_cust.custCode}
+	</delete> -->
+
+	<!-- 이용거래처별 메뉴내역  2023.02.09. hsg 
+	2023.11.27 hsg -  WITH(NOLOCK)  추가 	-->	
+	<select id="c_custMenuList" parameterType="HashMap" resultType="c_custMenu">
+		SELECT a.menuCode, a.menuName, a.menuUrl,
+			ISNULL(b.comCode,'') custCode, 
+   			CASE WHEN b.menuCode IS NOT NULL THEN 'Y' ELSE 'N' END validYN,
+  			ISNULL(b.regUserId,'') regUserId,
+   			COALESCE(CONVERT(CHAR(10), b.created, 121), '') created
+   			
+  		FROM dbo.e_menu a WITH(NOLOCK) 
+  		LEFT OUTER JOIN dbo.e_menu b  WITH(NOLOCK) ON a.menuCode = b.menuCode  AND b.comCode = #{custMenu.custCode}   
+  		<!-- LEFT OUTER JOIN dbo.c_custMenu b ON  a.menuCode = b.menuCode AND b.custCode = #{c_cusMenu.menuCode} --> 
+  		WHERE a.comCode = 'ㄱ000' 
+	</select>
+	
+	<!-- 이용거래처별 별메뉴등록  2023.02.09. hsg -->
+	<insert id="c_custMenuAdd"  parameterType="HashMap" >
+	INSERT INTO panErp.dbo.e_menu  (comCode, menuCode	,menuName	,regUserId, menuUrl) 
+		SELECT  #{custMenu.custCode}, menuCode, menuName ,#{logUserId} ,menuUrl
+		FROM dbo.e_menu 
+	WHERE comCode = 'ㄱ000'
+	  AND menuCode = #{custMenu.menuCode}
+	<!-- values( #{custMenu.custCode} ,#{custMenu.menuCode}	,#{custMenu.menuName}	,#{logUserId} ,#{menu.menuUrl}) -->
+	<!-- VALUES ( #{custMenu.custCode}	,#{custMenu.menuCode}	,#{custMenu.validYN}	,#{lgoUserId}	,GETDATE()) -->
+	</insert>
+	
+	<!-- 이용거래처별 별메뉴등록  2023.02.09. hsg -->
+	<update id="c_custMenuUpt"  parameterType="HashMap" >
+	UPDATE panErp.dbo.e_menu  SET
+		validYN = #{custMenu.validYN}, 
+		regUserId = #{logUserId}, 
+		created = GETDATE()
+	WHERE comCode = #{custMenu.custCode}
+	  AND menuCode = #{custMenu.menuCode}
+	</update>
+	
+	<!-- 이용거래처별 메뉴수정  2023.02.09. hsg -->
+	<delete id="c_custMenuDel" parameterType="HashMap">
+	DELETE FROM panErp.dbo.e_menu			 				 				 			
+	WHERE comCode = #{custMenu.custCode}
+	  AND menuCode = #{custMenu.menuCode}
+		
+		<!-- UPDATE panErp.dbo.c_custMenu
+			 SET comCode = #{comCode} ,
+				 userId = #{menuByUser.userId} ,
+				 menuCode = #{menuByUser.menuCode} ,
+				 srchAuth = #{menuByUser.srchAuth} , 
+				 editAuth = #{menuByUser.editAuth} ,
+				 uptUserId = #{userId} ,
+				 modified = GETDATE()				 				 			
+		WHERE idx = #{menuByUser.idx} -->
+	</delete>
+	
+				
+</mapper>

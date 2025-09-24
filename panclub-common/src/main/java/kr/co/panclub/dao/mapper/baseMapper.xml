@@ -1,0 +1,1943 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.IBaseDao">
+
+	<!-- 기초코드 목록 -->
+	<select id="codeList" statementType="CALLABLE"
+		parameterType="HashMap" resultType="code">
+		{ CALL panErp.dbo.up_codeList (
+		#{workingType},#{code.comCode},
+		#{code.mCode}, #{code.mCodeName}, #{code.code}, #{code.codeName}, #{code.validYN}
+		)}
+	</select>
+
+	<!-- 기초코드등록 -->
+	<select id="codeAdd" statementType="CALLABLE"
+		parameterType="HashMap" resultType="code">
+		{ CALL panErp.dbo.up_codeAdd (
+		#{workingType}, #{comCode}, #{userId}
+		,#{code.codeIdx} ,#{code.mCode} ,#{code.mCodeName} ,#{code.code} ,#{code.codeName}
+		,#{code.mCodeOrderBy} ,#{code.codeOrderBy}
+		,#{code.value1} ,#{code.value2} ,#{code.value3} ,#{code.validYN}
+		)}
+	</select>
+
+	<!-- 거래처 목록 2023.02.22 hsg - custSrch 추가. 거래처코드나 또는 거래처 명이 들어옴
+	2023.07.13 bk ceoName 추가
+	2023.12.12 yoonsang paymentDay 추가 
+	2023.02.02 supi - 판매가격유형 속성 조회조건 추가로 매개변수 추가
+	-->
+	<select id="custList" statementType="CALLABLE"
+		parameterType="HashMap" resultType="cust">
+		{ CALL panErp.dbo.up_custList (
+		#{workingType}, #{page}, #{qty}, #{orderBy},
+		#{ymdIgnoreYN}, #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+		#{cust.comCode}, #{cust.custType}, #{cust.custCode}, #{cust.custName}
+		,#{custTypeGroup} ,#{cust.bizNo} ,#{cust.validYN} ,#{cust.placeYN}
+		,#{cust.supplyYN}
+		,#{custSrch}
+		,#{cust.ceoName}
+		,#{cust.custManager}
+		,#{cust.paymentDay}
+		,#{cust.salePriceType}
+		)}
+	</select>
+
+	<!-- 거래처1건 조회 -->
+	<select id="custOne" statementType="CALLABLE"
+		parameterType="HashMap" resultType="cust">
+		{ CALL panErp.dbo.up_custList (
+		#{workingType}, #{page}, #{qty}, #{orderBy},
+		#{ymdIgnoreYN}, #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+
+		#{cust.comCode}, #{cust.custType}, #{cust.custCode}, #{cust.custName},#{cust.placeYN}
+		,#{cust.supplyYN}
+		)}
+	</select>
+
+	<!-- 거래처 담당자 목록 
+	2023.03.15 bokyung -custSrch추가  팝업에서 담당자명으로 조회될수 있게-->					
+	<select id="custMgrList" statementType="CALLABLE" parameterType="HashMap" resultType="custManager">
+		{ CALL panErp.dbo.up_custMgrList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			 	
+			#{cust.comCode}, #{cust.custCode}, #{custMgr.name} ,#{custSrch}
+		)}	
+	</select>
+
+	<!-- 거래처 관리자 목록 -->
+	<select id="custAdmList" statementType="CALLABLE"
+		parameterType="HashMap" resultType="custAdmin">
+		{ CALL panErp.dbo.up_custAdmList (
+		#{workingType}, #{page}, #{qty}, #{orderBy},
+		#{ymdIgnoreYN}, #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+
+		#{cust.comCode}, #{cust.custCode}
+		)}
+	</select>
+
+	<!-- 거래처등록
+			centerYN 외부재고/로컬재고 조회조건 추가	bk
+			2023.07.13 mainCustCode 추가 bk
+			2023.08.11 bk linkTkKey 추가
+			2023.08.11 bk #{custCode2}	,#{savedFileName}	,#{originalFileName}   
+			2023.12.12 yoonsang #{cust.paymentDay} 추가
+			2024.02.02 supi 판매가격유형 속성 추가로 매개변수 추가
+			-->
+	<select id="custAdd" statementType="CALLABLE"
+		parameterType="HashMap" resultType="cust">
+		{ CALL panErp.dbo.up_custAdd (
+		#{workingType}, #{comCode}, #{userId}
+		,#{cust.custCode} ,#{cust.custName} ,#{cust.formalName} ,#{cust.bizNo} ,#{cust.bzType}
+		,#{cust.bzItems} ,#{cust.custType}
+		,#{cust.ceoName} ,#{cust.custAddress1} ,#{cust.custAddress2} ,#{cust.phone}
+		,#{cust.fax} ,#{cust.taxType}
+		,#{cust.cashType} ,#{cust.balanceDspType} ,#{cust.payDay} ,#{cust.payType}
+		,#{cust.accNum} ,#{cust.validYN}
+		<!-- ,#{cust.dcRate} ,#{cust.bonusRate} ,#{cust.grade} ,#{cust.srMarginRate} -->
+		,#{cust.releasePriceType} ,#{cust.warehousePriceType}
+		,#{cust.marginRate}
+		,#{cust.warehouseRate} ,#{cust.releaseLimit} ,#{cust.depositLimitDay} ,#{cust.memo}
+		,#{cust.admGroupCode}
+		,#{cust.admEmpNo} ,#{cust.taxMobile} ,#{cust.taxEmail} ,#{cust.outsideCode}
+		,#{cust.placeYN} ,#{cust.supplyYN} ,#{cust.centerYN}
+		,#{cust.mainCustCode} ,#{cust.linkTkKey}
+		,#{custCode2}	,#{savedFileName}	,#{originalFileName}
+		,#{cust.paymentDay} ,#{cust.salePriceType}
+		)}
+	</select>
+
+	<!-- 거래처 담당자등록 -->
+	<select id="custMgrAdd" statementType="CALLABLE"
+		parameterType="HashMap" resultType="custManager">
+		{ CALL panErp.dbo.up_custMgrAdd (
+		#{workingType}, #{comCode}, #{userId}
+		,#{custManager.mgrIdx} ,#{custManager.custCode} ,#{custManager.name}
+		,#{custManager.position} ,#{custManager.role}
+		,#{custManager.phone1} ,#{custManager.phone2} ,#{custManager.email} ,#{custManager.validYN}
+		,#{custManager.memo}
+		)}
+	</select>
+
+	<!-- 거래처 담당자등록 -->
+	<select id="custAdmAdd" statementType="CALLABLE"
+		parameterType="HashMap" resultType="custAdmin">
+		{ CALL panErp.dbo.up_custAdmAdd (
+		#{workingType}, #{comCode}, #{userId}
+		,#{custAdmin.admIdx} ,#{custAdmin.custCode}
+		,#{custAdmin.admType} ,#{custAdmin.admCode} ,#{custAdmin.memo}
+		)}
+	</select>
+
+	<!-- 상품 목록 2023.02.28 ysjang - classCode 추가 -->
+	<select id="itemList" statementType="CALLABLE"
+		parameterType="HashMap" resultType="item">
+		{ CALL panErp.dbo.up_itemList (
+		#{workingType}, #{page}, #{qty}, #{orderBy},
+		#{ymdIgnoreYN}, #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+		#{comCode}, #{userId},
+		#{item.itemId}, #{item.itemCode}, #{item.itemNo}, #{item.factoryNo} ,#{item.itemName}
+		,#{item.makerCode}
+		,#{item.classCode} ,#{item.shareYN} , #{item.consignCustCode} , #{srchEqualItemNo},#{item.immediateRlYN}
+		)}
+	</select>
+
+	<!-- 상품1건 조회 -->
+	<select id="itemOne" statementType="CALLABLE"
+		parameterType="HashMap" resultType="item">
+		{ CALL panErp.dbo.up_itemList (
+		#{workingType}, #{page}, #{qty}, #{orderBy},
+		#{ymdIgnoreYN}, #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+		#{comCode}, #{userId},
+		#{item.itemId}, #{item.itemCode}, #{item.itemNo}, #{item.factoryNo} ,#{item.itemName}
+		,#{item.makerCode}
+		,#{item.classCode} ,#{item.shareYN} , #{item.consignCustCode}, #{srchEqualItemNo}
+		)}
+	</select>
+
+	<!-- 상품 등록 2023.022.8 ? - itemExchangeId 추가 
+	2023.05.16 hsg - dcExceptYN 할인제외여부 추가 -->
+	<select id="itemAdd" statementType="CALLABLE"
+		parameterType="HashMap" resultType="item">
+		{ CALL panErp.dbo.up_itemAdd (
+		#{workingType}, #{comCode}, #{userId}
+		,#{item.itemId} ,#{item.itemCode} ,#{item.itemNo} ,#{item.factoryNo}
+		,#{item.itemName} ,#{item.itemNameEn}
+		,#{item.makerCode} ,#{item.genuineYN} ,#{item.centerPrice} ,#{item.inPrice}
+		,#{item.salePrice} ,#{item.productYear}
+		,#{item.home} ,#{item.equipPlace} ,#{item.color} ,#{item.shine} ,#{item.weight}
+		,#{item.cbm}
+		,#{item.width} ,#{item.depth} ,#{item.height} ,#{item.carType} ,#{item.brandCode}
+		,#{item.saleBrandCode}
+		,#{item.classCode} ,#{item.shareYN} ,#{item.consignCustCode} ,#{item.itemExchangeId}
+		,#{item.dcExceptYN} ,#{item.immediateRlYN} ,#{item.noRealYN}
+		)}
+	</select>
+
+
+
+	<!-- 메뉴내역 작성 :정동근 수정 : 2023.01.30 - menuUrl 추가. 시큐리티에서 권한 체크 시 사용 2023.02.13 
+		- valid YN 추가, 사용여부 체크 _김보경 
+		2023.04.27  hsg - comCode='ㄱ000' 추가. 빠지는 경우 다른거래처의 메뉴가 중복으로 노출되는 오류있음
+		2023.11.27 hsg -  WITH(NOLOCK)  추가 -->
+	<select id="menuList" parameterType="HashMap" resultType="menu">
+		select a.menuCode ,a.menuName ,a.regUserId , a.menuUrl
+		from
+		panErp.dbo.e_menu a  WITH(NOLOCK) 
+		WHERE 1=1 AND comCode='ㄱ000'
+		<if test='menu.validYN != "" and menu.validYN != null '>
+			AND a.validYN = #{menu.validYN}
+		</if>
+	</select>
+
+	<!-- 메뉴등록 작성 :정동근 수정 : 2023.01.30 - menuUrl 추가. 시큐리티에서 권한 체크 시 사용 -->
+	<insert id="menuAdd" parameterType="HashMap">
+		insert into panErp.dbo.e_menu
+		(comCode, menuCode ,menuName ,regUserId, menuUrl, validYN)
+		values(#{logComCode}, #{menu.menuCode} ,#{menu.menuName}
+		,#{menu.regUserId},#{menu.menuUrl},#{menu.validYN})
+
+	</insert>
+
+	<!-- 메뉴수정 작성 :정동근 수정 : 2023.01.30 - menuUrl 추가. 시큐리티에서 권한 체크 시 사용 -->
+	<update id="menuUpt" parameterType="HashMap">
+		update panErp.dbo.e_menu
+		set menuName = #{menu.menuName} ,
+		regUserId = #{menu.regUserId}
+		,menuUrl = #{menu.menuUrl}
+		,validYN = #{menu.validYN}
+		where comCode=#{logComCode} AND menuCode =
+		#{menu.menuCode}
+	</update>
+
+	<!-- 메뉴삭제 -->
+	<delete id="menuDel" parameterType="HashMap">
+		delete from panErp.dbo.e_menu
+		where comCode=#{logComCode} AND menuCode = #{menu.menuCode}
+	</delete>
+
+	<!-- 창고내역 
+	2023.05.02 hsg - 출고대기창고여부, 판매가능창고여부 추가
+	2023.07.14 bk - 조건문 수정 
+	2023.08.24 hsg - 위탁창고 , join e_cust추가
+	2023.09.21 hsg - SP로 변경
+	2024.02.27 hsg - consignViewYN 추가
+	2024.03.18 supi - 창고별 재고조회에서 창고 정렬기준을 창고코드가 아닌 수탁업체코드를 기준으로 정렬받기위해 orderByString 변수 추가
+	2024.06.04 hsg - 물류센터 logisCode 추가
+	-->
+	<select id="storageList" statementType="CALLABLE"		parameterType="HashMap" resultType="storage">
+		{ CALL panErp.dbo.up_storageList (
+		#{workingType},	#{logComCode}, #{logUserId}
+		,#{storage.storageCode}, #{storage.storageName}, #{storage.storType}
+		,#{storage.validYN} ,#{storage.rlStandByYN} ,#{storage.workableYN}	,#{storage.consignYN}
+		,#{storage.storCodeMulti}  ,#{storage.checkType}, #{storage.consignViewYN}	, #{storage.orderByString} ,#{storage.gvComCode} ,#{storage.logisCode}
+		)}
+	</select>
+	
+<!-- 	<select id="storageList" parameterType="HashMap"		resultType="storage">
+		select a.comCode	,a.storageCode ,a.storageName ,a.memo1 ,a.validYN
+		,a.regUserId ,a.uptUserId	,a.storType
+		,ISNULL(a.rlStandByYN,'N') rlStandByYN ,ISNULL(a.workableYN,'N') workableYN
+		,ISNULL(a.consignYN,'N') consignYN
+		,a.consignCustCode, cust.custName consignCustName
+		from panErp.dbo.e_storage a
+		LEFT OUTER JOIN panErp.dbo.e_cust cust ON a.comCode = cust.comCode AND  a.consignCustCode = cust.custCode
+		WHERE a.comCode=#{logComCode}
+		<if test='storage.validYN != "" and storage.validYN != null '>
+			AND ISNULL(a.validYN,'N') = #{storage.validYN}
+		</if>
+		<if test='storage.rlStandByYN != "" and storage.rlStandByYN != null '>
+			AND ISNULL(a.rlStandByYN,'N') = #{storage.rlStandByYN}
+		</if>
+		<if test='storage.storageCode != "" and storage.storageCode != null '>
+  			AND a.storageCode LIKE CONCAT('%', #{storage.storageCode}, '%')
+		</if>
+		<if test='storage.workableYN != "" and storage.workableYN != null '>
+			AND ISNULL(a.workableYN,'N') = #{storage.workableYN}
+		</if>
+		<if test='storage.storType != "" and storage.storType != null '>
+			AND a.storType = #{storage.storType}
+		</if>
+		<if test='storage.storageName != "" and storage.storageName != null '>
+			AND a.storageName LIKE CONCAT('%', #{storage.storageName}, '%')
+		</if>
+		<if test='storage.consignYN != "" and storage.consignYN != null '>
+			AND ISNULL(a.consignYN,'N') = #{storage.consignYN}
+		</if>
+		
+	</select> -->
+	
+	<!-- 창고내역 (유효성검사시)
+	2023.07.14 bk 
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  -->
+	<select id="storageList2" parameterType="HashMap"
+		resultType="storage">
+		select a.comCode	,a.storageCode ,a.storageName ,a.memo1 ,a.validYN
+		,a.regUserId ,a.uptUserId	,a.storType
+		,ISNULL(a.rlStandByYN,'N') rlStandByYN ,ISNULL(a.workableYN,'N') workableYN
+		from panErp.dbo.e_storage a WITH(NOLOCK)
+		WHERE a.comCode=#{logComCode}
+	</select>
+
+	<!-- 창고등록 
+	2023.05.02 hsg - 출고대기창고여부, 판매가능창고여부 추가 
+	2023.08.24 hsg - 위탁창고여부,위타업체정보 추가   
+	2023.11.09 hsg - 수탁협력업체 consignCoworkCustCode 추가
+	2024.01.23 supi - 위탁업체에 대해 비공개 하는 consignViewYN 추가, 회수창고 테이블 여부 나타내는 ctStorageYN 누락되서 추가
+	2024.03.26 supi - 프로시저로 통합 및 그린파츠에서 등록시 수탁업체코드가 없거나 수탁업체창고여부'y'아닌경우 결과값 -3을 반환
+	2024.06.04 hsg - 물류센터 logisCode 추가
+	-->
+	
+	<select id="storageAdd" statementType="CALLABLE"		parameterType="HashMap" resultType="int">
+		{ 
+		CALL panErp.dbo.up_storageAdd (
+		#{workingType},	#{logComCode}, #{logUserId}
+		,#{storage.storageCode}, #{storage.storageName}, #{storage.storType}
+		,#{storage.validYN} ,#{storage.rlStandByYN} ,#{storage.workableYN}	,#{storage.consignYN}
+		,#{storage.consignCustCode}  ,#{storage.consignCoworkCustCode} ,#{storage.ctStorageYN} , #{storage.consignViewYN}	,#{storage.memo1} ,#{storage.logisCode}
+		)} 
+	</select>
+
+	<!-- 창고수정 
+	2023.05.02 hsg - 출고대기창고여부, 판매가능창고여부 추가 
+	2023.08.24 hsg - 위탁창고여부,위타업체정보 추가 
+	2023.11.09 hsg - 수탁협력업체 consignCoworkCustCode 추가
+	2024.01.10 supi - 창고테이블에 회수창고여부를 나태내는 ctStorageYN를 추가
+	2024.01.23 supi - 위탁업체에 대해 비공개 하는 속성 consignViewYN 추가(4car재고조회)
+	2024.03.26 supi - 프로시저로 변경
+	2024.06.04 hsg - 물류센터 logisCode 추가
+	-->
+	<select id="storageUpt" statementType="CALLABLE"		parameterType="HashMap" resultType="int">
+		{ 
+		CALL panErp.dbo.up_storageAdd (
+		#{workingType},	#{logComCode}, #{logUserId}
+		,#{storage.storageCode}, #{storage.storageName}, #{storage.storType}
+		,#{storage.validYN} ,#{storage.rlStandByYN} ,#{storage.workableYN}	,#{storage.consignYN}
+		,#{storage.consignCustCode}  ,#{storage.consignCoworkCustCode} ,#{storage.ctStorageYN} , #{storage.consignViewYN}	,#{storage.memo1} ,#{storage.logisCode}
+		)}  
+	</select>
+
+	<!-- 창고삭제 -->
+	<delete id="storageDel" parameterType="HashMap">
+		delete from
+		panErp.dbo.e_storage
+		where comCode=#{logComCode} AND storageCode = #{storage.storageCode}
+
+	</delete>
+
+	<!-- 랙 내역 230215 장윤상 수정
+	2023.05.11 hsg - e_storage  join 추가 
+	2023.09.08 hsg - e_stockRack 조인추가. sr.itemId, sr.stockQty 추가
+	2023.11.27 hsg - WITH(NOLOCK)  추가 
+	2024.06.10 hsg - logisRackId  select 절추가. 이를 위해 left join dbo.e_logisRack 추가 
+	2024.06.11 hsg - memo 누락되어 있어서 추가   
+	2024.10.29 supi - 랙의 창고 타입 반환 추가(재고투입에서 랙목록 받아올때 사용)
+	-->
+	<select id="rackList" parameterType="HashMap" resultType="rack">
+		<!-- select a.storageCode ,a.rackCode ,a.rackName ,validYN ,regUserId ,uptUserId 
+			from panErp.dbo.e_rack a -->
+		<!-- SELECT a.comCode	,a.storageCode ,b.storageName ,a.rackCode ,a.rackName ,a.barcode
+		,a.validYN ,a.regUserId ,a.uptUserId
+		FROM panErp.dbo.e_rack a
+		LEFT OUTER JOIN panErp.dbo.e_storage b
+		ON a.comCode = b.comCode and a.storageCode = b.storageCode
+		WHERE 1=1 -->
+		
+		SELECT a.comCode	,a.storageCode  ,a.rackCode 
+		<!-- ,a.rackName -->
+		,ISNULL(lr.rackName, a.rackName) rackName   <!-- 2024.06.10 hsg 위에거에서 이걸로 변경  -->
+		,a.barcode
+		,a.validYN ,a.regUserId ,a.uptUserId
+		,b.storageName		
+		<if test='rack.itemId != "" and rack.itemId != null  and rack.itemId != 0  '>
+		,sr.itemId, sr.stockQty
+		</if>
+		,a.logisRackId
+		,a.memo
+		<!-- ,lr.rackName logisRackName -->
+		,b.storType
+		,b.rlStandByYN
+		FROM panErp.dbo.e_rack a WITH(NOLOCK) 
+		JOIN dbo.e_storage b WITH(NOLOCK) ON a.comCode = b.comCode AND a.storageCode = b.storageCode
+		<if test='rack.itemId != "" and rack.itemId != null  and rack.itemId != 0  '>
+			LEFT OUTER JOIN dbo.e_stockRack sr WITH(NOLOCK) ON a.comCode = sr.comCode AND a.rackCode = sr.rackCode
+		</if>
+		LEFT OUTER JOIN dbo.e_logisRack lr ON a.comCode = lr.comCode AND a.logisRackId = lr.logisRackId
+		<!-- WHERE 1=1 AND a.comCode=#{logComCode} -->
+		<!--2024.03.13 yoonsang 주문연동관련 반입할때 창고와 렉을 검색하는데 gvComCode로 검색해야함 컨트롤러에서 realComCode에 gvComCode or logComCode 넣어줌-->
+		WHERE 1=1 AND a.comCode=#{realComCode}
+		<if test='rack.storageCode != "" and rack.storageCode != null '>
+			AND a.storageCode = #{rack.storageCode}
+		</if>
+		<if test='rack.storageName != "" and rack.storageName != null '>
+			AND b.storageName LIKE CONCAT('%', #{rack.storageName}, '%')
+		</if>
+		<if test='rack.rackCode != "" and rack.rackCode != null '>
+			AND a.rackCode = #{rack.rackCode}
+		</if>
+		<if test='rack.rackName != "" and rack.rackName != null '>
+			 AND a.rackName LIKE CONCAT('%', #{rack.rackName}, '%')
+		</if>
+		<if test='rack.barcode != "" and rack.barcode != null '>
+			AND a.barcode = #{rack.barcode}
+		</if>
+		<if test='rack.itemId != "" and rack.itemId != null  and rack.itemId != 0  '>
+			AND sr.itemId = #{rack.itemId}
+		</if>
+		<if test='rack.rackSrch != "" and rack.rackSrch != null '>
+			AND (a.rackCode = #{rack.rackSrch} OR a.rackName LIKE CONCAT('%', #{rack.rackSrch}, '%'))
+		</if>
+		
+		
+<!-- 		<if test='rackCode != "" and rackCode != null '>
+			AND a.rackCode = #{rackCode}
+		</if> -->
+		
+	</select>
+
+	<!-- 랙 등록 -->
+	<insert id="rackAdd" parameterType="HashMap">
+		insert into panErp.dbo.e_rack
+		(comCode, storageCode ,rackCode ,rackName ,validYN ,regUserId ,created
+		,uptUserId ,modified	
+		<if test='rack.barcode != null '>
+		,barcode
+		</if>
+		)
+		values(#{logComCode}, #{rack.storageName} ,#{rack.rackCode} ,#{rack.rackName}
+		,#{rack.validYN} ,#{logUserId} ,GETDATE() ,#{logUserId} ,GETDATE()	
+		<if test='rack.barcode != null '>
+		,#{rack.barcode}
+		</if>
+		)
+
+	</insert>
+
+	<!-- 랙 수정 -->
+	<update id="rackUpt" parameterType="HashMap">
+		update panErp.dbo.e_rack
+		set 
+		rackName = #{rack.rackName},
+		validYN = #{rack.validYN},
+		
+		
+		uptUserId = #{logUserId},
+		modified = GETDATE()
+		
+		,barcode = #{rack.barcode}
+		,storageCode = #{rack.storageName}
+
+		where comCode=#{logComCode} AND rackCode = #{rack.rackCode}
+
+	</update>
+	<!-- 랙 삭제 -->
+	<delete id="rackDel" parameterType="HashMap">
+		delete from panErp.dbo.e_rack
+		where comCode=#{logComCode} AND rackCode = #{rack.rackCode}
+
+	</delete>
+
+	<!-- 랙등록 등록 2023.11.24 hsg  : 상기 rackAdd, rackUpt, rackDel 은 사용안함. 
+	2024.06.11 hsg - logisRackId 추가. 
+	2024.10.21 supi - 랙 코드가 아닌 이름이 들어가고 있어서 수정
+	-->
+	<select id="rackReg" statementType="CALLABLE"	parameterType="HashMap" resultType="rack">
+	{ CALL panErp.dbo.up_rackAdd (
+		#{workingType}, #{logComCode}, #{logUserId}
+		,#{rack.storageCode}, #{rack.rackCode}, #{rack.rackName} , #{rack.barcode} , #{rack.memo}, #{rack.validYN}	
+		,#{rack.logisRackId}			
+	)}	       
+	</select> 
+
+	<!-- 부서목록 목록 
+	2023.05.30 hsg - where절에 comCode 추가
+	2023.11.27 hsg -  WITH(NOLOCK)  추가 -->
+	<select id="deptList" parameterType="HashMap"
+		resultType="depart">
+		select a.comCode ,a.dept1Code ,a.dept1Name ,a.dept2Code
+		,a.dept2Name ,a.dept3Code ,a.dept3Name
+		from panErp.dbo.e_depart a  WITH(NOLOCK) 
+		where comCode=#{logComCode}
+	</select>
+
+	<!-- 부서등록 2022-11-21 장윤상 -->
+	<insert id="deptAdd" parameterType="HashMap">
+		insert into
+		panErp.dbo.e_depart (comCode ,dept1Code ,dept1Name ,dept2Code
+		,dept2Name ,dept3Code ,dept3Name)
+		values(#{comCode}
+		,#{depart.dept1Code} ,#{depart.dept1Name} ,#{depart.dept2Code}
+		,#{depart.dept2Name} ,#{depart.dept3Code} ,#{depart.dept3Name})
+
+	</insert>
+
+	<!-- 부서삭제 2022-11-30 장윤상
+	2023.05.30 hsg - where절에 comCode추가 -->
+	<delete id="deptDel" parameterType="HashMap">
+		delete from panErp.dbo.e_depart  <!-- where -->
+		<where>
+			<choose>
+				<when
+					test='depart.dept1Code != "" and depart.dept2Code != "" and depart.dept3Code != "" '>
+					comCode=#{logComCode} AND
+					dept1Code = #{depart.dept1Code} AND dept2Code =
+					#{depart.dept2Code} AND
+					dept3Code = #{depart.dept3Code}
+				</when>
+				<when
+                    test='depart.dept1Code != "" and depart.dept2Code != "" and depart.dept3Code == ""'>
+					comCode=#{logComCode} AND				
+					dept1Code = #{depart.dept1Code} AND dept2Code =
+					#{depart.dept2Code}
+				</when>
+				<when
+				    test='depart.dept1Code != "" and depart.dept2Code == "" and depart.dept3Code == "" '>
+					comCode=#{logComCode} AND
+					dept1Code = #{depart.dept1Code}
+				</when>
+
+			</choose>
+		</where>
+	</delete>
+	<update id="deptUpt" parameterType="HashMap">
+		update panErp.dbo.e_depart
+
+		<if test='depart.dept1Name != "" and depart.dept1Name != null '>
+			set dept1Name = #{depart.dept1Name} where comCode=#{logComCode} AND dept1Code =
+			#{deptSet.dept1Code}
+		</if>
+		<if test='depart.dept2Name != "" and depart.dept2Name != null'>
+			set dept2Name = #{depart.dept2Name} where comCode=#{logComCode} AND dept1Code =
+			#{deptSet.dept1Code} and dept2Code = #{deptSet.dept2Code}
+		</if>
+		<if test='depart.dept3Name != "" and depart.dept3Name != null'>
+			set dept3Name = #{depart.dept3Name} where comCode=#{logComCode} AND dept1Code =
+			#{deptSet.dept1Code} and dept2Code = #{deptSet.dept2Code} and
+			dept3Code = #{deptSet.dept3Code}
+		</if>
+
+	</update>
+
+	<!-- 보험사할인율 리스트
+	2023.05.30 hsg - where절에 comCode추가 
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  
+	2024.11.18 supi - 작성자,수정자 반환 추가 및 기간 조회에서 현재 적용or 전체 조회로 변경
+	-->
+	<select id="insurDcList" parameterType="HashMap"
+		resultType="insurDcRate">
+
+		select idr.comCode ,insurIdx ,insurCode ,makerCode ,custTypeCode ,dcRate
+		,startYmd ,endYmd ,memo
+		,idr.regUserId ,idr.created ,idr.uptUserId ,idr.modified
+		,u1.userName regUserName , u2.userName uptUserName
+		from
+		panErp.dbo.e_insurDcRate idr WITH(NOLOCK)   
+		LEFT JOIN dbo.e_user u1 WITH(NOLOCK) ON u1.comCode = idr.comCode AND u1.userId = idr.regUserId 
+		LEFT JOIN dbo.e_user u2 WITH(NOLOCK) ON u2.comCode = idr.comCode AND u2.userId = idr.uptUserId
+		where 1=1 AND idr.comCode=#{logComCode}  
+		<if
+			test='insurDcRate.insurCode != "" and insurDcRate.insurCode != null '>
+			AND insurCode = #{insurDcRate.insurCode}
+		</if>
+		<if
+			test='insurDcRate.makerCode != "" and insurDcRate.makerCode != null '>
+			AND makerCode = #{insurDcRate.makerCode}
+		</if>
+		<if
+			test='"Y".equals(insurDcRate.curInsurDcRateYN)'>
+			AND endYmd is null
+		</if>
+		ORDER BY insurCode, makerCode, custTypeCode , startYmd
+
+	</select>
+
+	<!-- 보험사할인율 등록 
+			2022-12-09 장윤상 
+			2024-11-18 supi - 추가수정삭제 부분 수정 및 프로시저로 변경
+	-->
+	<select id="insurDcAdd" statementType="CALLABLE" parameterType="HashMap" resultType="CommonResult">
+		{ CALL panErp.dbo.up_insurDcAdd (
+			#{insurDcRate.workingType} , #{logComCode} , #{logUserId} , #{insurDcRate.insurCode} , #{insurDcRate.makerCode} ,
+			#{insurDcRate.custTypeCode} , #{insurDcRate.dcRate} , #{insurDcRate.memo}
+		)}
+	</select>
+
+	 
+
+	<!-- SR 목록 2022-12-21 장윤상 
+	2023.05.30 hsg - where절에 comCode추가, join에 comCOde 추가
+	2023.06.26 bk comcode 파라미터 수정   
+	2023.07.13 hsg - order by 절추가
+	2023.07.13 hsg - SP로 수정
+    2023.07.13 hsg - validYN  추가               -->
+	<select id="srList" statementType="CALLABLE" parameterType="HashMap" resultType="sr">
+		{ CALL panErp.dbo.up_srList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			 	
+			#{comCode}, #{userId},  #{sr.validYN}
+		)}	
+	</select>		
+	<!-- <select id="srList" parameterType="HashMap" resultType="sr">
+		select a.srIdx, a.comCode ,a.srType ,a.srCode
+		,a.regUserId ,a.created
+		,a.uptUserId ,a.modified,
+		CASE WHEN a.srType= 'SR1' THEN b.name
+		ELSE c.custName
+		END AS srName
+		from dbo.e_sr a
+
+		left outer join dbo.e_staff b on a.comCode = b.comCode AND a.srCode = b.empNo
+		left outer join dbo.e_cust c on a.comCode = c.comCode AND a.srCode = c.custCode
+		
+		WHERE 1=1 AND a.comCode=#{comCode} 
+		ORDER BY a.srType
+
+	</select>
+ -->
+ 
+	<!-- SR관리거래처목록 2022-12-21 장윤상 
+	2023.05.30 hsg - where절에 comCode추가
+	2023.07.13 hsg - validYN  추가
+	2023.11.27 hsg -  WITH(NOLOCK)  추가 -->
+	<select id="srCustList" parameterType="HashMap"
+		resultType="srCust">
+		select a.srCustIdx ,a.comCode ,a.srType ,a.srCode
+		,a.custCode ,a.custShareRate
+		,a.regUserId ,a.created ,a.uptUserId
+		,a.modified
+		,b.custName
+		from panErp.dbo.e_srCust a  WITH(NOLOCK) 
+		LEFT OUTER JOIN dbo.e_cust b  WITH(NOLOCK) ON a.comCode = b.comCode AND a.custCode = b.custCode
+		WHERE a.comCode=#{comCode} 
+		<if test='srCust.validYN != "" and srCust.validYN  != null '>
+			AND a.validYN = #{srCust.validYN}
+		</if>
+		
+	</select>
+
+	<!-- SR 목록 등록 2022-12-09 장윤상 -->
+	<insert id="srAdd" parameterType="HashMap">
+		insert into panErp.dbo.e_sr
+		(comCode ,srType ,srCode
+		,regUserId ,created ,uptUserId ,modified)
+		values(#{comCode} ,#{sr.srType} ,#{sr.srCode}
+		,#{userId} ,GETDATE()
+		,#{userId} ,GETDATE())
+
+	</insert>
+
+	<!-- SR목록 업데이트 2022-12-13 장윤상 
+	2023.05.30 hsg - where절에 comCode추가,-->
+	<update id="srUpt" parameterType="HashMap">
+		update panErp.dbo.e_sr
+		set
+		srType = #{sr.srType} ,uptUserId = #{userId}, modified = GETDATE()
+		where comCode=#{logComCode} AND srIdx = #{sr.srIdx}
+
+	</update>
+
+	<!-- SR목록 삭제 2022-12-13 장윤상 
+	2023.05.30 hsg - where절에 comCode추가-->
+	<delete id="srDel" parameterType="HashMap">
+		delete from panErp.dbo.e_sr
+		where srIdx = #{sr.srIdx} AND comCode=#{logComCode}
+	</delete>
+
+	<!-- SR 관리거래처 등록 2022-12-27 장윤상 -->
+	<insert id="srCustAdd" parameterType="HashMap">
+		insert into
+		panErp.dbo.e_srCust (comCode ,srType ,srCode ,custCode ,custShareRate
+		,regUserId ,created ,uptUserId ,modified)
+		values(#{comCode} ,#{srType}
+		,#{srCode} ,#{srCust.custName} ,#{srCust.custShareRate}
+		,#{userId}
+		,GETDATE() ,#{userId} ,GETDATE())
+
+	</insert>
+
+	<!-- SR 관리거래처 업데이트 2022-12-27 장윤상
+	2023.05.30 hsg - where절에 comCode추가 -->
+	<update id="srCustUpt" parameterType="HashMap">
+		update panErp.dbo.e_srCust
+		set custShareRate = #{srCust.custShareRate} ,uptUserId = #{userId},
+		modified = GETDATE() where srCustIdx = #{srCust.srCustIdx}  AND comCode=#{comCode}
+
+	</update>
+
+	<!-- SR 관리거래처 삭제 2022-12-27 장윤상 
+	2023.05.30 hsg - where절에 comCode추가-->
+	<delete id="srCustDel" parameterType="HashMap">
+		delete from
+		panErp.dbo.e_srCust where srCustIdx = #{srCust.srCustIdx}  AND comCode=#{comCode}
+	</delete>
+
+
+	<!-- 마감일 목록 2023-01-02 장윤상
+	2023.05.30 hsg - where절에 comCode추가
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  -->
+	<select id="deadlineList" parameterType="HashMap"
+		resultType="deadline">
+		select
+		a.deadIdx, a.comCode ,a.inDead ,a.outDead
+		,a.depositDead ,a.withdrawDead ,a.memo
+		from panErp.dbo.e_deadline a  WITH(NOLOCK) 
+		WHERE comCode=#{comCode}
+	</select>
+	
+	<!-- 마감일 ADD/UPT 230808 장윤상 
+	매퍼에서 SP로 수정-->
+	<select id="deadlineAdd" statementType="CALLABLE" parameterType="HashMap" resultType="deadline">		
+		{ CALL panErp.dbo.up_deadlineAdd (
+			#{workingType}, #{logComCode}, #{logUserId}
+			,#{deadline.inDead} ,#{deadline.outDead} ,#{deadline.depositDead} ,#{deadline.withdrawDead}
+		)}
+
+	</select>
+
+	<!-- 마감일 업데이트 2022-12-13 장윤상 
+	2023.05.30 hsg - where절에 comCode추가-->
+	<!-- <update id="deadlineUpt" parameterType="HashMap">
+		update
+		panErp.dbo.e_deadline
+		set 
+		inDead = #{iDead}
+		, outDead = #{oDead}
+		,depositDead = #{dDead} 
+		,withdrawDead = #{wDead}
+		,memo =#{deadline.memo}
+		where comCode=#{comCode}
+
+	</update> -->
+
+
+	<!-- 입금 리스트 
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가-->
+<!-- 	<select id="depositList" parameterType="HashMap"
+		resultType="deposit">
+
+		select a.comCode ,a.depositNo ,a.depositDate ,a.custCode
+		,cust2.custName AS custName ,a.carNo ,a.accCode ,code.codeName AS
+		accName   
+		,a.payType ,code2.codeName AS payTypeName ,a.cashRectYN
+		,a.cashRectNo ,a.cardCom ,cust.custName AS cardComName ,a.payCode
+		,pyament.name AS payName ,pyament.accoutNo AS payAccNo
+		,a.cdAllowNo
+		,a.supPrice ,a.vat ,a.depositMoney ,a.cardFee ,a.remitFee ,a.dcMoney
+		,a.claimReqNo ,a.connectCdPay ,a.memo
+		,a.regUserId ,a.created
+		,a.uptUserId ,a.modified
+
+		,a.countY ,a.cashRectM ,a.cashM ,a.cardM ,a.accM ,a.cardSubM
+		,dd.depositDead AS depositDead
+		,b.clGroupId	AS jobArr
+		,b.depositMoney AS depositArr
+
+		from panErp.dbo.e_deposit a
+		LEFT OUTER JOIN panErp.dbo.e_code code ON
+		code.mCode = '3000' AND a.accCode = code.code AND a.comCode = code.comCode
+		LEFT OUTER JOIN
+		panErp.dbo.e_code code2 ON code2.mCode = '3010' AND a.payType =
+		code2.code AND a.comCode = code2.comCode
+		LEFT OUTER JOIN panErp.dbo.e_cust cust ON cust.custType =
+		'C5' AND a.cardCom = cust.custCode AND a.comCode = cust.comCode
+		LEFT OUTER JOIN panErp.dbo.e_cust
+		cust2 ON a.custCode = cust2.custCode  AND a.comCode = cust2.comCode
+		
+		LEFT OUTER JOIN
+		panErp.dbo.e_payment pyament ON a.payCode = pyament.payCode  AND a.comCode = pyament.comCode
+		LEFT OUTER JOIN
+		panErp.dbo.e_deadline dd ON a.comCode = dd.comCode
+		LEFT OUTER JOIN
+		panErp.dbo.e_depositClGroup b ON a.comCode = b.comCode and a.depositNo = b.depositNo 
+		
+		where 1=1 AND a.comCode=#{comCode}
+
+		<if test='deposit.accCode != "" and deposit.accCode != null '>
+			AND a.accCode = #{deposit.accCode}
+		</if>
+		<if test='deposit.custCode != "" and deposit.custCode != null '>
+			AND a.custCode = #{deposit.custCode}
+		</if>
+		<if test='deposit.cardCom != "" and deposit.cardCom != null '>
+			AND a.cardCom = #{deposit.cardCom}
+		</if>
+		<if test='deposit.payCode != "" and deposit.payCode != null '>
+			AND a.payCode = #{deposit.payCode}
+		</if>
+		<if test='deposit.payType != "" and deposit.payType != null '>
+			AND a.payType = #{deposit.payType}
+		</if>
+		<if test='deposit.claimReqNo != "" and deposit.claimReqNo != null '>
+			AND a.claimReqNo = #{deposit.claimReqNo}
+		</if>
+		<if test='deposit.depositNo != "" and deposit.depositNo != null '>
+			AND a.depositNo = #{deposit.depositNo}
+		</if>
+		<if test='cdCode != "" and cdCode != null '>
+			AND a.cardCom = #{cdCode} and connectCdPay is null
+		</if>
+
+
+		<if test='sYmd != "" and sYmd != null and eYmd != "" and eYmd != null'>
+			AND a.depositDate <![CDATA[ >= ]]>
+			#{sYmd} and depositDate <![CDATA[ <= ]]>
+			#{eYmd}
+		</if>
+		<if test = 'orderBy=="finDepNo"'>
+			ORDER BY a.depositNo
+		</if>
+		<if test = 'orderBy=="" or orderBy == null'>
+			ORDER BY a.depositDate, a.depositNo
+		</if>
+
+	</select> -->
+
+	<!-- 입금 목록 등록 2022-01-11 장윤상 -->
+	<!-- <insert id="depositAdd" parameterType="HashMap">
+		insert into
+		panErp.dbo.e_deposit (comCode ,depositNo ,depositDate ,custCode
+		,carNo ,accCode ,payType ,cashRectYN
+		,cashRectNo ,cardCom ,payCode ,cdAllowNo ,supPrice
+		,vat ,depositMoney ,cardFee ,remitFee
+		,dcMoney ,clGroupId ,memo
+		,regUserId ,created ,uptUserId ,modified
+		,countY ,cashRectM ,cashM ,cardM ,accM ,cardSubM
+		)
+
+		values(#{comCode} ,#{deposit.depositNo} ,#{deposit.depositDate} ,#{deposit.custCode}
+		,#{deposit.carNo} ,#{deposit.accCode} ,#{deposit.payType}
+		,#{deposit.cashRectYN}
+		,#{deposit.cashRectNo} ,#{deposit.cardCom} ,#{deposit.payCode} ,#{deposit.cdAllowNo}
+		,#{deposit.supPrice}
+		,#{deposit.vat} ,#{deposit.depositMoney} ,#{deposit.cardFee} ,#{deposit.remitFee}
+		,#{deposit.dcMoney} ,#{deposit.clGroupId} ,#{deposit.memo}
+		,#{userId}
+		,CONVERT(VARCHAR(10), GETDATE(), 23)
+		,GETDATE()
+		,#{userId} 
+		,CONVERT(VARCHAR(10), GETDATE(), 23)
+		,GETDATE()
+
+		,#{deposit.countY} ,#{deposit.cashRectM} ,#{deposit.cashM} ,#{deposit.cardM}
+		,#{deposit.accM} ,#{deposit.cardSubM}
+		)
+
+	</insert> -->
+	<!-- 230720 yoonsang cdCode 추가
+		2023.10.05 bk orderGroupId 추가
+		2024.05.25 yoonsang  memo추가-->
+	<select id="depositList" statementType="CALLABLE" parameterType="HashMap" resultType="deposit">
+	{ CALL panErp.dbo.up_depositList (
+	    #{deposit.workingType}, #{comCode}, #{userId}, #{ymdIgnoreYN},	 #{orderBy},	
+	    #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+	    #{deposit.depositNo}, #{deposit.depositDate}, #{deposit.custCode}, #{deposit.accCode},
+	    #{deposit.payType}, #{deposit.cardCom}, #{deposit.payCode},
+	    #{deposit.carNo},#{deposit.cashRectYN} 
+	    ,#{deposit.clGroupId}	,#{deposit.cdCode} ,#{deposit.orderGroupId}	,#{deposit.memo} 
+		)}	
+	</select>
+		
+	<!-- 입금 목록 등록 2023-06-15  bk -->
+	    <select id="depositAdd" statementType="CALLABLE" parameterType="HashMap" resultType="int">
+		{ CALL panErp.dbo.up_depositAdd (
+			#{deposit.workingType} ,  #{comCode},  #{userId} 
+			,#{deposit.depositNo} ,#{deposit.depositDate} ,#{deposit.custCode} ,#{deposit.carNo} ,#{deposit.accCode} ,#{deposit.payType} 
+			,#{deposit.cashRectYN} ,#{deposit.cashRectNo} ,#{deposit.cardCom}
+			,#{deposit.payCode} ,#{deposit.cdAllowNo} ,#{deposit.supPrice}
+			,#{deposit.vat} ,#{deposit.depositMoney} ,#{deposit.cardFee} ,#{deposit.remitFee}
+			,#{deposit.dcMoney} ,#{deposit.clGroupId} ,#{deposit.memo}
+			,#{deposit.countY} ,#{deposit.cashRectM} ,#{deposit.cashM} ,#{deposit.cardM}
+			,#{deposit.accM} ,#{deposit.cardSubM} 
+			 ,#{deposit.depositArr}  ,#{deposit.jobArr} 
+		)}	
+	</select>
+
+
+
+
+	<!-- 입금목록 업데이트 2022-01-12 장윤상 
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가-->
+<!-- 	<update id="depositUpt" parameterType="HashMap">
+		update
+		panErp.dbo.e_deposit
+		set
+		depositDate = #{deposit.depositDate}
+		,custCode = #{deposit.custCode}
+		,carNo =
+		#{deposit.carNo}
+		,accCode = #{deposit.accCode}
+		,payType =
+		#{deposit.payType}
+		,cashRectYN = #{deposit.cashRectYN}
+		,cashRectNo =
+		#{deposit.cashRectNo}
+		,cardCom = #{deposit.cardCom}
+		,payCode =
+		#{deposit.payCode}
+		,cdAllowNo = #{deposit.cdAllowNo}
+		,supPrice =
+		#{deposit.supPrice}
+		,vat = #{deposit.vat}
+		,depositMoney =
+		#{deposit.depositMoney}
+		,cardFee = #{deposit.cardFee}
+		,remitFee =
+		#{deposit.remitFee}
+		,dcMoney = #{deposit.dcMoney}
+		,clGroupId =
+		#{deposit.clGroupId}
+		,memo = #{deposit.memo}
+
+		,countY = #{deposit.countY}
+		,cashRectM = #{deposit.cashRectM}
+		,cashM =
+		#{deposit.cashM}
+		,cardM = #{deposit.cardM}
+		,accM = #{deposit.accM}
+		,cardSubM = #{deposit.cardSubM}
+
+
+		,uptUserId = #{userId}
+		, modified = GETDATE()CONVERT(VARCHAR(10), GETDATE(), 23)
+
+		where depositNo = #{deposit.depositNo}
+          AND comCode=#{comCode}
+	</update> -->
+	
+	<!-- 입금 목록 업데이트  2023-06-15  bk -->
+	 <select  id="depositUpt"  statementType="CALLABLE" parameterType="HashMap" resultType="int">
+	 
+		{ CALL panErp.dbo.up_depositAdd (
+			'UPT',  #{comCode},  #{userId}
+			,#{deposit.depositNo} ,#{deposit.depositDate} ,#{deposit.custCode} ,#{deposit.carNo} ,#{deposit.accCode} ,#{deposit.payType} 
+			,#{deposit.cashRectYN} ,#{deposit.cashRectNo} ,#{deposit.cardCom}
+			,#{deposit.payCode} ,#{deposit.cdAllowNo} ,#{deposit.supPrice}
+			,#{deposit.vat} ,#{deposit.depositMoney} ,#{deposit.cardFee} ,#{deposit.remitFee}
+			,#{deposit.dcMoney} ,#{deposit.clGroupId} ,#{deposit.memo}
+			,#{deposit.countY} ,#{deposit.cashRectM} ,#{deposit.cashM} ,#{deposit.cardM}
+			,#{deposit.accM} ,#{deposit.cardSubM}
+			 ,#{deposit.depositArr}  ,#{deposit.jobArr} 
+		)}	
+	</select>
+
+	<!-- 카드대금입금시 관련 물품대에 카드대금 입금번호 업데이트 2023-01-17 장윤상
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가 -->
+	<update id="depositCdPayAdd" parameterType="HashMap">
+		update
+		panErp.dbo.e_deposit
+		set
+		connectCdPay = #{connectCdPay}
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where depositNo = #{depositCdPay}
+           AND comCode=#{comCode}
+	</update>
+
+	<!-- 입금목록 삭제 2023-01-18 장윤상 
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가-->
+<!-- 	<delete id="depositDel" parameterType="HashMap">
+		delete from
+		panErp.dbo.e_deposit where depositNo = #{deposit.depositNo}
+		AND comCode=#{comCode}
+	</delete>
+ -->
+ 	<select  id="depositDel"  statementType="CALLABLE" parameterType="HashMap" resultType="int">
+ 		{ CALL panErp.dbo.up_depositAdd (
+			'DEL',  #{comCode},  #{userId}
+			,#{deposit.depositNo} ,#{deposit.depositDate} ,#{deposit.custCode} ,#{deposit.carNo} ,#{deposit.accCode} ,#{deposit.payType} 
+			,#{deposit.cashRectYN} ,#{deposit.cashRectNo} ,#{deposit.cardCom}
+			,#{deposit.payCode} ,#{deposit.cdAllowNo} ,#{deposit.supPrice}
+			,#{deposit.vat} ,#{deposit.depositMoney} ,#{deposit.cardFee} ,#{deposit.remitFee}
+			,#{deposit.dcMoney} ,#{deposit.clGroupId} ,#{deposit.memo}
+			,#{deposit.countY} ,#{deposit.cashRectM} ,#{deposit.cashM} ,#{deposit.cardM}
+			,#{deposit.accM} ,#{deposit.cardSubM}
+			 ,#{deposit.depositArr}  ,#{deposit.jobArr} 
+		)}	
+	</select>
+ 
+	<!-- 카드대금입금목록 삭제시 관련 물품대 사이의 관계 끊기 2023-01-18 장윤상 
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가-->
+	<update id="depositUpt1" parameterType="HashMap">
+		update
+		panErp.dbo.e_deposit
+		set
+		connectCdPay = null
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where connectCdPay = #{deposit.depositNo}
+		AND comCode=#{comCode}
+	</update>
+
+	<!-- 출금목록 조회 2023-01-19 장윤상 
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가
+	2023.09.08 bk countY/cashRectYN/cashRectNo/ cashRectM 추가
+	2023.10.04 bk 이름으로 노출되게 수정 
+	2023.11.27 hsg -  WITH(NOLOCK)  추가
+	2024.06,19 yoonsang - 비고(memo) 조회 추가 -->
+	<select id="withdrawList" parameterType="HashMap"
+		resultType="withdraw">
+
+		select a.comCode ,a.wdNo ,a.wdDate ,a.custCode ,cust2.custName AS
+		custName ,a.accCode ,code.codeName AS accName
+		,a.payType
+		,code2.codeName AS payTypeName ,a.payCode ,payment.name AS payCodeName
+		,payment.accoutNo AS payAccNo
+		,a.supPrice ,a.vat ,a.wdMoney ,a.fee
+		,a.dcMoney
+		,a.wdReqNo ,a.memo ,a.cashM ,a.cardM ,a.accM,
+		<!-- a.regUserId , -->u1.userName AS regUserId ,
+		a.created ,
+		<!-- a.uptUserId -->
+		u2.userName AS uptUserId 
+		,a.modified
+		,dd.withdrawDead
+		,a.clReqNo
+		,a.countY
+		,  CASE WHEN a.cashRectYN = 'N' THEN '' ELSE a.cashRectYN END AS cashRectYN
+		,a.cashRectM
+		,a.cashRectNo
+		from panErp.dbo.e_withdraw a  WITH(NOLOCK) 
+
+		LEFT OUTER JOIN panErp.dbo.e_code code  WITH(NOLOCK) ON code.mCode = '3000' AND
+		a.accCode = code.code AND a.comCode = code.comCode
+		LEFT OUTER JOIN panErp.dbo.e_code code2  WITH(NOLOCK) ON
+		code2.mCode = '3010' AND a.payType = code2.code  AND a.comCode = code2.comCode
+		LEFT OUTER JOIN
+		panErp.dbo.e_cust cust2  WITH(NOLOCK) ON a.custCode = cust2.custCode  AND a.comCode = cust2.comCode
+		LEFT OUTER JOIN
+		panErp.dbo.e_payment payment  WITH(NOLOCK) ON a.comCode = payment.comCode AND a.payCode = payment.payCode
+
+		LEFT OUTER JOIN
+		panErp.dbo.e_deadline dd  WITH(NOLOCK) ON  a.comCode = dd.comCode
+		LEFT OUTER JOIN
+		panErp.dbo.e_user u1  WITH(NOLOCK) ON  a.comCode = u1.comCode AND a.regUserId = u1.userId 
+		LEFT OUTER JOIN
+		panErp.dbo.e_user u2  WITH(NOLOCK) ON  a.comCode = u2.comCode AND a.uptUserId = u2.userId 
+
+		where 1=1 AND a.comCode=#{comCode}
+		<if test='withdraw.custCode != "" and withdraw.custCode != null '>
+			AND a.custCode = #{withdraw.custCode}
+		</if>
+		<if test='withdraw.payCode1 != "" and withdraw.payCode1 != null'>
+			AND a.payCode = #{withdraw.payCode1}
+		</if>
+		<if test='withdraw.payCode2 != "" and withdraw.payCode2 != null'>
+			AND a.payCode = #{withdraw.payCode2}
+		</if>
+		<if test='withdraw.payType != "" and withdraw.payType != null '>
+			AND a.payType = #{withdraw.payType}
+		</if>
+		<if test='withdraw.wdReqNo != "" and withdraw.wdReqNo != null '>
+			AND a.wdReqNo = #{withdraw.wdReqNo}
+		</if>
+		<if test='withdraw.wdNo != "" and withdraw.wdNo != null '>
+			AND a.wdNo = #{withdraw.wdNo}
+		</if>
+		<if test='withdraw.cashRectYN =="Y" '><!--현금영수증 발행건   -->
+			AND a.cashRectYN = 'Y'
+		</if>
+		<if test='withdraw.cashRectYN =="N" '><!--현금영수증 미발행건   -->
+			AND a.cashRectYN = 'N'
+		</if>
+		<if test='withdraw.memo != "" and withdraw.memo != null '>
+			AND a.memo  LIKE CONCAT('%', #{withdraw.memo}, '%')
+		</if>
+		<if
+			test='(sYmd != "" and sYmd != null and eYmd != "" and eYmd != null) and (ymdIgnoreYN != "Y")'>
+			AND a.wdDate <![CDATA[ >= ]]>
+			#{sYmd} and wdDate <![CDATA[ <= ]]>
+			#{eYmd}
+		</if>
+		<if test = 'orderBy=="finWdNo"'>
+			ORDER BY a.wdNo 
+		</if>
+		<if test = 'orderBy=="" or orderBy == null'>
+			ORDER BY a.wdDate, a.wdNo
+		</if>
+	</select>
+
+	<!-- 출금 목록 등록 2022-01-11 장윤상
+	2023.04.12 hsg - SP로 변경  -->
+<!-- 	<insert id="withdrawAdd" parameterType="HashMap">
+		insert into
+		panErp.dbo.e_withdraw (comCode ,wdNo ,wdDate
+		,custCode ,accCode ,payType ,payCode
+		,supPrice ,vat ,wdMoney ,fee ,dcMoney
+		,wdReqNo ,memo
+
+		,cashM ,cardM ,accM
+
+		,regUserId ,created ,uptUserId ,modified
+
+		)
+
+		values(#{comCode} ,#{withdraw.wdNo} ,#{withdraw.wdDate}
+		,#{withdraw.custCode} ,#{withdraw.accCode} ,#{withdraw.payType} ,#{withdraw.payCode}
+		,#{withdraw.supPrice} ,#{withdraw.vat} ,#{withdraw.wdMoney}
+		,#{withdraw.fee} ,#{withdraw.dcMoney}
+		,#{withdraw.wdReqNo} ,#{withdraw.memo}
+
+		,#{withdraw.cashM} ,#{withdraw.cardM} ,#{withdraw.accM}
+
+		,#{userId} ,GETDATE()
+		,#{userId} ,GETDATE())
+
+	</insert> -->
+	
+	<!-- 230615 yoonsang wdReqNo 추가 
+		2023.09.08 countY / cashRectYN / cashRectM/ cashRectNo 추가 -->
+    <select id="withdrawAdd" statementType="CALLABLE" parameterType="HashMap" resultType="int">
+		{ CALL panErp.dbo.up_withdrawAdd (
+			'ADD',  #{comCode},  #{userId}
+			,#{withdraw.wdNo} ,#{withdraw.wdDate}
+			,#{withdraw.custCode} ,#{withdraw.accCode} ,#{withdraw.payType} ,#{withdraw.payCode}
+			,#{withdraw.supPrice} ,#{withdraw.vat} ,#{withdraw.wdMoney}
+			,#{withdraw.fee} ,#{withdraw.dcMoney}
+			,#{withdraw.wdReqNo} ,#{withdraw.memo}
+			,#{withdraw.cashM} ,#{withdraw.cardM} ,#{withdraw.accM}
+			,#{withdraw.clReqNo},#{withdraw.countY},#{withdraw.cashRectYN},#{withdraw.cashRectM},#{withdraw.cashRectNo},#{withdraw.jobArr} 
+		)}	
+	</select>
+	
+	<!-- 출금목록 업데이트 2022-01-12 장윤상 
+	2023.04.12 hsg - SP로 변경 -->
+<!-- 	<update id="withdrawUpt" parameterType="HashMap">
+		update
+		panErp.dbo.e_withdraw
+		set
+		wdDate = #{withdraw.wdDate}
+
+		,custCode = #{withdraw.custCode}
+		,accCode = #{withdraw.accCode}
+		,payType =
+		#{withdraw.payType}
+		,payCode = #{withdraw.payCode}
+
+		,supPrice = #{withdraw.supPrice}
+		,vat = #{withdraw.vat}
+		,wdMoney =
+		#{withdraw.wdMoney}
+		,fee = #{withdraw.fee}
+		,dcMoney =
+		#{withdraw.dcMoney}
+
+		,wdReqNo = #{withdraw.wdReqNo}
+		,memo = #{withdraw.memo}
+
+		,cashM = #{withdraw.cashM}
+		,cardM = #{withdraw.cardM}
+		,accM = #{withdraw.accM}
+
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where wdNo = #{withdraw.wdNo}
+
+	</update> -->
+
+    <select id="withdrawUpt" statementType="CALLABLE" parameterType="HashMap" resultType="int">
+		{ CALL panErp.dbo.up_withdrawAdd (
+			'UPT',  #{comCode},  #{userId}
+			,#{withdraw.wdNo} ,#{withdraw.wdDate}
+			,#{withdraw.custCode} ,#{withdraw.accCode} ,#{withdraw.payType} ,#{withdraw.payCode}
+			,#{withdraw.supPrice} ,#{withdraw.vat} ,#{withdraw.wdMoney}
+			,#{withdraw.fee} ,#{withdraw.dcMoney}
+			,#{withdraw.wdReqNo} ,#{withdraw.memo}
+			,#{withdraw.cashM} ,#{withdraw.cardM} ,#{withdraw.accM} 
+			,#{withdraw.clReqNo},#{withdraw.countY},#{withdraw.cashRectYN},#{withdraw.cashRectM},#{withdraw.cashRectNo},#{withdraw.jobArr} 
+		)}	
+	</select>
+	
+	
+	<!-- 계좌거래내역 마스터 조회 2023-01-26 장윤상 
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가,sub쿼리에 comCode 추가
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  -->
+	<select id="accHisList" parameterType="HashMap"
+		resultType="accountHistory">
+
+		select a.comCode ,a.payCode ,a.name payName ,a.accoutNo
+		payNo ,z.dpMSum ,y.wdMSum
+
+		from panErp.dbo.e_payment a  WITH(NOLOCK) 
+
+		LEFT OUTER JOIN (select comCode, payCode, sum(depositMoney) dpMSum FROM
+		dbo.e_deposit  WITH(NOLOCK) 
+		where depositDate BETWEEN #{sYmd} AND #{eYmd}
+		group by comCode, payCode) z ON
+		a.payCode = z.payCode AND a.comCode  = z.comCode
+
+		LEFT OUTER JOIN (select comCode, payCode, sum(wdMoney) wdMSum FROM dbo.e_withdraw   WITH(NOLOCK) 
+		where wdDate BETWEEN #{sYmd} AND #{eYmd}
+		group by comCode, payCode) y ON
+		a.payCode = y.payCode AND a.comCode = y.comCode
+
+		WHERE a.payType = '계좌'
+          AND a.comCode=#{logComCode}
+		order by a.payCode
+
+	</select>
+
+	<!-- 계좌거래내역 디테일 조회 2023-01-26 장윤상
+	2023.05.30 hsg - where절에 comCode추가, join절에 comCode 추가,sub쿼리에 comCode 추가 
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  -->
+	<select id="accHisList2" parameterType="HashMap"
+		resultType="accountHistory">
+
+		SELECT z.*, y.custName
+		FROM (
+		SELECT '입금' dwType, depositDate dwDate, depositNo dwNo, a.accCode
+		,a.custCode ,depositMoney dpMoney ,0 wdMoney ,a.memo
+		,a.carNo ,a.payCode ,accCode accName
+		,a.comCode
+		from dbo.e_deposit a WITH(NOLOCK) 
+
+		WHERE depositDate BETWEEN #{sYmd} AND #{eYmd} AND a.comCode=#{logComCode}
+
+		UNION ALL
+
+		SELECT '출금' dwType, wdDate dwDate, wdNo dwNo, a.accCode ,a.custCode , 0
+		dpMoney ,wdMoney ,a.memo
+		,'' carNo ,a.payCode ,accCode accName
+		,a.comCode
+		from dbo.e_withdraw a WITH(NOLOCK) 
+
+		WHERE wdDate BETWEEN #{sYmd} AND #{eYmd} AND a.comCode=#{logComCode}
+		) z
+
+		join dbo.e_cust y  WITH(NOLOCK) ON z.custCode = y.custCode AND z.comCode = y.comCode
+		where 1=1 AND y.comCode=#{logComCode}
+		<if
+			test='accountHistory.payCode != "" and accountHistory.payCode != null '>
+			AND z.payCode = #{accountHistory.payCode}
+		</if>
+
+		order by z.dwNo
+
+	</select>
+
+	<!-- 출금목록 삭제 2023-01-18 장윤상
+	2023.05.30 hsg - where절에 comCode추가, -->
+<!-- 	<delete id="withdrawDel" parameterType="HashMap">
+		delete from
+		panErp.dbo.e_withdraw where wdNo = #{withdraw.wdNo} AND comCode=#{comCode}
+	</delete> -->
+	<select id="withdrawDel" statementType="CALLABLE" parameterType="HashMap" resultType="int">
+		{ CALL panErp.dbo.up_withdrawAdd (
+			'DEL',  #{comCode},  #{userId}
+			,#{withdraw.wdNo} ,#{withdraw.wdDate}
+			,#{withdraw.custCode} ,#{withdraw.accCode} ,#{withdraw.payType} ,#{withdraw.payCode}
+			,#{withdraw.supPrice} ,#{withdraw.vat} ,#{withdraw.wdMoney}
+			,#{withdraw.fee} ,#{withdraw.dcMoney}
+			,#{withdraw.wdReqNo} ,#{withdraw.memo}
+			,#{withdraw.cashM} ,#{withdraw.cardM} ,#{withdraw.accM}
+		)}	
+	</select>
+
+	<!-- 세금계산서 조회 2023-01-31 장윤상 
+	2023.05.30 hsg - where절에 comCode추가,
+	2023.07.10 bk custCode 조회조건 추가 
+	2023.08.08 yoonsang expType 조회조건 추가
+	2023.11.27 hsg -  WITH(NOLOCK)  추가  -->
+	<select id="taxBillList" parameterType="HashMap"
+		resultType="taxBill">
+		SELECT t.comCode ,t.taxBillNo ,t.appStatusCode ,t.docStatusCode
+		,t.documentId ,t.documentId2
+		,t.taxBillDate ,t.bizType ,t.custCode ,t.custName ,t.ceoName ,t.bizNo ,t.address ,t.phone ,t.fax
+		,t.taxEmail
+		,t.itemName ,t.supPrice ,t.vat ,t.totalPrice ,t.clType ,t.memo ,t.taxTypeCode ,t.taxTypeName
+		,t.errCode
+		<!-- ,regUserId ,created ,uptUserId ,modified -->
+		,ISNULL(u1.userName,'') regUserId 
+		,t.created
+		,ISNULL(u2.userName,'') uptUserId
+		,t.modified
+		,t.expType
+		,cg.clType AS clType2
+		
+		FROM panErp.dbo.e_taxBill t  WITH(NOLOCK) 
+		LEFT OUTER JOIN panErp.dbo.e_user u1  WITH(NOLOCK) ON u1.comCode = t.comCode AND u1.userId = t.regUserId 
+		LEFT OUTER JOIN panErp.dbo.e_user u2  WITH(NOLOCK) ON u2.comCode = t.comCode AND u2.userId = t.uptUserId
+		LEFT OUTER JOIN ( SELECT tc.comCode,tc.taxBillNo,MIN(tc.clGroupId) clGroupId FROM panErp.dbo.e_taxBillClGroup tc 
+						WHERE tc.comCode = #{comCode}
+						GROUP BY tc.comCode ,tc.taxBillNo) tc ON tc.comCode = t.comCode AND tc.taxBillNo = t.taxBillNo
+		LEFT OUTER JOIN panErp.dbo.e_clGroup cg ON cg.comCode = tc.comCode AND cg.clGroupId = tc.clGroupId
+		WHERE 1=1  AND t.comCode=#{comCode}
+
+		<if test='taxBill.taxBillNo != "" and taxBill.taxBillNo != null '>
+			AND t.taxBillNo = #{taxBill.taxBillNo}
+		</if>
+		<if
+			test='sYmd != "" and sYmd != null and eYmd != "" and eYmd != null'>
+			AND t.taxBillDate <![CDATA[ >= ]]>
+			#{sYmd} and t.taxBillDate <![CDATA[ <= ]]>
+			#{eYmd}
+		</if>
+		<if test='taxBill.custCode != "" and taxBill.custCode != null '>
+			AND t.custCode = #{taxBill.custCode}
+		</if>
+		
+		<if test="taxBill.appStatus == '미발급'">
+    		AND (t.appStatusCode = '' OR t.appStatusCode IS NULL)
+		</if>
+		<if test="taxBill.appStatus == '승인대기'">
+    		AND (t.appStatusCode = 'W')
+		</if>
+		<if test="taxBill.appStatus == '승인' ">
+    		AND (t.appStatusCode = 'T' AND t.errCode = 'SUC001' )
+		</if>
+		<if test="taxBill.appStatus == '반려' ">
+    		AND (t.appStatusCode = 'B' )
+		</if>
+		<if test="taxBill.expType != '' and taxBill.expType != null ">
+    		AND t.expType = #{taxBill.expType}
+		</if>
+		<if test="taxBill.clType2 != '' and taxBill.clType2 != null ">
+    		AND cg.clType = #{taxBill.clType2}
+		</if>
+		
+	</select>
+
+	<!-- 세금계산서 등록 2023-01-31 장윤상 
+	2023.05.30 hsg - where절에 comCode추가
+	20230706 yoonsang clGroupId 추가,
+	20230808 yoonsang expType 추가
+	20231116 yoonsang 저장프로시저로 변환-->
+	<!-- 
+	<insert id="taxBillAdd" parameterType="HashMap">
+		insert into
+		panErp.dbo.e_taxBill (comCode ,taxBillNo
+		,taxBillDate ,bizType ,custCode ,custName ,ceoName
+		,bizNo ,address ,phone ,fax ,taxEmail
+		,itemName ,supPrice ,vat ,totalPrice
+		,clType ,memo ,taxTypeCode ,taxTypeName
+		
+		,clGroupId ,expType
+
+		,regUserId ,created ,uptUserId ,modified
+		
+
+		)
+
+		values(#{comCode} ,#{taxBill.taxBillNo}
+
+		,#{taxBill.taxBillDate} ,#{taxBill.bizType} ,#{taxBill.custCode} ,#{taxBill.custName}
+		,#{taxBill.ceoName}
+		,#{taxBill.bizNo} ,#{taxBill.address} ,#{taxBill.phone} ,#{taxBill.fax}
+		,#{taxBill.taxEmail}
+		,#{taxBill.itemName} ,#{taxBill.supPrice} ,#{taxBill.vat} ,#{taxBill.totalPrice}
+		,#{taxBill.clType} ,#{taxBill.memo} ,#{taxBill.taxTypeCode}
+		,#{taxBill.taxTypeName}
+		
+		,#{taxBill.clGroupId}	,#{taxBill.expType} 
+
+		,#{userId} ,GETDATE()
+		,#{userId} ,GETDATE())
+
+	</insert>
+ 	-->
+ 	
+ 	<select id="taxBillAdd" statementType="CALLABLE" parameterType="HashMap" resultType="taxBill">
+		{ CALL panErp.dbo.up_taxBillAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{taxBill.taxBillNo}
+			,#{taxBill.taxBillDate} ,#{taxBill.bizType} ,#{taxBill.custCode} ,#{taxBill.custName}
+			,#{taxBill.ceoName}
+			,#{taxBill.bizNo} ,#{taxBill.address} ,#{taxBill.phone} ,#{taxBill.fax}
+			,#{taxBill.taxEmail}
+			,#{taxBill.itemName} ,#{taxBill.supPrice} ,#{taxBill.vat} ,#{taxBill.totalPrice}
+			,#{taxBill.clType} ,#{taxBill.memo} ,#{taxBill.taxTypeCode}
+			,#{taxBill.taxTypeName}
+			,#{taxBill.clGroupId}	,#{taxBill.clgArr}	,#{taxBill.expType} ,#{taxBill.tbNoArr}
+			
+			,#{documentId},#{appStatusCode},#{docStatusCode}
+			
+			,#{taxBill.summary},#{taxBill.seq}
+		)}	
+	</select>
+ 	
+	<!-- 세금계산서목록 업데이트 2022-01-12 장윤상 
+	2023.05.30 hsg - where절에 comCode추가,-->
+	<update id="taxBillUpt" parameterType="HashMap">
+		update
+		panErp.dbo.e_taxBill
+		set
+
+		taxBillDate = #{taxBill.taxBillDate} ,bizType = #{taxBill.bizType} ,custCode =
+		#{taxBill.custCode} ,custName = #{taxBill.custName} ,ceoName =
+		#{taxBill.ceoName}
+		,bizNo = #{taxBill.bizNo} ,address =
+		#{taxBill.address} ,phone = #{taxBill.phone} ,fax = #{taxBill.fax}
+		,taxEmail = #{taxBill.taxEmail}
+		,itemName = #{taxBill.itemName}
+		,supPrice = #{taxBill.supPrice} ,vat = #{taxBill.vat} ,totalPrice =
+		#{taxBill.totalPrice}
+		,clType = #{taxBill.clType} ,memo =
+		#{taxBill.memo} ,taxTypeCode = #{taxBill.taxTypeCode} ,taxTypeName =
+		#{taxBill.taxTypeName}
+
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where taxBillNo = #{taxBill.taxBillNo}
+        AND comCode=#{comCode}
+	</update>
+
+	<!-- 세금계산서 하이웍스 등록시 업데이트 2022-02-09 장윤상 
+	2023.05.30 hsg - where절에 comCode추가,-->
+	<update id="taxBillUptHw" parameterType="HashMap">
+		update
+		panErp.dbo.e_taxBill
+		set
+
+		documentId = #{documentId}
+		,appStatusCode = #{appStatusCode}
+		,docStatusCode =
+		#{docStatusCode}
+
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where taxBillNo = #{taxBillNo}
+            AND comCode=#{comCode}
+	</update>
+
+	<!-- 세금계산서 하이웍스 조회와 동시의 업데이트 2022-02-13 장윤상 
+	2023.05.30 hsg - where절에 comCode추가,-->
+	<update id="taxBillFind" parameterType="HashMap">
+		update
+		panErp.dbo.e_taxBill
+		set
+
+		appStatusCode = #{appStatusCode}
+		,docStatusCode = #{declareStautsNum}
+		,documentId2 =
+		#{issueId}
+		,errCode = #{declareStatusCode}
+
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where documentId = #{documentId}
+          AND comCode=#{comCode}
+	</update>
+
+	<!-- 하이웍스에서 없어진 전자세금계산서 적용 2022-02-14 장윤상
+	2023.05.30 hsg - where절에 comCode추가, -->	
+	<update id="taxBillReset" parameterType="HashMap">
+		update
+		panErp.dbo.e_taxBill
+		set
+
+		appStatusCode = null
+		,docStatusCode = null
+		,documentId = null
+		,errCode = null
+
+		,uptUserId = #{userId}, modified = GETDATE()
+
+		where taxBillNo = #{taxBillNo}
+          AND comCode=#{comCode}
+	</update>
+
+	<!-- 세금계산서 삭제 2023-02-14 장윤상 
+	2023.05.30 hsg - where절에 comCode추가,-->
+	<delete id="taxBillDel" parameterType="HashMap">
+		delete from
+		panErp.dbo.e_taxBill where taxBillNo = #{taxBillNo}  AND comCode=#{comCode}
+	</delete>
+
+	<!-- 세금계산서 키 조회 2023-02-14 장윤상 
+	2023.05.30 hsg - join절에 comCode추가
+	2023.11.27 hsg -  WITH(NOLOCK)  추가 -->
+	<select id="taxKeyLsit" parameterType="HashMap"
+		resultType="keyInfo">
+		<!-- SELECT keyIdx,custCode,keyVal ,purpose1,purpose2,purpose3,relatedUrl,validYN 
+			FROM panErp.dbo.e_keyInfo -->
+
+		SELECT a.keyIdx, a.custCode, a.keyVal , a.purpose1, a.purpose2,
+		a.purpose3, a.relatedUrl, a.validYN, b.bizNo
+
+		FROM panErp.dbo.e_keyInfo a  WITH(NOLOCK) 
+
+		LEFT OUTER JOIN panErp.dbo.e_cust b  WITH(NOLOCK) 
+
+		<!-- 230707 팬오토의 거래처처와 조인하도록 변경 ex) 위드모터스 문제해결
+		ON a.custCode = b.custCode AND a.custCode = b.comCode -->
+		ON a.custCode = b.custCode AND b.comCode = 'ㄱ000'
+
+		WHERE 1=1 and a.custCode = #{logComCode} and a.validYN ='Y'
+
+
+	</select>
+
+	<!-- 공지사항 목록 -->
+	<!-- <select id="noticeList" parameterType="HashMap" resultType="notice"> 
+		select title, contents, regYmd from dbo.e_notice WHERE 1 = 1 <if test='notice.title 
+		!= "" and notice.title != null '> AND title = #{notice.title} </if> </select> -->
+	<!-- 공지사항 2023-01-28 김보경 -->
+	<select id="noticeList" statementType="CALLABLE"
+		parameterType="HashMap" resultType="notice">
+		{ CALL panErp.dbo.up_noticeList (
+		#{workingType},#{logUserId}, #{page}, #{qty}, #{orderBy},
+		#{ymdIgnoreYN}, #{sYmd1}, #{eYmd1}, #{sYmd2}, #{eYmd2},
+		#{logComCode}, #{notice.title}, #{notice.noticeNo}, #{notice.contents} ,
+		#{notice.fixYN} , #{notice.notiYmd}
+		)}
+	</select>
+
+	<!-- 공지사항 등록 2023-01-31 김보경 -->
+	<select id="noticeAdd" statementType="CALLABLE"
+		parameterType="HashMap" resultType="notice">
+		{ CALL panErp.dbo.up_noticeAdd (
+			#{workingType}, #{logComCode}, #{logUserId}
+			
+			, #{notice.noticeNo}, #{notice.comCodeArr}, #{notice.title} , #{notice.contents} , #{notice.notiYmd}, #{notice.validYN}, #{notice.delYN}
+			, #{notice.startYmd}, #{notice.endYmd}, #{notice.attFileNameOrigin}, #{notice.attFileName}	, #{notice.fixYN}	, #{notice.fixSeq}	, #{notice.popYN}	, #{notice.popDate}
+		)}	       
+		</select> 
+
+		<!-- 환율조회 2023-03-03 김보경 -->
+ 	<select id="exRateList" statementType="CALLABLE" parameterType="HashMap" resultType="exchangeRate">
+		{ CALL panErp.dbo.up_exRateList(
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			#{logComCode},#{logUserId},  #{ExchangeRate.code}
+		)}	
+
+	</select> 
+	
+		<!-- 환율 등록 2023-03-15 김보경 -->
+<!-- 	 <select id="exchageRateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="exchangeRate">
+		{ CALL panErp.dbo.up_noticeAdd (
+			#{workingType}, #{logComCode}, #{logUserId}
+			
+			, #{exchangeRate.noticeNo}, #{notice.comCodeArr}, #{notice.title} , #{notice.contents} , #{notice.notiYmd}, #{notice.validYN}, #{notice.delYN}
+			, #{notice.startYmd}, #{notice.endYmd}, #{notice.attFileNameOrigin}, #{notice.attFileName}	, #{notice.fixYN}	, #{notice.fixSeq}	, #{notice.popYN}	, #{notice.popDate}
+		)}	       
+		</select>  - -->
+
+		
+	<!-- 환경설정조회 2023.04.27 hsg -->
+	<select id="configOne" statementType="CALLABLE"	parameterType="HashMap" resultType="config">
+		{ CALL panErp.dbo.up_configList (
+			#{workingType}, #{logComCode} , #{logUserId}
+		)}
+	</select>
+
+	<!--  환경설정등록 2023.04.27 hsg 
+	2023.11.01 hsg - cCustRate 추가 
+	2024.02.05 supi- 기본할인율 기본마진율 추가
+	2024.02.06 supi - 위탁판매업체 추가
+	2024.09.23 supi - 관리업체 정보 매개변수 추가
+	2024.10.15 supi - 주문연동업체설정을 위한 매개변수 추가
+	-->
+	<select id="configAdd" statementType="CALLABLE"	parameterType="HashMap" resultType="config">
+		{ CALL panErp.dbo.up_configAdd (
+		#{workingType}, #{logComCode} , #{logUserId}
+		,#{config.partsmallCustCode} ,#{config.glozenCustCode},#{config.hallaCustCode},#{config.skCustCode},#{config.dekoCustCode},#{config.eapsCustCode}
+		,#{config.cCustRate},#{config.saleDcRate},#{config.saleMarginRate} , #{config.stockConsignCustCode} , #{config.childComCodeStr} 
+		,#{config.orderReqCustCode}
+		)}
+	</select>			
+	
+	<!-- 공유재고 정보리스트	-->					
+	<select id="stockShareList" statementType="CALLABLE" parameterType="HashMap" resultType="stockShare">
+		{ CALL panErp.dbo.up_stockShareList (
+			#{workingType},	#{logComCode}, #{logUserId},
+			#{stockShare.itemId} , #{stockShare.custCode}
+		)}	
+	</select>
+	
+	<!--  부품별 정품번호 등록 2023.06.20 bk -->
+	<select id="itemOeAdd" statementType="CALLABLE" parameterType="HashMap" resultType="itemoe">
+		{ CALL panErp.dbo.up_itemOeAdd (
+		#{workingType}, #{comCode}, #{userId}
+		,#{itemoe.itemId} ,#{itemoe.makerCode} ,#{itemoe.oeNo}  ,#{itemoe.validYN}  		
+		,#{itemoe.makerCode_oe}  
+		)}
+	</select>	
+	
+	<!-- 부품별 정품번호 조회 2023-06-21 김보경 -->
+ 	<select id="itemOeList" statementType="CALLABLE" parameterType="HashMap" resultType="itemoe">
+		{ CALL panErp.dbo.up_itemOeList(
+			#{workingType}, #{comCode},#{userId},  
+			#{itemOe.itemId}
+		)}	
+	</select>	
+	
+	<!-- 부품메모 등록  2023.06.23 bk	-->
+	 <select id="itemMemoAdd" statementType="CALLABLE" parameterType="HashMap" resultType="itemMemo">
+		{ CALL panErp.dbo.up_itemMemoAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{memo.itemId} ,#{memo.memo}    ,#{memo.regUserId}              
+			 ,#{memo.uptUserId}  ,#{memo.idx}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+		)}	
+	</select> 
+		<!-- 부품메모 목록  2023.06.23  bk -->					
+	 <select id="itemMemoList" statementType="CALLABLE" parameterType="HashMap" resultType="itemMemo">
+		{ CALL panErp.dbo.up_itemMemoList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			 #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId}, #{itemMemo.itemId}
+		)}	
+	</select> 
+	
+	<!-- 2023.09.11 bk 출금에서 현금영수증 발행 -->
+    <select id="withdrawChk" statementType="CALLABLE" parameterType="HashMap" resultType="int">
+		{ CALL panErp.dbo.up_withdrawAdd (
+			'CHK',  #{comCode},  #{userId}
+			,#{withdraw.wdNo} ,#{withdraw.wdDate}
+			,#{withdraw.custCode} ,#{withdraw.accCode} ,#{withdraw.payType} ,#{withdraw.payCode}
+			,#{withdraw.supPrice} ,#{withdraw.vat} ,#{withdraw.wdMoney}
+			,#{withdraw.fee} ,#{withdraw.dcMoney}
+			,#{withdraw.wdReqNo} ,#{withdraw.memo}
+			,#{withdraw.cashM} ,#{withdraw.cardM} ,#{withdraw.accM}
+			,#{withdraw.clReqNo},#{withdraw.countY},#{withdraw.cashRectYN},#{withdraw.cashRectM},#{withdraw.cashRectNo}
+			,#{withdraw.jobArr} 
+		)}	
+	</select>
+	<!-- 2023.03.04 supi 견적등록 , 발주 까지에서 수령물류센터 코드를 가져오기 위한 매퍼 -->
+	<select id="logisCodeList" parameterType="HashMap" resultType="logisCode">
+		SELECT code, codeName FROM dbo.e_code 
+		WHERE comCode = #{logComCode} AND mCode = '9030' AND code != '' AND validYN = 'Y'
+	</select>
+	<!-- 2024.07.11 supi 팝업등록 
+		 2024.07.30 supi 우선순위, 모든기간 노출여부 , 한주 안보기 체크박스 여부 , 모달여부 , 페이지 오픈시 오픈여부 속성 추가
+	-->
+	<select id="popupReg" parameterType="HashMap" resultType="String">
+		{ CALL panErp.dbo.up_popupReg (
+			#{comCode},  #{userId} , #{title} , #{validYN} , #{width} ,
+			#{height} , #{sYmd} , #{eYmd} , #{allCustViewYN} , #{allMenuViewYN},
+			#{fileName} , #{fileUUID} , #{imgMag} , #{preText} , #{postText},
+			#{memo},#{custArr},#{menuArr},#{strArr3},#{strArr4},#{strArr5},
+			#{popupIdx},
+			#{allYmdYN} , #{isOpenPopupYN} , #{isWeekCheckboxYN} , #{isModalYN} , #{priority} , #{popupName}
+			
+		)}	
+	</select>
+	<!-- 2024.07.11 supi 팝업조회 -->
+	<select id="popupList" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_popupList (
+			#{comCode},  #{userId} , #{popupIdx} , #{menuUrl}  
+			 
+			
+		)}	
+	</select>
+	
+	<!-- 2024.09.11 supi 권한내역 리스트 
+		 2024.09.27 supi 파라미터별 반환 조인 동적으로 변동 및 권한설정과 업체별 권한에서 오퍼레티어가 아닌경우 반환 안되도록 추가
+	-->
+	<select id="permissionList"   parameterType="HashMap" resultType="Permission">  
+		<if test = "''.equals(type) || 'pcc'.equals(type)">
+		DECLARE @operateComCode varchar(20)
+		SELECT @operateComCode = comCode from dbo.uf_erpOperate('') 
+		</if>
+	
+		SELECT 
+			idx , 
+			code ,
+			name ,
+			type , 
+			memo 
+			<if test = "''.equals(type)">
+			,url 
+			,hiddenMenu  
+			,valid  
+			</if>
+			<if test ="'pu'.equals(type)">
+			,(SELECT count(*) FROM dbo.vw_permissionUser pu WITH(NOLOCK) WHERE pu.comCode = #{comCode} AND pu.permissionIdx = p.idx AND userId != (select masterId from c_cust where custCode = #{comCode})) puCount
+			</if>
+			<if test ="'pcc'.equals(type)">
+			,(SELECT count(*) FROM dbo.vw_permissionComCode pcc WITH(NOLOCK) WHERE pcc.permissionIdx = p.idx AND pcc.custCode != @operateComCode) pccCount
+			</if>
+		FROM panErp.dbo.e_permission p WITH(NOLOCK)  
+		<if test ="'pu'.equals(type)">
+		JOIN dbo.vw_permissionComCode pc on pc.custCode = #{comCode} AND pc.permissionIdx = p.idx 
+		</if> 
+		<if test = "''.equals(type) || 'pcc'.equals(type)">
+		WHERE #{comCode} = @operateComCode
+		</if>
+	</select>
+	<!-- 2024.09.11 supi 권한내역 CUD -->
+	<select id="permissionAdd" statementType="CALLABLE" parameterType="HashMap" resultType="commonResult">
+		{ CALL panErp.dbo.up_permissionAdd (
+			@i__workingType=#{workingType} ,
+			@i__logComCode =#{comCode} ,
+			@i__logUserId = #{userId} ,
+			@i__idx=#{permission.idx} , 
+			@i__code=#{permission.code} , 
+			@i__name=#{permission.name} , 
+			@i__type=#{permission.type} , 
+			@i__url=#{permission.url} , 
+			@i__hiddenMenu=#{permission.hiddenMenu} , 
+			@i__valid=#{permission.valid} , 
+			@i__memo=#{permission.memo} 
+		)}	
+	</select>
+	<!-- 2024.09.20 supi 권한템플릿마스터 정보 리스트 
+		 2024.10.11 supi 권한타입 반환 추가
+	-->
+	<select id="permissionTemplateList"   parameterType="HashMap" resultType="PermissionTemplate">
+		SELECT 
+			templateIdx idx, 
+			name, 
+			memo,
+			(
+				SELECT count(*) permissionCount FROM dbo.e_permissionTemplate a
+				JOIN dbo.vw_permissionComCode pcc ON pcc.custCode = #{comCode} AND pcc.permissionIdx = a.permissionIdx 
+				WHERE a.idx = templateIdx
+			) permissionCount , 
+			templateType
+		FROM panErp.dbo.e_permissionTemplateInfo WITH(NOLOCK)  
+		WHERE comCode = #{comCode}
+	</select>
+	<!-- 2024.09.20 supi 권한템플릿에 담긴 권한 리스트 (자신이 가진 권한내에서 설정)-->
+	<select id="permissionTemplateDetail"   parameterType="HashMap" resultType="Permission">
+		SELECT 
+			p.idx ,
+			p.code ,
+			p.name , 
+			p.type , 
+			p.url , 
+			p.memo,
+			IIF(pt.idx is null , 'false' , 'true' ) valid 
+		FROM dbo.e_permission p WITH(NOLOCK) 
+		JOIN dbo.vw_permissionComCode pcc ON pcc.custCode = #{comCode} AND pcc.permissionIdx = p.idx
+		LEFT JOIN dbo.e_permissionTemplate pt WITH(NOLOCK)  on pt.permissionIdx = p.idx AND pt.idx = #{idx}
+		WHERE #{comCode} = (select comCode from dbo.e_permissionTemplateInfo where templateIdx = #{idx}) 
+	</select>
+	<!-- 2024.09.20 supi 권한템플릿 CUD 
+		 2024.10.11 supi 권한 매개변수 추가
+	-->
+	<select id="permissionTemplateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="commonResult">
+		{ CALL panErp.dbo.up_permissionTemplateAdd (
+			@i__workingType=#{workingType} ,
+			@i__logComCode =#{comCode} ,
+			@i__logUserId = #{userId} ,
+			
+			@i__idx=#{template.idx} ,
+			@i__name=#{template.name} ,
+			@i__memo=#{template.memo} ,
+			@i__permissionIdx=#{template.permissionIdx} ,
+			@i__valid=#{template.valid} , 
+			@i__templateType=#{template.templateType}
+		)}	
+	</select>
+	<!-- 2024.09.20 supi 업체권한설정의 업체리스트 
+		 2024.09.26 supi selectIndex가 -1이면 모든 업체들 코드와 이름 그리고 템플릿정보(템플릿번호,템플릿이름)와 업체가 보유한 권한수의 정보 리스트를 반환하고 
+		 				 selectIndex가 -1이 아닌경우 모든 업체의 코드와 이름 그리고 selectIndex와 동일한 권한 인덱스의 보유유무를 가진 리스트를 반환
+	-->
+	<select id="permissionCustList"   parameterType="HashMap" resultType="c_cust">
+		DECLARE @operateComCode varchar(20)
+		SELECT @operateComCode = comCode from dbo.uf_erpOperate('')
+	
+		SELECT 
+			a.custCode ,
+			b.custName 
+			
+			<if test="selectIndex == -1">
+			,ISNULL(pti.name , '') templateName,
+			a.permissionTemplateIdx templateIdx,
+			(
+				select count(*) permissionCount from dbo.vw_permissionComCode pcc where pcc.custCode = a.custCode
+			)  permissionCount
+			</if>
+			<if test="selectIndex != -1">
+			,IIF(pcc.permissionIdx IS NULL , 'false' , 'true') permissionValid 
+			</if>
+			
+		FROM dbo.c_Cust a  WITH(NOLOCK) 
+		JOIN dbo.e_cust b  WITH(NOLOCK) ON b.comCode = @operateComCode AND a.custCode = b.custCode
+		<if test="selectIndex == -1">
+		LEFT JOIN dbo.e_permissionTemplateInfo pti WITH(NOLOCK)  ON pti.templateIdx = a.permissionTemplateIdx
+		</if>
+		<if test="selectIndex != -1">
+		LEFT JOIN dbo.vw_permissionComCode pcc ON pcc.custCode = a.custCode AND pcc.permissionIdx = #{selectIndex}
+		</if>
+		WHERE a.custCode != @operateComCode AND #{comCode} = @operateComCode
+		 
+	</select>
+	<!-- 2024.09.23 supi 관리업체 정보 -->
+	<select id="getParentComInfo"   parameterType="HashMap" resultType="c_cust">
+		DECLARE @operateComCode varchar(20)
+		SELECT @operateComCode = comCode from dbo.uf_erpOperate('')
+		
+		SELECT  c.custCode , c.custName
+		FROM dbo.e_comCodeParent ccp
+		JOIN dbo.e_cust c ON c.comCode = @operateComCode AND c.custCode = ccp.parentComCode
+		WHERE ccp.comCode = #{comCode}
+	</select>
+	<!-- 2024.09.23 supi 피관리업체 정보 -->
+	<select id="getChildComInfoList"   parameterType="HashMap" resultType="c_cust">
+		DECLARE @operateComCode varchar(20)
+		SELECT @operateComCode = comCode from dbo.uf_erpOperate('')
+		
+		select cc.custCode , c.custName , IIF(ccp.comCode IS NULL , 'false' , 'true')  childValid
+		from dbo.c_cust cc
+		JOIN dbo.e_cust c ON c.comCode = @operateComCode AND c.custCode = cc.custCode
+		LEFT JOIN dbo.e_comCodeParent  ccp ON  ccp.comCode = cc.custCode AND ccp.parentComCode = #{comCode}
+		where cc.parentComCode = #{comCode} 
+	</select>
+ 
+	<!-- 2024.09.24 supi 업체권한설정의 특정 업체의 권한 정보 
+		 2024.09.27 supi 오퍼레이터가 아닌경우 반환안되도록 추가
+	-->
+	<select id="permissionCustDetail"   parameterType="HashMap" resultType="Permission">
+		DECLARE @operateComCode varchar(20)
+		SELECT @operateComCode = comCode from dbo.uf_erpOperate('')
+	
+		DECLARE @templateIdx int  = (select permissionTemplateIdx from dbo.c_cust where custCode = #{custCode})
+		
+		select  p.idx
+				,p.code
+				,p.name
+				,p.type 
+				,p.url 
+				,p.memo
+				, IIF(pt.idx IS NULL , 'false' , 'true') templateValid 
+				, ISNULL(cap.permissionValid , IIF(pt.idx IS NULL , 'false' , 'true')) valid  
+		from dbo.e_permission p
+		LEFT JOIN dbo.e_permissionTemplate pt ON pt.idx = @templateIdx AND pt.permissionIdx = p.idx
+		LEFT JOIN dbo.e_custAddpermission cap ON cap.comCode = #{custCode} AND p.idx = cap.permissionIdx
+		WHERE p.valid = 'true' AND #{comCode} = @operateComCode
+	</select>
+	<!-- 2024.09.24 supi 업체권한 설정 -->
+	<select id="permissionCustAdd" statementType="CALLABLE" parameterType="HashMap" resultType="commonResult">
+		{ CALL panErp.dbo.up_permissionCustAdd (
+			@i__workingType=#{workingType} ,
+			@i__logComCode =#{comCode} ,
+			@i__logUserId = #{userId} ,
+			
+			@i__custCode=#{custCode} ,
+			@i__templateIdx=#{templateIdx} , 
+			@i__permissionIdx=#{permissionIdx} ,
+			@i__valid=#{valid}
+		)}	
+	</select>
+	<!-- 2024.09.25 supi 유저권한설정에서 유저 정보 리스트 조회 -->
+	<select id="permissionUserList"   parameterType="HashMap" resultType="user">
+		SELECT 
+			u.userId ,
+			u.userName 
+			<if test="selectIndex == -1">
+			, 
+			ISNULL(pti.name , '') templateName,
+			u.permissionTemplateIdx templateIdx,
+			(
+				SELECT count(*) FROM dbo.vw_permissionUser pcc WHERE pcc.comCode = #{comCode} AND pcc.userId = u.userId 
+			)  permissionCount
+			</if>
+			<if test="selectIndex != -1">
+			,IIF(p.permissionIdx IS NULL , 'false' , 'true') permissionValid 
+			</if>
+					
+		FROM dbo.e_user u  WITH(NOLOCK) 
+		<if test="selectIndex == -1">
+		LEFT JOIN dbo.e_permissionTemplateInfo pti WITH(NOLOCK)  ON pti.templateIdx = u.permissionTemplateIdx
+		</if>
+		<if test="selectIndex != -1">
+		LEFT JOIN dbo.vw_permissionUser p ON p.comCode = #{comCode} AND p.userId = u.userId AND p.permissionIdx = #{selectIndex}
+		</if>
+		WHERE u.comCode = #{comCode}  AND validYN = 'Y' AND u.userId != (select masterId from c_cust where custCode = #{comCode})
+	</select>
+	<!-- 2024.09.25 supi 유저권한설정에서 특정유저의 권한정보 -->
+	<select id="permissionUserDetail"   parameterType="HashMap" resultType="Permission">
+		DECLARE @templateIdx int  = (select permissionTemplateIdx from dbo.e_user where comCode =  #{comCode} AND userId = #{targetUserId} ) 
+
+		SELECT 
+			p.idx,
+			p.code,
+			p.name ,
+			p.type ,
+			p.url ,
+			p.memo ,
+			IIF(pt.idx IS NULL , 'false' , 'true') templateValid ,
+			ISNULL(uap.permissionValid , IIF(pt.idx IS NULL , 'false' , 'true')) valid  
+		FROM dbo.e_permission p
+		JOIN dbo.vw_permissionComCode pcc ON pcc.custCode = #{comCode} AND pcc.permissionIdx = p.idx 
+		LEFT JOIN dbo.e_permissionTemplate pt ON pt.idx = @templateIdx AND pt.permissionIdx = p.idx
+		LEFT JOIN dbo.e_userAddpermission uap ON uap.comCode = #{comCode} AND uap.userId = #{targetUserId} AND uap.permissionIdx = p.idx
+	</select>
+	<!-- 2024.09.25 supi 사용자권한 설정 -->
+	<select id="permissionUserAdd" statementType="CALLABLE" parameterType="HashMap" resultType="commonResult">
+		{ CALL panErp.dbo.up_permissionUserAdd (
+			@i__workingType=#{workingType} ,
+			@i__logComCode =#{comCode} ,
+			@i__logUserId = #{userId} ,
+			
+			@i__userId=#{targetUserId} ,
+			@i__templateIdx=#{templateIdx} , 
+			@i__permissionIdx=#{permissionIdx} ,
+			@i__valid=#{valid}
+		)}	
+	</select> 
+	<!--2024.09.30 supi 두개의 파라미터가 관계사인지 반환하는 쿼리 -->
+	<select id="isErpOperate" statementType="CALLABLE" parameterType="HashMap" resultType="boolean" >		
+		SELECT IIF(#{comCode} = (SELECT comCode FROM dbo.UF_ErpOperate('')) , 'true' , 'false')
+	</select>
+	
+	<!--2024.09.30 supi 메뉴리스트 정보 불러오는 쿼리 -->
+	<select id="menuViewList" statementType="CALLABLE" parameterType="HashMap" resultType="permission" >		
+		SELECT p.idx , p.code 
+		FROM dbo.vw_permissionUser pu
+		LEFT JOIN dbo.e_permission p on pu.permissionIdx = p.idx
+		WHERE pu.comCode = #{comCode} AND pu.userId = #{userId} AND p.type = '접근'
+	</select>
+	<!--2024.09.30 supi 유저의 권한이 변경된 날짜를 가져오는 쿼리 -->
+	<select id="getPermissionModified" statementType="CALLABLE" parameterType="HashMap" resultType="date" >		
+		SELECT ISNULL(permissionModified ,0)
+		FROM dbo.e_user
+		WHERE comCode = #{comCode} AND userId = #{userId}
+	</select> 
+	<!--2024.09.30 supi 숨김처리할 메뉴리스트 받아오는 쿼리 -->
+	<select id="hiddenMenuCodeList" statementType="CALLABLE"   resultType="String" >		
+		select code
+		from dbo.e_permission
+		where hiddenMenu = 'true'
+	</select> 
+	<!--2024.09.30 supi 숨김처리할 메뉴리스트 받아오는 쿼리 -->
+	<select id="menuStructureList" statementType="CALLABLE"   resultType="menuStructure" >		
+		SELECT 
+			ms.idx ,
+			ms.menuName , 
+			ms.permissionIdx ,
+			ms.parentMenuIdx ,
+			ms.seq,
+			p.name permissionName,
+			p.code permissionCode,
+			p.url ,
+			p.hiddenMenu , 
+			ms.valid
+		FROM dbo.e_menuStructure ms
+		LEFT JOIN dbo.e_permission p ON p.idx = ms.permissionIdx AND p.type = '접근'  
+		order by parentMenuIdx ,seq
+	</select> 
+	<!-- 2024.10.04 supi 메뉴구조 cud -->
+	<select id="menuStructureAdd" statementType="CALLABLE" parameterType="HashMap" resultType="commonResult">
+		{ CALL panErp.dbo.up_menuStructureAdd (
+			@i__workingType=#{workingType} ,
+			@i__logComCode =#{comCode} ,
+			@i__logUserId = #{userId} ,
+			
+			@i__idx=#{idx} ,
+			@i__seq=#{seq} , 
+			@i__menuName=#{menuName} , 
+			@i__permissionIdx=#{permissionIdx} ,
+			@i__parentMenuIdx=#{parentMenuIdx} ,
+			@i__hiddenMenu=#{hiddenMenu} , 
+			@i__valid=#{valid}
+		)}	
+	</select> 
+	<!--2024.10.17 supi js에서 db에 버그 기록하는 통신 -->
+	<select id="bugReport" statementType="CALLABLE" parameterType="HashMap">		
+		INSERT INTO _bugReport(comCode, userId , title, content , reportUrl , reportDate )
+		VALUES(#{comCode} , #{userId},#{title} , #{content} , #{reportUrl} , getdate())
+	</select>
+</mapper>

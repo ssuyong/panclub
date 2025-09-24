@@ -1,0 +1,17 @@
+*{
+	font-family: 'IBM Plex Sans KR', sans-serif;	
+}
+.form-control{
+	height: 41.43px;
+	
+}
+.card-title text-center mb-4{
+	font-size: 30px;
+}
+#btnFindPw{
+	height: 41.43px;
+}
+.form-label { 
+	margin-bottom: 0.3rem;
+	margin-top: 0.3rem;}
+	

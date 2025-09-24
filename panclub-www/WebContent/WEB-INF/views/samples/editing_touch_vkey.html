@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+<meta http-equiv="Content-Style-Type" content="text/css"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+<meta name="title" content="HTML5, 자바스크립트 데이터그리드 AUIGrid"/>
+<meta name="url" content="https://www.auisoft.net/">
+<meta name="description" content="HTML5, 자바스크립트 데이타그리드(javascript datagrid) AUISoft"/>
+<title>AUIGrid 자바스크립트 데이터그리드(Javascript DataGrid  AUIGrid)</title>
+<link href="https://www.auisoft.net/aui.ico" rel="shortcut icon" />
+
+<link href="./style/AUIGrid_style.css" rel="stylesheet"/>
+
+
+<!-- 데모를 위한 스크립트입니다. -->
+<script type="text/javascript" src="./js/demo.js"></script>
+
+<!-- 공용 Ajax 요청 스크립트 -->
+<script type="text/javascript" src="./js/common.js"></script>
+
+<!-- AUIGrid 라이센스 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<script type="text/javascript" src="./js/AUIGridLicense.js"></script>
+<script type="text/javascript" src="../AUIGrid/AUIGrid.js"></script>
+<style type="text/css">
+
+</style>
+
+<script type="text/javascript">
+
+// AUIGrid 생성 후 반환 ID
+var myGridID;
+
+// document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+function documentReady() {  
+	
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	
+	AUIGrid.setGridData(myGridID, gridData);
+};
+
+// AUIGrid 칼럼 설정
+var columnLayout = [{
+		dataField : "f0",
+		headerText : "text",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "text"
+		}
+	}, {
+		dataField : "f1",
+		headerText : "decimal",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "decimal"
+		}
+	}, {
+		dataField : "f2",
+		headerText : "numeric",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "numeric"
+		}
+	}, {
+		dataField : "f3",
+		headerText : "tel",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "tel"
+		}
+	}, {
+		dataField : "f4",
+		headerText : "search",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "search"
+		}
+	}, {
+		dataField : "f5",
+		headerText : "email",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "email"
+		}
+	}, {
+		dataField : "f6",
+		headerText : "url",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "url"
+		}
+	}, {
+		dataField : "f7",
+		headerText : "none",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "none"
+		}
+	}];
+
+
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	var auiGridProps = {
+			
+			editable : true,
+			
+			// 모바일 기기에서 스크롤 크기 작게
+			autoScrollSize : true,
+			
+			// 모바일 기기에서 무조건 싱글 탭(1번 클릭) 으로 편집 모드 진입
+			// 즉, editingBeginMode="doubleClick" 인 경우 PC는 더블클릭이라도 모바일은 싱글 탭임.
+			autoEditBeginMode : true,
+			
+			// 모바일 기기의 스크롤 크기
+			scrollHeight4Mobile : 4,
+			
+			// 셀을 클릭하면 가상 키보드가 올라오나요?
+			// enableFocus  = false 설정하십시오.
+			enableFocus : false
+			
+	};
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, auiGridProps);
+};
+
+var timerId = null;
+
+//리사이즈 이벤트
+window.onresize = function() {
+	// 200ms 보다 빠르게 리사이징 된다면..
+	if(timerId !== null) {
+		clearTimeout(timerId);
+	}
+	
+	timerId = setTimeout(function() {
+		
+		// 그리드 리사이징
+		if(myGridID) {
+			AUIGrid.resize(myGridID);
+		}
+	}, 200);  // 현재 200ms 민감도....환경에 맞게 조절하세요.
+};
+
+var gridData = [{"f0":"0, 0","f1":"0, 1","f2":"0, 2","f3":"0, 3","f4":"0, 4","f5":"0, 5","f6":"0, 6","f7":"0, 7","f8":"0, 8"},{"f0":"1, 0","f1":"1, 1","f2":"1, 2","f3":"1, 3","f4":"1, 4","f5":"1, 5","f6":"1, 6","f7":"1, 7","f8":"1, 8"},{"f0":"2, 0","f1":"2, 1","f2":"2, 2","f3":"2, 3","f4":"2, 4","f5":"2, 5","f6":"2, 6","f7":"2, 7","f8":"2, 8"},{"f0":"3, 0","f1":"3, 1","f2":"3, 2","f3":"3, 3","f4":"3, 4","f5":"3, 5","f6":"3, 6","f7":"3, 7","f8":"3, 8"},{"f0":"4, 0","f1":"4, 1","f2":"4, 2","f3":"4, 3","f4":"4, 4","f5":"4, 5","f6":"4, 6","f7":"4, 7","f8":"4, 8"},{"f0":"5, 0","f1":"5, 1","f2":"5, 2","f3":"5, 3","f4":"5, 4","f5":"5, 5","f6":"5, 6","f7":"5, 7","f8":"5, 8"},{"f0":"6, 0","f1":"6, 1","f2":"6, 2","f3":"6, 3","f4":"6, 4","f5":"6, 5","f6":"6, 6","f7":"6, 7","f8":"6, 8"},{"f0":"7, 0","f1":"7, 1","f2":"7, 2","f3":"7, 3","f4":"7, 4","f5":"7, 5","f6":"7, 6","f7":"7, 7","f8":"7, 8"},{"f0":"8, 0","f1":"8, 1","f2":"8, 2","f3":"8, 3","f4":"8, 4","f5":"8, 5","f6":"8, 6","f7":"8, 7","f8":"8, 8"},{"f0":"9, 0","f1":"9, 1","f2":"9, 2","f3":"9, 3","f4":"9, 4","f5":"9, 5","f6":"9, 6","f7":"9, 7","f8":"9, 8"},{"f0":"10, 0","f1":"10, 1","f2":"10, 2","f3":"10, 3","f4":"10, 4","f5":"10, 5","f6":"10, 6","f7":"10, 7","f8":"10, 8"},{"f0":"11, 0","f1":"11, 1","f2":"11, 2","f3":"11, 3","f4":"11, 4","f5":"11, 5","f6":"11, 6","f7":"11, 7","f8":"11, 8"},{"f0":"12, 0","f1":"12, 1","f2":"12, 2","f3":"12, 3","f4":"12, 4","f5":"12, 5","f6":"12, 6","f7":"12, 7","f8":"12, 8"},{"f0":"13, 0","f1":"13, 1","f2":"13, 2","f3":"13, 3","f4":"13, 4","f5":"13, 5","f6":"13, 6","f7":"13, 7","f8":"13, 8"},{"f0":"14, 0","f1":"14, 1","f2":"14, 2","f3":"14, 3","f4":"14, 4","f5":"14, 5","f6":"14, 6","f7":"14, 7","f8":"14, 8"},{"f0":"15, 0","f1":"15, 1","f2":"15, 2","f3":"15, 3","f4":"15, 4","f5":"15, 5","f6":"15, 6","f7":"15, 7","f8":"15, 8"},{"f0":"16, 0","f1":"16, 1","f2":"16, 2","f3":"16, 3","f4":"16, 4","f5":"16, 5","f6":"16, 6","f7":"16, 7","f8":"16, 8"},{"f0":"17, 0","f1":"17, 1","f2":"17, 2","f3":"17, 3","f4":"17, 4","f5":"17, 5","f6":"17, 6","f7":"17, 7","f8":"17, 8"},{"f0":"18, 0","f1":"18, 1","f2":"18, 2","f3":"18, 3","f4":"18, 4","f5":"18, 5","f6":"18, 6","f7":"18, 7","f8":"18, 8"},{"f0":"19, 0","f1":"19, 1","f2":"19, 2","f3":"19, 3","f4":"19, 4","f5":"19, 5","f6":"19, 6","f7":"19, 7","f8":"19, 8"}];
+</script>
+
+</head>
+<body>
+
+<div style="margin:4px;">
+	<div>
+		<div style="margin:10px;">
+			<p>본 데모를 모바일 기기에서 확인하십시오.</p>
+			<p>모바일 기기(아이폰, 안드로이드, 아이패드 등)에서 수정할 때 가상 키보드(소프트 키보드)의 종류를 지정하여 설정한 모습입니다.</p>
+			<p>가상 키보드는 모바일 기기에 의존적으로 해당 기기에서 먼저 지원해야 하며, 기기마다 표시되는 형식이 상이 할 수 있습니다.</p>
+			<ul>
+				<li>text : 사용자의 현재 로케일에 맞는 표준 키보드를 제공합니다.</li>
+				<li>decimal : 사용자의 로케일에 맞는 숫자형 키보드를 제공합니다. 기기에 따라 음의 부호(-)는 제공할 수도, 제공하지 않을 수도 있습니다.</li>
+				<li>numeric : 숫자형 키보드를 제공합니다.</li>
+				<li>tel :전화번호 키보드를 제공합니다.</li>
+				<li>search : 검색 입력 칸에 최적화한 가상 키보드를 제공합니다.</li>
+				<li>email : 이메일 입력에 최적화한 가상 키보드를 제공합니다.</li>
+				<li>url : URL 입력에 최적화한 가상 키보드를 제공합니다.</li>
+				<li>none : 가상 키보드를 출력하지 않습니다.</li>
+ 			</ul>
+ 			<p><a href="./editing_touch_vkey2.html">달력, 콤보박스 등의 렌더러에 가상 키보드 종류 적용된 데모 보기</a></p>
+		</div>
+		
+		<!-- 에이유아이 그리드가 이곳에 생성됩니다. -->
+		<div id="grid_wrap" style="width:100%; height:380px;"></div>
+	</div>
+</div>
+
+<div id="footer">
+     <div class="copyright">
+        <p>Copyright © 2022 AUISoft </p>
+    </div>
+</div>
+
+</body>
+</html>

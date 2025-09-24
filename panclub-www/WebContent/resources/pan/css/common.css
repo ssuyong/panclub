@@ -1,0 +1,49 @@
+
+.tui-datepicker-input { width:120px!important; }
+.tui-datepicker {z-index:999;}
+.dropdown-item.disabled, .dropdown-item:disabled { color:rgba(30,41,59,.3)!important;  *color:#eee;}
+
+/*  ** BEGIN : AUI Grid ** */
+
+	/* row 색상 초기화 */
+	.auigrid-init-row-style {		background: #eeeeee;		color: #005500;		 }
+	/* 오류발생한 row 색상*/
+	.auigrid-err-row-style {		background: #f78e8e;		font-weight: bold;		color: #22741C;  	}
+	/* 정품아닌경우 row 색상*/
+	.auigrid-nogn-row-style {		background: #ebfbf8;		color: #0b3f0b;  	}
+	/*글자정렬*/
+	.left {		text-align: left;	}
+	.right {		text-align: right;	}
+	/*글자색상*/
+	.auigrid-color-style-darkred {		background: #f7f3d5;	color: darkRed;  font-weight:bold; 	}
+	.auigrid-color-style-link {		text-decoration: underline;	*color: darkBlue;  *font-weight:bold; 	}
+	.auigrid-color-style-link-darkred {		text-decoration: underline;	background: #f7f3d5;	 color: darkRed;  font-weight:bold; 	}
+	.auigrid-color-style-expect {		color: blue;  *font-weight:bold;  text-decoration-line: line-through; 	  text-decoration-style: dotted;	   	}  /*미정*/
+	/* 칼럼 : 필수입력 */
+	.auigrid-must-col-style {	background: #fff1e6;		}
+	/* 칼럼 : 선택입력 */
+	.auigrid-opt-col-style {	background: #eaf5ff;		}
+	
+/* ** END : AUI Grid ** */
+
+
+
+/*  ** BEGIN : JQUERY UI ** */
+
+	/* 팝업 닫기 x  */
+	.ui-dialog .ui-dialog-titlebar-close { border: 1px solid #aaa; color:#aaa; }	
+	/* 팝업 버튼  */
+	.ui-dialog .ui-dialog-buttonpane button {     border: 1px solid #aaa;  padding: 5px 20px; }
+	
+/* ** END : JQUERY UI ** */
+
+
+
+
+/*  ** BEGIN : Select2  ** */
+.select2-container--default .select2-selection--single {height: 28px!important;    border: 1px solid #ddd!important;} 
+/*  ** BEGIN : Select2  ** */
+
+/*  ** BEGIN : blink  ** */
+
+/*  ** END : blink  ** */

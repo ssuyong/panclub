@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.IBizDao">
+
+		<!-- 사원 목록 2022-10-24 장윤상 -->					
+	<select id="staffList" statementType="CALLABLE" parameterType="HashMap" resultType="staff">
+		{ CALL panErp.dbo.up_staffList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			 	
+			#{staff.comCode}, #{staff.empNo}, #{staff.name}, #{staff.offMail}
+		)}	
+	</select>
+
+	
+	<!-- 사원등록 2022-10-28 장윤상 -->
+	<select id="staffAdd" statementType="CALLABLE" parameterType="HashMap" resultType="staff">
+		{ CALL panErp.dbo.up_staffAdd (
+			#{workingType},  #{comCode},  #{userId}
+ 			,#{staff.empNo}			,#{staff.dutyCode}			,#{staff.positionCode}			,#{staff.classCode}			,#{staff.branchCode}			,#{staff.deptCode} 
+			,#{staff.imageRoot} 			,#{staff.name}		,#{staff.ename}		,#{staff.gender}			,#{staff.phone1}			,#{staff.phone2} 
+			,#{staff.birth} 			,#{staff.offMail}		,#{staff.mail}			    ,#{staff.addr1}			,#{staff.zipCode}			,#{staff.startYmd}			,#{staff.finYmd} 
+			,#{staff.panclubUserId} 			
+		)}	
+	</select>
+
+	<!-- 부서목록 목록 	-->		
+	<select id="deptList" statementType="CALLABLE" parameterType="HashMap" resultType="depart">
+		{ CALL panErp.dbo.up_deptList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			 	
+			#{depart.comCode}, #{depart.deptCode}
+		)}	
+	</select>		
+
+
+    <!-- 사용자 목록 정동근-->					
+	<select id="userList" statementType="CALLABLE" parameterType="HashMap" resultType="user">
+		{ CALL panErp.dbo.up_userList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			#{logIP}, 
+			#{logComCode}, #{logUserId}, #{pwdEnc}, 
+			#{autoLoginSession}, 	
+			#{user.comCode}, #{user.userId}, #{user.userName}
+		)}
+	</select>	
+	
+	<!-- 사용자등록 -->
+	<select id="userAdd" statementType="CALLABLE" parameterType="HashMap" resultType="user">
+		{ CALL panErp.dbo.up_userAdd (
+			#{workingType},			#{logComCode}, 			#{logUserId} 				
+			,#{user.userId}			,#{user.userName},		#{user.pwdEnc},			#{user.divisionCode},	#{user.userTypeCode} 
+			,#{user.validYN}        ,#{user.comCode}
+		)}	
+	</select>
+	
+	<!-- 사용자별메뉴내역 	
+	2023.11.27 hsg -  WITH(NOLOCK)  추가 -->	
+	<select id="menuByUserList" parameterType="HashMap" resultType="menuByUser">
+		SELECT a.menuCode, a.menuName,
+   			ISNULL(b.idx,0) idx, 
+   			ISNULL(b.srchAuth,'') srchAuth, 
+   			ISNULL(b.editAuth,'') editAuth,
+  			ISNULL(b.uptUserId,'') uptUserId,
+   			COALESCE(CONVERT(CHAR(10), b.modified, 121), '') modified
+   			,ISNULL(a.menuUrl, '') menuUrl 
+  		FROM dbo.e_menu a WITH(NOLOCK) 
+  		LEFT OUTER JOIN dbo.e_menuByUser b  WITH(NOLOCK) ON a.comCode = b.comCode AND a.menuCode = b.menuCode  AND b.userId = #{menuByUser.userId} 
+  		WHERE 1 = 1
+  		  AND a.comCode = #{menuByUser.comCode}
+		<if test=' menuByUser.menuCode != null and menuByUser.menuCode != "" '>
+			AND a.menuCode = #{menuByUser.menuCode} 
+		</if>		
+	</select>
+	
+	<!-- 사용자별메뉴 1개 조회. 2023.01.30 
+	2023.05.30 hsg - where절에 comCode추가	 -> 필요없어서 삭제 ->06.27 다시부활시킴.동일한 아이디로 팬오토,임파츠로그시 메류오류 뜸.
+	2023.11.27 hsg -  WITH(NOLOCK)  추가
+	2023.12.01 supi - 프로시저로 변경 및 시스템관리자의 경우 무조건 통과되도록 수정 
+	-->	
+	<select id="menuByUserOne" statementType="CALLABLE" parameterType="HashMap" resultType="menuByUser">
+		{ CALL panErp.dbo.up_menuByUserOne (
+			#{menuByUser.userId}, #{logComCode},	#{menu.menuUrl}
+		)}
+	
+	
+<!-- 		SELECT a.menuCode, a.menuName, -->
+<!--    			ISNULL(b.idx,0) idx,  -->
+<!--    			CASE WHEN ISNULL(c.userTypeCode,'') ='시스템관리자' THEN 'Y' ELSE ISNULL(b.srchAuth,'N') END srchAuth,  -->
+<!--    			CASE WHEN ISNULL(c.userTypeCode,'') ='시스템관리자' THEN 'Y' ELSE ISNULL(b.editAuth,'N') END editAuth, -->
+<!--    			ISNULL(b.srchAuth,'N') srchAuth, -->
+<!--    			ISNULL(b.editAuth,'N') editAuth, --> 
+<!--   			ISNULL(b.uptUserId,'') uptUserId, -->
+<!--    			COALESCE(CONVERT(CHAR(10), b.modified, 121), '') modified -->
+<!--    			,ISNULL(a.menuUrl, '') menuUrl  -->
+<!--   		FROM dbo.e_menu a WITH(NOLOCK)  -->
+<!--   		LEFT OUTER JOIN dbo.e_menuByUser b ON a.comCode = b.comCode AND a.menuCode = b.menuCode AND b.userId = #{menuByUser.userId}			    -->
+<!--    		JOIN dbo.e_menuByUser b  WITH(NOLOCK) ON a.comCode = b.comCode AND a.menuCode = b.menuCode AND b.userId = #{menuByUser.userId} --> 
+<!--    		JOIN dbo.e_user c  WITH(NOLOCK) ON  b.comCode = c.comCode AND b.userId = c.userId --> 
+<!--    		WHERE 1 = 1 AND a.comCode =#{logComcode} --> 
+<!--    		    AND a.menuUrl = #{menu.menuUrl}  --> 
+  		    
+  		    
+<!--   		JOIN dbo.e_menuByUser b  WITH(NOLOCK) ON a.comCode = b.comCode AND a.menuCode = b.menuCode AND b.userId = 'supi20' -->
+<!-- 		JOIN dbo.e_user c  WITH(NOLOCK) ON  b.comCode = c.comCode AND b.userId = c.userId -->
+<!--   		WHERE 1 = 1 AND a.comCode = 'ㄱ000' -->
+<!--   		    AND a.menuUrl = '/club/c-cust' -->
+ 	</select>
+	
+	<!-- 사용자별메뉴등록 -->
+	<insert id="menuByUserAdd"  parameterType="HashMap" >
+		INSERT into panErp.dbo.e_menuByUser (comCode	,userId		,menuCode	,srchAuth	,editAuth	,uptUserId	,modified	) 
+		VALUES ( #{comCode}	,#{menuByUser.userId}	,#{menuByUser.menuCode}	
+				,#{menuByUser.srchAuth}	,#{menuByUser.editAuth}	,#{userId}	,GETDATE())
+		
+	</insert>
+	
+	<!-- 사용자별메뉴수정 
+	2023.05.30 hsg - where절에 comCode추가 -> 필요없어서 삭제 -->
+	<update id="menuByUserUpt" parameterType="HashMap">
+		UPDATE panErp.dbo.e_menuByUser
+			 SET comCode = #{comCode} ,
+				 userId = #{menuByUser.userId} ,
+				 menuCode = #{menuByUser.menuCode} ,
+				 srchAuth = #{menuByUser.srchAuth} , 
+				 editAuth = #{menuByUser.editAuth} ,
+				 uptUserId = #{userId} ,
+				 modified = GETDATE()				 				 			
+		WHERE idx = #{menuByUser.idx}	 		
+	</update>
+	
+	<!-- 사용자별메뉴삭제 -->
+	<delete id="menuByUserDel" parameterType="HashMap">
+		DELETE from panErp.dbo.e_menuByUser		
+		WHERE	idx = #{menu.idx}
+		
+	
+	</delete>
+	
+	
+	<!-- 계좌/카드 리스트 
+		240805 yoonsang regPopYN 추가-->					
+	<select id="paymentList" statementType="CALLABLE" parameterType="HashMap" resultType="payment">
+		{ CALL panErp.dbo.up_paymentList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{payment.payCode},	#{payment.payType}
+			,#{payment.regPopYN} 
+		)}
+	</select>	
+	
+	<!-- 계좌/카드등록 
+			2023.06.27commonDpYN/ insurDpYN/ accOwner 추가 -->
+	<select id="paymentAdd" statementType="CALLABLE" parameterType="HashMap" resultType="payment">
+		{ CALL panErp.dbo.up_paymentAdd (
+			#{workingType},			#{logComCode}, 			#{logUserId} 				
+			,#{payment.payCode}			,#{payment.payType},		#{payment.name},			#{payment.accoutNo},	#{payment.validYN} 
+			,#{payment.depoistAccYN} ,#{payment.commonDpYN} ,#{payment.insurDpYN} ,#{payment.accOwner}
+		)}	
+	</select>
+	
+	<!-- 법인카드 리스트 -->					
+	<select id="coCardList" statementType="CALLABLE" parameterType="HashMap" resultType="coCard">
+		{ CALL panErp.dbo.up_coCardList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{coCard.cardNum}
+		)}
+	</select>	
+	
+	<!-- 법인카드등록  -->
+	<select id="coCardAdd" statementType="CALLABLE" parameterType="HashMap" resultType="coCard">
+		{ CALL panErp.dbo.up_coCardAdd (
+			#{workingType},			#{logComCode}, 			#{logUserId} 				
+			,#{coCard.custCode}			,#{coCard.cardNum},		#{coCard.cardName},			#{coCard.cvc},	#{coCard.expirDate} 
+			,#{coCard.settleDay}	,#{coCard.ownType}	,#{coCard.userComment}	,#{coCard.limitAmt}	,#{coCard.usePeriod}
+			,#{coCard.prevCardNum1}	,#{coCard.memo1}	,#{coCard.validYN}
+		)}	
+	</select>
+	
+	<!-- 매출목표 리스트 -->					
+	<select id="salesAimList" statementType="CALLABLE" parameterType="HashMap" resultType="salesAim">
+		{ CALL panErp.dbo.up_salesAimList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{salesAim.stdYYYY}
+		)}
+	</select>	
+	
+	<!-- 매출목표 등록  -->
+	<select id="salesAimAdd" statementType="CALLABLE" parameterType="HashMap" resultType="salesAim">
+		{ CALL panErp.dbo.up_salesAimAdd (
+			#{workingType},			#{logComCode}, 			#{logUserId} 				
+			,#{salesAim.stdYYYY}			,#{salesAim.admType},		#{salesAim.admCode}
+			,#{salesAim.m1}	,#{salesAim.m2}	,#{salesAim.m3}	,#{salesAim.m4}	,#{salesAim.m5}	,#{salesAim.m6} 
+			,#{salesAim.m7}	,#{salesAim.m8}	,#{salesAim.m9}	,#{salesAim.m10}	,#{salesAim.m11}	,#{salesAim.m12}			
+		)}	
+	</select>
+	
+	<!-- 거래처원장 리스트 
+		2023.07.17 mainYN 추가
+		2023.10.31 printType 추가-->					
+	<select id="custLedgList" statementType="CALLABLE" parameterType="HashMap" resultType="custLedg">
+		{ CALL panErp.dbo.up_custLedgList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{custLedg.custCode},#{mainYN} ,#{custLedg.printType}
+		)}
+	</select>
+	
+	<!-- 거래처원장 리스트 
+		2023.07.17 mainYN 추가
+		2023.10.31 printType 추가-->					
+	<select id="custLedgList2" statementType="CALLABLE" parameterType="HashMap" resultType="custLedg">
+		{ CALL panErp.dbo.up_custLedgList_윤상 (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{custLedg.custCode},#{mainYN} ,#{custLedg.printType}
+		)}
+	</select>	
+	
+	<!-- 거래처별 종합 거래장 리스트 -->					
+	<select id="custBizList" statementType="CALLABLE" parameterType="HashMap" resultType="custBiz">
+		{ CALL panErp.dbo.up_custBizList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{custBiz.custCode}
+		)}
+	</select>	
+	
+	<!-- ###################################################### -->
+	
+	<!-- 출금요청 등록 
+			2023.04.06 bokyung jobArr 추가
+			2023.06.29 bk#{reqDtl.ledgArr}   ,#{reqDtl.seqArr}  추가   	-->
+	<select id="wdReqAdd" statementType="CALLABLE" parameterType="HashMap" resultType="wdReq">
+		{ CALL panErp.dbo.up_wdReqAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{req.wdReqNo}  ,#{req.wdReqType}	,#{req.custCode}	,#{req.wdReqYmd}	,#{req.wdReqAmt}	
+			,#{req.attaFile}	,#{req.attaFileOri}	,#{req.memo1}
+			,#{req.reqArr} ,#{req.jobArr}   ,#{req.wdReqNoArr} ,#{req.ledgArr}     ,#{req.seqArr}       
+		)}	
+	</select>
+	
+	<!-- 출금요청디테일 등록
+			2023.06.29 #{reqDtl.ledgArr}   ,#{reqDtl.seqArr}  추가  -->
+	<select id="wdReqDtlAdd" statementType="CALLABLE" parameterType="HashMap" resultType="wdReqDtl">
+		{ CALL panErp.dbo.up_wdReqDtlAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{reqDtl.wdReqNo}  ,#{reqDtl.reqSeq}       ,#{reqDtl.jobNo}	
+            ,#{reqDtl.jobArr}  ,#{reqDtl.ledgArr}     ,#{reqDtl.seqArr}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+		)}	
+	</select>
+
+	<!-- 출금요청 마스터 목록
+			buyChk, payStatus 추가 bokyung
+			2023.07.13 bk wdDateType 추가 -->					
+	<select id="wdReqList" statementType="CALLABLE" parameterType="HashMap" resultType="wdReq">
+		{ CALL panErp.dbo.up_wdReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.wdReqNo}, #{req.wdReqType} ,#{cdCode} ,#{req.custCode} ,#{req.buyChk} ,#{req.payStatus},
+			#{wdDateType}
+		)}	
+	</select>
+	
+	<!-- 출금요청 상세 목록 -->					
+	<select id="wdReqDtlList" statementType="CALLABLE" parameterType="HashMap" resultType="wdReqDtl">
+		{ CALL panErp.dbo.up_wdReqDtlList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqDtl.wdReqNo}, #{reqDtl.reqSeq}
+			,#{reqDtl.reqArr}, #{reqDtl.seqArr}
+		)}	
+	</select>
+	
+	<!-- 일정 등록 -->	
+	<insert id="schAdd" parameterType="HashMap">
+		insert into
+		panErp.dbo.e_schedule (comCode	,schNo	 ,title	,category	,member	,startYmd	,endYmd		,contents
+									
+							,regUserId	,created	,uptUserId	,modified							
+							)
+					            
+					values(#{comCode} 	,#{schedule.schNo}	,#{schedule.title}	,#{schedule.category}	,#{schedule.member}	,#{schedule.startYmd}
+					,#{schedule.endYmd}	,#{schedule.contents}				
+				
+		
+					,#{userId} ,GETDATE()
+					,#{userId} ,GETDATE())
+
+	</insert> 
+	
+	<!-- 일정 조회 2023-02-20 장윤상 
+	2023.05.30 hsg - where절에 comCode추가
+	230720 yoonsang comCode 수정
+	231114 supi sql방식에서 프로시저로 변경, 모회사모회사테이블 추가 생성후 자회사가 존재할경우 자회사도 일정 들어나도록 수정 // 현재 해당 테이블 데이터 미존재로 ㄱ000만 임시적으로 다른회사일정보이도록 함
+ 
+	-->
+	
+	<select id="scheduleList" parameterType="HashMap"
+		resultType="schedule">
+			
+		<!-- SELECT	comCode	,schIdx	,schNo	,title	,category	,member	,startYmd	,endYmd	,contents
+				,regUserId	,created	,uptUserId	,modified	 
+				
+		FROM panErp.dbo.e_schedule
+			
+		WHERE 1=1 AND comCode=#{schedule.comCode} -->
+		
+		
+		{ CALL panErp.dbo.up_scheduleList (
+		#{comCode})}	
+		
+
+	</select>
+	
+	<!-- 일정 업데이트 2023-02.21 장윤상 
+	<update id="schUpt" parameterType="HashMap">
+		update
+		panErp.dbo.e_schedule
+		set 
+		 title = #{schedule.title}
+		 ,category = #{schedule.category}
+		 ,member = #{schedule.member}
+		 ,startYmd = #{schedule.startYmd}
+		 ,endYmd = #{schedule.endYmd}
+		 ,contents = #{schedule.contents}
+		
+		
+		,uptUserId	= #{userId}, modified = GETDATE() 
+		
+		where schNo	=	#{schedule.schNo}
+
+	</update>-->
+	
+	<!-- 일정 삭제 2023-02-21 장윤상 
+	2023.05.30 hsg - where절에 comCode추가
+	230720 yoonsang comcode 수정
+	20231116 schNo기준이 아닌 넘겨온 삭제명단의 같은 일정 삭제로 변경
+	
+	--> 
+	<delete id="schDel" parameterType="HashMap">
+		delete from
+		panErp.dbo.e_schedule where 
+		startYmd = #{schedule.startYmd} AND 
+		endYmd = #{schedule.endYmd} AND  
+		category = #{schedule.category} AND  
+		comCode=#{comCode}
+	</delete>
+
+	<!-- 접속현황 2023-03-03 김보경 -->
+	<select id="userLog" statementType="CALLABLE" parameterType="HashMap" resultType="userLog">
+		{ CALL panErp.dbo.up_userLogList (
+		#{workingType}, #{page},	#{qty},	 #{orderBy},	
+		#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+		#{logComCode}, #{logUserId}, 
+		#{userLog.comCode}, #{userLog.userId}
+	)}	
+		
+	</select>
+	
+	 <!-- 거래처별 종합 거래장 리스트 
+				2023.06.12 bk
+				2023.06.30 #{placeYmdYN} 추가
+				2023.07.12 bk itemId / itemNO 추가 
+				2023.08.02 bk carNo/ orderGroupId 추가
+				2023.10.16 bk srCode 추가
+				2024.02.01 yoonsang taxBillRegYN 추가
+				2024.03,05 yoonsang mainYN 추가 -->					
+	<select id="transactionList" statementType="CALLABLE" parameterType="HashMap" resultType="transaction">
+		{ CALL panErp.dbo.up_transactionList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{transaction.custCode},#{transaction.clType},#{transaction.ledgType}
+			,#{placeYmdYN},#{transaction.custOrderNo}
+			,#{transaction.itemId},#{transaction.itemNo} ,#{transaction.orderGroupId} ,#{transaction.carNo}
+			,#{transaction.srCode} ,#{transaction.taxBillRegYN}  ,#{transaction.mainYN}
+		)}
+	</select>
+	<!-- 매입처 거래상세내역2
+				20231123 yoonsang 최초작성-->					
+	<select id="transactionList2" statementType="CALLABLE" parameterType="HashMap" resultType="transaction">
+		{ CALL panErp.dbo.up_transactionList2 (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{transaction.custCode},#{transaction.clType},#{transaction.ledgType}
+			,#{placeYmdYN},#{transaction.custOrderNo}
+			,#{transaction.itemId},#{transaction.itemNo} ,#{transaction.orderGroupId} ,#{transaction.carNo}
+			,#{transaction.srCode}	,#{transaction.branchComCode}
+		)}
+	</select>		
+	
+	<!-- 거래처원장 리스트 
+		2023.07.17 mainYN 추가
+		2023.10.31 printType 추가-->					
+	<select id="otherReceivablesList" statementType="CALLABLE" parameterType="HashMap" resultType="custLedg">
+		{ CALL panErp.dbo.up_otherReceivablesList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{custLedg.custCode},#{mainYN} ,#{custLedg.printType}
+		)}
+	</select>
+	<!-- 
+		2024.07.08 supi 마감경과 작업조회 데이터 받는 통신 
+		
+	 -->
+	<select id="closeTaskList" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{
+			CALL panErp.dbo.up_closeTask ( 
+			'' , #{logComCode} , #{logUserId} , #{bizPart} , #{biz} , #{comCode} , #{branchCode} , #{orderGroupId}
+		
+		)}
+	</select>
+	
+	<!-- 2024.10.08 supi url권한체크 -->
+	<select id="permissionURLCheck" statementType="CALLABLE" parameterType="HashMap"  resultType="string" >		
+		SELECT dbo.UF_PermissionURLCheck(#{logComCode} , #{logUserId} , #{menuUrl})
+	</select> 			
+</mapper>	

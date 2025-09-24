@@ -1,0 +1,959 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.ILogisDao">
+
+	<!-- 창고사용요청 마스터 목록 
+	2023.03.29 hsg -chkStatus 추가. 처리상태 -->
+	<!-- 2023.04.03 yoonsang orderGroupId 추가 
+	2023.06.30 bk branchCode 추가
+	2023.10.05 yoonsang custCode 추가		
+	2024.01.31 supi 마스터 조회시 디테일의 회수불가 품목 수량 노출을 위한 반환 추가		
+	-->	
+	<select id="storageUseReqList" statementType="CALLABLE" parameterType="HashMap" resultType="storageUseReq">
+		{ CALL panErp.dbo.up_storageUseReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.storageUseReqNo},#{req.storageMgr}
+			,#{req.chkStatus}	,#{req.orderGroupId}		,#{req.branchCode}
+			,#{req.custCode}	 ,#{req.ctReject}	
+		)}	
+	</select>
+	
+	<!-- 창고사용요청 품목 목록 
+	2023.08.23 sg - itemId, itemNo  추가 -->		
+	<select id="storageUseReqItemList" statementType="CALLABLE" parameterType="HashMap" resultType="storageUseReqItem">
+		{ CALL panErp.dbo.up_storageUseReqItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.storageUseReqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.seqArr},  #{reqItem.itemId},   #{reqItem.itemNo}
+		)}	
+	</select>
+
+	<!-- 창고사용 마스터 목록 -->
+	<!-- 2023.04.03 yoonsang orderGroupId 추가
+		2023.06.30 branchCode bk -->						
+	<select id="storageUseList" statementType="CALLABLE" parameterType="HashMap" resultType="storageUse">
+		{ CALL panErp.dbo.up_storageUseList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.storageUseReqNo},#{req.storageMgr} ,#{req.orderGroupId}
+			,#{req.branchCode}
+		)}	
+	</select>
+	
+	<!--
+	* 이건 안쓰이는듯. 2023.08.23 
+	창고사용 품목 목록: 
+	2023.08.23 sg - itemId, itemNo  추가  -->					
+	<select id="storageUseItemList" statementType="CALLABLE" parameterType="HashMap" resultType="storageUseItem">
+		{ CALL panErp.dbo.up_storageUseItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.storageUseReqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.seqArr},  #{reqItem.itemId},   #{reqItem.itemNo}
+		)}	
+	</select>
+	
+	<!-- 이동요청 마스터 목록 -->					
+	<select id="storMvReqList" statementType="CALLABLE" parameterType="HashMap" resultType="storMvReq">
+		{ CALL panErp.dbo.up_storMvReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.reqNo},#{req.eBranchCode}
+		)}	
+	</select>
+	
+	<!-- 이동요청 품목 목록 -->					
+	<select id="storMvReqItemList" statementType="CALLABLE" parameterType="HashMap" resultType="storMvReqItem">
+		{ CALL panErp.dbo.up_storMvReqItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.reqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.seqArr}
+		)}	
+	</select>
+	
+	<!-- 이동 마스터 목록 -->					
+	<select id="storMvList" statementType="CALLABLE" parameterType="HashMap" resultType="storMv">
+		{ CALL panErp.dbo.up_storMvList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.reqNo},#{req.eBranchCode}
+		)}	
+	</select>
+	
+	<!-- 이동 품목 목록 -->					
+	<select id="storMvItemList" statementType="CALLABLE" parameterType="HashMap" resultType="storMvItem">
+		{ CALL panErp.dbo.up_storMvItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.reqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.rseArr}
+		)}	
+	</select>
+	
+	<!-- 입고 품목 목록 
+	2023.03.21 hsg - whNo, bizNo  추가 23.03.27 yoonsang whYmd ,custOrderNo, itemId ,itemNo추가
+	2023.07.03 yoonsang whSchYmd 추가 
+	2023.07.07 bk - printYN 추가 
+	2023.07.14 bk plcArr , seqArr 추가
+	2023.09.04 bk - rlSchYmd , dlvType 추가
+	2023.09.11 bk - whSchTime 추가 
+	2024.03.04 supi - 요청업체 조회를 위해 gvComCode매개변수 추가(jsp에서 셀렉트박스)
+	-->					
+	<select id="whItemList" statementType="CALLABLE" parameterType="HashMap" resultType="whItem">
+		{ CALL panErp.dbo.up_whItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			#{logComCode}, #{logUserId},
+			#{whItem.placeNo}, 	#{whItem.orderGroupId}, 	#{whItem.orderNo}, 	#{whItem.custCode}
+			,#{whItem.whNo} ,#{whItem.bizNo}	,#{whItem.whYmd}	,#{whItem.custOrderNo}
+			
+			,#{whItem.whStatus}	,#{whItem.whUnitPriceReg}	,#{whItem.itemId}	,#{whItem.itemNo}
+			,#{whItem.rcvCustCode}	,#{whItem.branchCode}	,#{whItem.whSchYmd}
+			,#{printYN},#{plcArr},#{seqArr},#{whItem.dlvType},#{whItem.rlSchYmd},#{whItem.whSchTime},#{whItem.gvComCode}
+		)}	
+	</select>		
+	
+	<!-- 입고 등록 --> 
+	<!-- 2023.03.29 - yoonsang custOrderNo 발주에서 가져오는걸로 수정 -->
+	<!-- 2023.04.10 hsg - placeNoArr, placeSeqArr 추가. 출금요청된건과 안된건이 같이 들어오는 경우 오류처리
+		 2023.0622 yoonsang whSeqArr 추가 (DEL에이용) 
+		 2023.07.31 hsg - whCntArr,whUnitPriceArr,rackCode,placeRlYmd -->
+	<select id="whAdd" statementType="CALLABLE" parameterType="HashMap" resultType="wh">
+		{ CALL panErp.dbo.up_whAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{wh.whNo} 		,#{wh.storageCode}		,#{wh.custCode}		,#{wh.whYmd}
+			,#{wh.memo1}      	,#{wh.price}		,#{wh.taxPrice}			,#{wh.sumPrice}
+			,#{wh.placeNoArr} 		,#{wh.placeSeqArr} ,#{wh.whNoArr}
+			,#{wh.whSeqArr} ,#{wh.whCntArr},#{wh.whUnitPriceArr},#{wh.rackCode},#{wh.placeRlYmd}
+		)}	
+	</select>
+	
+	<!-- 입고품목 등록 
+	2023.03.21 hsg -storageCode rackCode 추가
+	2023.03.22 hsg -itemNoNew,orderGroupId 추가. 품번변경용도
+	2023.03.23 hsg -allItemChnYN 주문그룹전체를 변경할건지에 대한 옵션
+	2023.03.29 - yoonsang custOrderNo 발주에서 가져오는걸로 수정
+	20230630 - yoonsagn placeRlYmd 추가
+	2023.07.05 hsg - saleUnitPriceNew 추가.품번변경용도
+	-->
+	<select id="whItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="whItem">
+		{ CALL panErp.dbo.up_whItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{whItem.whNo},		#{whItem.whSeq} ,	#{whItem.placeNo},	#{whItem.placeSeq},		#{whItem.orderNo}, 	#{whItem.orderSeq}
+			,#{whItem.itemId},  	#{whItem.saleUnitPrice},	#{whItem.cnt},	#{whItem.whUnitPrice},	#{whItem.whSumPrice},
+			 #{whItem.memo1}		,#{whItem.memo2} 	
+			,#{whItem.whNoArr} 		,#{whItem.whSeqArr}			,#{whItem.placeNoArr} 		,#{whItem.placeSeqArr}
+			,#{whItem.whCntArr} 		,#{whItem.whUnitPriceArr}
+			,#{whItem.storageCode} 		,#{whItem.rackCode}		
+			,#{whItem.orderGroupId}	,#{whItem.itemNoNew}	 ,#{whItem.itemIdNew} ,#{whItem.allItemChnYN} ,#{whItem.placeRlYmd} ,#{whItem.saleUnitPriceNew}
+		)}	
+	</select>
+	
+	<!-- 입고 마스터 목록
+			buyChk 매입확정 추가 bk
+			, 20230626 #{orderGroupId} yoonsang 추가
+			,2023.06.28 #{wh.branchCode} 추가
+			 -->					
+	<select id="whList" statementType="CALLABLE" parameterType="HashMap" resultType="wh">
+		{ CALL panErp.dbo.up_whList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN} ,#{ymdIgnoreYN2}, 
+			#{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{wh.whNo}	,#{wh.custCode} ,#{wh.buyChk} ,#{wh.whDateType} ,#{orderGroupId} 
+			,#{wh.branchCode} 
+		)}	
+	</select>	
+	
+	
+	<!-- ###################################################### -->
+	
+	<!-- 출고요청 등록 
+	2023.05.20 - stroragCode rackCode 추가.
+	2024.03.13 yoonsang gvComCode 추가-->
+	<select id="rlReqAdd" statementType="CALLABLE" parameterType="HashMap" resultType="rlReq">
+		{ CALL panErp.dbo.up_rlReqAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{req.rlReqNo}     ,#{req.orderGroupId}      		    ,#{req.dmdYmd}		,#{req.dmdTime}			
+			,#{req.rlMgr}		,#{req.memo1}    ,#{req.lastPickParts}        ,#{req.rlWay}    ,#{req.custOrderNo}   
+			,#{req.storageCode} ,#{req.rackCode}	,#{req.stdClType} ,#{req.gvComCode}
+		)}	
+	</select>
+	
+	<!-- 출고요청품목 등록 -->
+	<select id="rlReqItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="rlReqItem">
+		{ CALL panErp.dbo.up_rlReqItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{reqItem.rlReqNo}  ,#{reqItem.reqSeq}       ,#{reqItem.orderNo}	,#{reqItem.orderSeq}	,#{reqItem.rlReqCnt}
+            ,#{reqItem.ordArr}   ,#{reqItem.seqArr}       ,#{reqItem.cntArr}	,#{reqItem.reqArr}      ,#{reqItem.rseArr}	,#{reqItem.mm1Arr},	#{reqItem.mm2Arr}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+		)}	
+	</select>
+
+	<!-- 출고요청 마스터 목록
+			2023.06.30 bk #{req.branchCode} 추가 
+			2023.07.04 bk regUserId 추가 
+			2023.07.10 bk stdClType 추가
+			2023.07.20 bk  rlDate 추가
+			2023.09.14 yoonsang gvComCode 추가 -->					
+	<select id="rlReqList" statementType="CALLABLE" parameterType="HashMap" resultType="rlReq">
+		{ CALL panErp.dbo.up_rlReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.rlReqNo},#{req.rlMgr}
+			,#{req.dmdTime}	,#{req.rlWay}	,#{req.custCode}	,#{req.carNo}	,#{req.orderGroupId}	,#{req.procStatus}
+			,#{req.branchCode},#{req.regUserId},#{printYN}, #{req.stdClType}
+			 ,#{req.gvComCode}  ,#{req.doubleClickYN}
+		)}	
+	</select>
+	
+	<!-- 출고요청 1건 조회
+			2023.06.30 bk #{req.branchCode} 추가 
+			2023.07.04 bk regUserId 추가 
+			2023.07.10 bk stdClType 추가
+			2023.09.14 yoonsang gvComCode 추가
+	 -->					
+	<select id="reqOne" statementType="CALLABLE" parameterType="HashMap" resultType="rlReq">
+		{ CALL panErp.dbo.up_rlReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.rlReqNo},#{req.rlMgr}
+			,#{req.dmdTime}	,#{req.rlWay}	,#{req.custCode}	,#{req.carNo}	,#{req.orderGroupId}	,#{req.procStatus}
+			,#{req.branchCode},#{req.regUserId}
+			,#{printYN} ,#{req.stdClType} ,#{req.gvComCode}
+		)}	
+	</select>
+	
+	<!-- 출고요청 품목 목록 
+	2023.08.31 hsg - procStatus, custCode 추가 
+	2023.09.14 yoonsang gvcomCode 추가 -->					
+	<select id="rlReqItemList" statementType="CALLABLE" parameterType="HashMap" resultType="rlReqItem">
+		{ CALL panErp.dbo.up_rlReqItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.rlReqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.seqArr}, #{reqItem.procStatus}, #{reqItem.custCode}
+			,#{reqItem.gvComCode}
+		)}	
+	</select>
+
+	<!-- 출고 품목 목록 
+	2023.08.21 sg - itemId, itemNo  추가 -->					
+	<select id="rlItemList" statementType="CALLABLE" parameterType="HashMap" resultType="rlItem">
+		{ CALL panErp.dbo.up_rlItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			#{logComCode}, #{logUserId},
+			#{rlItem.rlReqNo}, 	#{rlItem.orderGroupId}, 	#{rlItem.orderNo}, 	#{rlItem.custCode}
+			,#{rlItem.rlNo},#{claimType}, #{rlItem.itemId}, #{rlItem.itemNo} ,#{rlItem.gvComCode}
+		)}	
+	</select>		
+	
+	<!-- 출고 등록 
+	2023.05.20 -  rackCode 추가
+	20230627 yoonsang #{rl.rlSeqArr} 추가
+	20230914 yoonsang gvComCode 추가
+	2023.09.19 bk deliveryFee & deliveryYN 추가 
+	-->
+	<select id="rlAdd" statementType="CALLABLE" parameterType="HashMap" resultType="rl">
+		{ CALL panErp.dbo.up_rlAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{rl.rlNo} 		,#{rl.storageCode}		,#{rl.custCode}		,#{rl.rlYmd}
+			,#{rl.custOrderNo}	,#{rl.memo1}      	,#{rl.price}		,#{rl.taxPrice}			,#{rl.sumPrice}
+			,#{rl.rlMgr}	,#{rl.rlWay}
+			,#{rl.rackCode}	,#{rl.rlSeqArr}	,#{rl.stdClType} ,#{rl.gvComCode} ,#{rl.deliveryFee} ,#{rl.deliveryYN} , #{rl.comCode}
+		)}	
+	</select>
+	
+	<!-- 출고품목 등록 -->
+	<select id="rlItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="rlItem">
+		{ CALL panErp.dbo.up_rlItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{rlItem.rlNo},		#{rlItem.rlSeq} ,	#{rlItem.rlReqNo},	#{rlItem.rlReqSeq},	#{rlItem.custOrderNo}, 	#{rlItem.orderNo}, 	#{rlItem.orderSeq}
+			,#{rlItem.itemId},  	#{rlItem.saleUnitPrice},	#{rlItem.cnt},	#{rlItem.rlUnitPrice},	#{rlItem.rlSumPrice},
+			 #{rlItem.memo1}		,#{rlItem.memo2} 	
+			,#{rlItem.reqNoArr} 		,#{rlItem.reqSeqArr} 	,#{rlItem.rlNoArr} 		,#{rlItem.rlSeqArr}			 ,#{rlItem.storCdArr}
+			,#{rlItem.rlCntArr} 		,#{rlItem.rlUnitPriceArr},#{rlItem.memo1Arr} 		,#{rlItem.memo2Arr}	,#{rlItem.gvComCode}  , #{rlItem.comCode} 
+			
+		)}	
+	</select>
+	
+	<!-- 출고 마스터 목록 20230411 yoonsang 추가
+			20230523 bk -branchCode 추가
+			2023.07.04 bk regUserId 추가 
+			2023.07.10 bk stdClType 추가  
+			2023.07.13 hsg srCode 추가
+			2023.07.26  bk rlDateType 추가 
+			2023.08.02 yoonsang clGroupId 추가
+			2024.01.08 yoonsang orderUserId 추가 
+			2024.02.27 supi gvComCode추가
+			-->					
+	<select id="rlList" statementType="CALLABLE" parameterType="HashMap" resultType="rl">
+		{ CALL panErp.dbo.up_rlList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{rl.rlNo}	,#{rl.custCode}	,#{rl.carNo}	,#{rl.orderGroupId}	,#{rl.rlMgr}	,#{rl.rlWay}
+			,#{rl.branchCode},#{rl.regUserId},#{rl.stdClType}  ,#{rl.srCode}  ,#{rlDateType}
+			,#{rl.clGroupId} ,#{rl.orderUserId},#{rl.gvComCode} ,#{rl.doubleClickYN}
+		)}	
+	</select>	
+	
+	<!-- 출고 마스터 1개 조회 20230417 
+			20230523 bk -branchCode 추가
+			2023.07.04 bk regUserId 추가 
+			2023.07.10 bk stdClType 추가
+			2023.07.13 hsg srCode 추가
+			2023.07.26  bk rlDateType 추가  -->					
+	<select id="rlOne" statementType="CALLABLE" parameterType="HashMap" resultType="rl">
+		{ CALL panErp.dbo.up_rlList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{rl.rlNo}	,#{rl.custCode}	,#{rl.carNo}	,#{rl.orderGroupId}	,#{rl.rlMgr}	,#{rl.rlWay}
+			,#{rl.branchCode},#{rl.regUserId},#{rl.stdClType}  ,#{rl.srCode} ,#{rlDateType}
+			,#{rl.clGroupId}  ,#{rl.orderUserId} ,#{rl.gvComCode}  
+		)}	
+	</select>	
+	
+	
+	
+	
+	<!-- ###################################################### -->
+	
+	<!-- 반입요청 등록 -->
+	<select id="riReqAdd" statementType="CALLABLE" parameterType="HashMap" resultType="riReq">
+		{ CALL panErp.dbo.up_riReqAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{req.riReqNo}     ,#{req.orderGroupId}      		    ,#{req.dmdYmd}		,#{req.dmdTime}			
+			,#{req.receiver}		,#{req.memo1}    ,#{req.attaFile}        ,#{req.attaFileOri}    ,#{req.riWay}
+			,#{req.storageCode} ,#{req.custCode}
+		)}	
+	</select>
+	
+	<!-- 반입요청품목 등록 -->
+	<!-- 2023.04.20 yoonsang 출고를 오더로 바꿈 -->
+	<select id="riReqItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="riReqItem">
+		{ CALL panErp.dbo.up_riReqItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{reqItem.riReqNo}  ,#{reqItem.reqSeq}       <!-- ,#{reqItem.rlNo}	,#{reqItem.rlSeq}	,#{reqItem.cnt} -->
+            <!-- ,#{reqItem.rlArr}   ,#{reqItem.seqArr} -->
+            ,#{reqItem.odArr}	,#{reqItem.odSeqArr}        
+            ,#{reqItem.cntArr}	,#{reqItem.reqArr}      ,#{reqItem.rseArr}	,#{reqItem.mm1Arr}    ,#{reqItem.gvComCode}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+		)}	
+	</select>
+
+	<!-- 반입요청 마스터 목록
+				2023.06.30 bk #{req.branchCode} 추가 
+				2023.07.04 bk -regUserId 추가 
+				2024.02.27 supi gvComCode조회조건 추가
+				-->					
+	<select id="riReqList" statementType="CALLABLE" parameterType="HashMap" resultType="riReq">
+		{ CALL panErp.dbo.up_riReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.riReqNo},#{req.receiver}
+			,#{req.dmdTime}	,#{req.riWay}	,#{req.custCode}	,#{req.carNo}	,#{req.orderGroupId}	,#{req.procStatus}
+			,#{req.branchCode},#{req.regUserId} ,#{req.gvComCode} ,#{req.doubleClickYN}
+		)}	
+	</select>
+	
+		<!-- 반입요청 1개조회 
+				2023.09.21 yoonsang gvComCode 추가-->					
+	<select id="rireqOne" statementType="CALLABLE" parameterType="HashMap" resultType="riReq">
+		{ CALL panErp.dbo.up_riReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.riReqNo},#{req.receiver}
+			,#{req.dmdTime}	,#{req.riWay}	,#{req.custCode}	,#{req.carNo}	,#{req.orderGroupId}	,#{req.procStatus}
+			,#{req.gvComCode}
+		)}	
+	</select>
+	
+	
+	<!-- 반입요청 품목 목록 
+		2023.09.21 yoonsang gvComCode 추가-->					
+	<select id="riReqItemList" statementType="CALLABLE" parameterType="HashMap" resultType="riReqItem">
+		{ CALL panErp.dbo.up_riReqItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.riReqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.seqArr}, #{reqItem.gvComCode}
+		)}	
+	</select>
+
+	<!-- 반입 등록 
+	2023.05.23 hsg - rackCode 추가
+	2023.09.21 yoonsang gvComCode 추가-->
+	<select id="riAdd" statementType="CALLABLE" parameterType="HashMap" resultType="ri">
+		{ CALL panErp.dbo.up_riAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{ri.riNo} 		,#{ri.storageCode}		,#{ri.custCode}		,#{ri.riYmd}
+			,#{ri.memo1}      	,#{ri.price}		,#{ri.taxPrice}			,#{ri.sumPrice}
+			,#{ri.riMgr}		,#{ri.rackCode}	,#{ri.gvComCode}
+		)}	
+	</select>
+	
+	<!-- 반입품목 등록 -->
+	<!-- 2023.04.20 yoonsang 출고관련빼고 오더번호오더순번 추가 
+		2023.09.21 yoonsang gvComCode 추가-->
+	<select id="riItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="riItem">
+		{ CALL panErp.dbo.up_riItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{riItem.riNo},		#{riItem.riSeq} ,	#{riItem.riReqNo},	#{riItem.riReqSeq}, #{riItem.rlNo},	#{riItem.rlSeq}
+			,#{riItem.itemId},  	#{riItem.cnt},    #{riItem.riUnitPrice}	
+			,#{rlItem.memo1}		,#{rlItem.memo2} 	
+			,#{riItem.reqNoArr} 		,#{riItem.reqSeqArr} 	,#{riItem.riNoArr} 		,#{riItem.riSeqArr}			
+			,#{riItem.riCntArr} 		,#{riItem.riUnitPriceArr},#{riItem.memo1Arr} 		,#{riItem.memo2Arr}
+			,#{riItem.odNoArr}	,#{riItem.odSeqArr}	,#{riItem.gvComCode}
+			
+		)}	
+	</select>
+	
+	<!-- 반입 마스터 목록 
+		2023.06.30 bk branchCode 추가 
+		2023.07.04 bk regUserId 추가
+		2023.07.27 bk riDateType 추가 
+		2024.02.27 supi gvComCode 추가
+		-->					
+	<select id="riList" statementType="CALLABLE" parameterType="HashMap" resultType="ri">
+		{ CALL panErp.dbo.up_riList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{ri.riNo}
+			,#{ri.custCode}	,#{ri.carNo}	,#{ri.orderGroupId}	,#{ri.riMgr}
+			,#{ri.branchCode},#{ri.regUserId},#{riDateType} ,#{ri.gvComCode} ,#{ri.doubleClickYN} 
+		)}	
+	</select>	
+	
+	<!-- 반입 품목 목록 -->					
+	<select id="riItemList" statementType="CALLABLE" parameterType="HashMap" resultType="riItem">
+		{ CALL panErp.dbo.up_riItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			#{logComCode}, #{logUserId},
+			#{riItem.riReqNo}, 	#{riItem.orderGroupId}, 	#{riItem.orderNo}, 	#{riItem.custCode}
+			,#{riItem.riNo} ,#{riItem.gvComCode}
+		)}	
+	</select>		
+	
+	
+	<!-- ###################################################### -->
+	
+	<!-- 반출요청 등록
+	2023.05.24 hsg - rackCode 추가 -->
+	<select id="roReqAdd" statementType="CALLABLE" parameterType="HashMap" resultType="roReq">
+		{ CALL panErp.dbo.up_roReqAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{req.roReqNo}     	,#{req.orderGroupId}      	,#{req.dmdYmd}		,#{req.dmdTime}			
+			,#{req.receiver}		,#{req.memo1}    			,#{req.attaFile}        ,#{req.attaFileOri}    ,#{req.roWay}
+			,#{req.storageCode} 	,#{req.custCode}
+			,#{roReqNo2}	,#{savedFileName}	,#{originalFileName}
+			,#{req.rackCode}
+		)}	
+	</select>
+	
+	<!-- 반출요청품목 등록 -->
+	<!-- 2023.04.20 yoonsang 반입대신 주문번호주문순번 -->
+	<select id="roReqItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="roReqItem">
+		{ CALL panErp.dbo.up_roReqItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{reqItem.roReqNo}  ,#{reqItem.reqSeq}       ,#{reqItem.roNo}	,#{reqItem.roSeq}	,#{reqItem.cnt}
+            ,#{reqItem.odArr}   ,#{reqItem.odSeqArr}       ,#{reqItem.cntArr}	,#{reqItem.reqArr}      ,#{reqItem.rseArr}	,#{reqItem.mm1Arr},	#{reqItem.mm2Arr}   
+            ,#{reqItem.plArr},	#{reqItem.plSeqArr}       ,#{reqItem.toOrderReqPlaceYNArr}		,#{reqItem.gvComCode}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+		)}	
+	</select>
+
+	<!-- 반출요청 마스터 목록
+		2023.06.30 branchCode 추가 BK
+		2023.07.04 regUserId 추가 bk
+		2024.02.27 supi gvComCode추가
+		 -->					
+	<select id="roReqList" statementType="CALLABLE" parameterType="HashMap" resultType="roReq">
+		{ CALL panErp.dbo.up_roReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.roReqNo},#{req.receiver}
+			,#{req.dmdTime}	,#{req.roWay}	,#{req.custCode}	,#{req.carNo}	,#{req.orderGroupId}	,#{req.procStatus}
+			,#{req.branchCode},#{req.regUserId} ,#{req.gvComCode} ,#{req.doubleClickYN}
+		)}	
+	</select>
+	
+		<!-- 반출요청 마스터 목록 -->					
+	<select id="roReqOne" statementType="CALLABLE" parameterType="HashMap" resultType="roReq">
+		{ CALL panErp.dbo.up_roReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.roReqNo},#{req.receiver}
+			,#{req.dmdTime}	,#{req.roWay}	,#{req.custCode}	,#{req.carNo}	,#{req.orderGroupId}	,#{req.procStatus}
+			,#{req.branchCode}	,#{req.regUserId}	,#{req.gvComCode}
+		)}	
+	</select>
+	
+	<!-- 반출요청 품목 목록 -->					
+	<select id="roReqItemList" statementType="CALLABLE" parameterType="HashMap" resultType="roReqItem">
+		{ CALL panErp.dbo.up_roReqItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{reqItem.roReqNo}, #{reqItem.reqSeq}
+			,#{reqItem.reqArr}, #{reqItem.seqArr}, #{reqItem.gvComCode}
+		)}	
+	</select>
+
+	<!-- 반출 등록 
+	2023.05.24 hsg - rackCode 추가 
+	2023.08.01 bk custRoNo 추가
+	2024.03.15 yoonsang gvComCode 추가-->
+	<select id="roAdd" statementType="CALLABLE" parameterType="HashMap" resultType="ro">
+		{ CALL panErp.dbo.up_roAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{ro.roNo} 		,#{ro.storageCode}		,#{ro.custCode}		,#{ro.roYmd}
+			,#{ro.memo1}      	,#{ro.price}		,#{ro.taxPrice}			,#{ro.sumPrice}
+			,#{ro.roMgr}		,#{ro.roWay}        ,#{ro.rackCode}		   ,#{ro.custRoNo}
+			,#{ro.gvComCode}	
+			,#{ro.odArr}	,#{ro.odSeqArr}	,#{ro.plArr}	,#{ro.plSeqArr}
+			,#{ro.reqNoArr}	,#{ro.reqSeqArr}	,#{ro.roCntArr}	,#{ro.memo1Arr} 
+			,#{ro.roNoArr}	,#{ro.roSeqArr}	,#{ro.salePriceArr}	,#{ro.toOrderReqPlaceYNArr}
+			
+		
+		)}	
+	</select>
+	
+	<!-- 반출품목 등록 
+		2023.07.10 yoonsang placeWhYmd 추가-->
+	<select id="roItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="roItem">
+		{ CALL panErp.dbo.up_roItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{roItem.roNo},		#{roItem.roSeq} ,	#{roItem.roReqNo},	#{roItem.roReqSeq}, #{roItem.riNo},	#{roItem.riSeq}
+			,#{roItem.itemId},  		#{roItem.cnt} , #{roItem.roUnitPrice}
+			,#{roItem.memo1}		,#{roItem.memo2} 	
+			,#{roItem.reqNoArr} 		,#{roItem.reqSeqArr} 	,#{roItem.roNoArr} 		,#{roItem.roSeqArr}			
+			,#{roItem.roCntArr} 		,#{roItem.roUnitPriceArr},#{roItem.memo1Arr} 		,#{roItem.memo2Arr}
+			,#{roItem.odArr}	,#{roItem.odSeqArr}
+			,#{roItem.plArr}	,#{roItem.plSeqArr}, #{roItem.penaltyPrice}	, #{roItem.placeWhYmd}
+			, #{roItem.gvComCode}
+			
+		)}	
+	</select>
+	
+	<!-- 반출 마스터 목록
+		2023.06.30 bk branchCode 추가  
+		2023.07.04 bk regUserId 추가
+		2023.08.01 bk placeCustCode, custRoNo 추가
+		2024.02.27 supi gvComCode 추가
+		-->					
+	<select id="roList" statementType="CALLABLE" parameterType="HashMap" resultType="ro">
+		{ CALL panErp.dbo.up_roList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{ro.roNo}	,#{ro.custCode}	,#{ro.carNo}	,#{ro.orderGroupId}	,#{ro.roMgr}
+			,#{ro.branchCode},#{ro.regUserId} ,#{ro.placeCustCode} ,#{ro.custRoNo} , #{ro.gvComCode}
+			, #{ro.doubleClickYN}
+		)}	
+	</select>	
+	
+	<!-- 반출 품목 목록 
+			2023.06.14 itemNo, custOrderNo 추가 bk
+			2023.06.30 branchCode 추가 bk
+		-->					
+	<select id="roItemList" statementType="CALLABLE" parameterType="HashMap" resultType="roItem">
+		{ CALL panErp.dbo.up_roItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2}, 
+			#{logComCode}, #{logUserId},
+			#{roItem.roReqNo}, 	#{roItem.orderGroupId}, 	#{roItem.orderNo}, 	#{roItem.custCode}
+			,#{roItem.roNo},#{roItem.itemNo},#{roItem.custOrderNo},#{roItem.branchCode}
+			,#{roItem.custRoNo} , #{roItem.gvComCode}
+		)}	
+	</select>			
+	
+	
+	<!-- ###################################################### -->
+	
+	<!-- 재고 조회 -->					
+	<select id="stockList" statementType="CALLABLE" parameterType="HashMap" resultType="stock">
+		{ CALL panErp.dbo.up_stockList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{st.stockYm}, #{st.storCode}, #{st.itemId},  #{st.itemCode}, #{st.itemNo}
+			
+			,#{st.itemName},#{st.makerCode},#{st.classCode}
+			,#{st.storName}
+		)}	
+	</select>	
+	
+	<!-- 재고 입출고목록 -> 재고수동처리마스터
+	2023.09.06 hsg - wrNo, consignCustCode 추가
+	2024.06.13 supi - 수동입출고 내역 부품id,부품번호 조회용 매개변수 추가
+	-->					
+	<select id="stockWrList" statementType="CALLABLE" parameterType="HashMap" resultType="stockWr">
+		{ CALL panErp.dbo.up_stockWrList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{stockWr.stockYm}, #{stockWr.storCode}, #{stockWr.itemId}
+			, #{stockWr.wrNo}, #{stockWr.consignCustCode}
+			,#{stockWr.itemNo}
+		)}	
+	</select>	
+	
+	<!-- 재고실사 목록 -->					
+	<select id="stockChkList" statementType="CALLABLE" parameterType="HashMap" resultType="stockChk">
+		{ CALL panErp.dbo.up_stockChkList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{stockChk.storCode}, #{stockChk.rackCode}
+			,#{stockChk.itemId},#{stockChk.itemNo}, #{stockChk.itemName}
+		)}	
+	</select>
+
+	<!-- 재고실사 등록 -->
+	<select id="stockChkAdd" statementType="CALLABLE" parameterType="HashMap" resultType="stockChk">
+		{ CALL panErp.dbo.up_stockChkAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{stockChk.itemId} 		,#{stockChk.storCode}		,#{stockChk.rackCode}		,#{stockChk.chkQty}
+			,#{stockChk.itemArr} 		,#{stockChk.storArr}		,#{stockChk.rackArr}		,#{stockChk.qtyArr}
+		)}	
+	</select>
+
+	<!-- 재고 목록 2023.05.09  hsg -stockList 대체
+	2023.08.31 hsg - bulkSrchType , itemBulk   추가 				
+	2023.10.12 yoonsang - checkType   추가 
+	2023.10.19 yoonsang - storageCode 추가 
+	2024.10.09 supi - 수탁업체 조회조건 consignCustCode 추가
+	-->					
+	<select id="stockItemList" statementType="CALLABLE" parameterType="HashMap" resultType="stockItem">
+		{ CALL panErp.dbo.up_stockItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			
+			#{st.storCode}, #{st.itemId},#{st.itemNo},#{st.itemName},#{st.makerCode},#{st.classCode},#{st.storName}
+			,#{bulkSrchType}, #{itemBulk} ,#{st.checkType}	,#{st.outStorCode}
+			,#{st.storageCode},#{noRealYN},#{qtyZeroYN} , #{consignCustCode}
+		)}	
+	</select>	
+	
+	<!-- 랙별 재고 목록 2023.05.10  hsg 
+					2024.01.12 supi - 다중조회 기능추가	
+	-->					
+	<select id="stockRackList" statementType="CALLABLE" parameterType="HashMap" resultType="stockRack">
+		{ CALL panErp.dbo.up_stockRackList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			
+			#{stockRack.rackCode},#{stockRack.rackName}, #{stockRack.storCode},#{stockRack.storName} , 
+			#{stockRack.itemId},#{stockRack.itemNo},#{stockRack.itemName}
+			,#{bulkSrchType},#{itemBulk}
+		)}	
+	</select>	
+	
+	<!-- 재고수동처리 2023.05.12 hsg
+			2023.05.23 bk- inPrice  추가 	
+			2024.07.25 yoonsang jobNo,jobSeq 추가
+			2024.07.30 yoonsang reqComCode,placeNo,placeSeq추가-->
+	<select id="stockItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="stockItem">
+		{ CALL panErp.dbo.up_stockItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{stockItem.actionType}  ,#{stockItem.itemId} 		,#{stockItem.rackCode}		,#{stockItem.procQty}		,#{stockItem.procMemo1} 	,#{stockItem.afterRackCode}
+			,'', '', ''
+			,#{stockItem.inPrice}	,#{stockItem.jobNo}	,#{stockItem.jobSeq}	,#{stockItem.reqComCode}	,#{stockItem.placeNo}	,#{stockItem.placeSeq}
+		)}	
+	</select>
+	
+	<!-- 재고 이력 2023.05.16  hsg -stockWrList 대체-->					
+	<select id="stockActionsList" statementType="CALLABLE" parameterType="HashMap" resultType="stockActions">
+		{ CALL panErp.dbo.up_stockActionsList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			
+			#{st.itemId},#{st.itemNo},#{st.itemName}, #{st.rackCode},#{st.rackName} , #{st.storCode},#{st.storName}
+		)}	
+	</select>	
+
+	<!-- 월별재고원가등록 2023.06.06 hsg 	 -->
+	<select id="stockYMAdd" statementType="CALLABLE" parameterType="HashMap" resultType="stockYM">
+		{ CALL panErp.dbo.up_stockYmAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{stockYM.stdYM} 
+		)}	
+	</select>
+	
+	<!-- 반입 마스터 1개조회  -->					
+	<select id="riOne" statementType="CALLABLE" parameterType="HashMap" resultType="ri">
+		{ CALL panErp.dbo.up_riList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{ri.riNo} ,#{ri.custCode}	,#{ri.carNo}	,#{ri.orderGroupId}	,#{ri.riMgr}
+			,#{ri.branchCode},#{ri.regUserId},#{riDateType} ,#{ri.gvComCode}
+		)}	
+	</select>	
+	
+	<!-- 재고수동처리디테일	2023.09.06 hsg 
+						2024.04.30 supi 수종입출고에서 바코드 스캔시 이부분 스캔하는데 처리속도 향상을 위해 품번도 같이 넣어서 불러오는식으로 수정
+	-->					
+	<select id="stockWrItemList" statementType="CALLABLE" parameterType="HashMap" resultType="stockWrItem">
+		{ CALL panErp.dbo.up_stockWrItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{stockWrItem.wrNo} ,#{stockWrItem.itemNo}
+		)}	
+	</select>	
+
+	<!--  재고수동 입출고 등록  2023.09.06 hsg  
+						   2024.05.30 supi - 품목정리(바코드출력)에 위탁업체 정보 추가
+	-->
+	<select id="stockWrAdd" statementType="CALLABLE" parameterType="HashMap" resultType="stockWr">
+		{ CALL panErp.dbo.up_stockWrAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{stockWr.wrNo} ,#{stockWr.wrYmd}	,#{stockWr.bizType}      	,#{stockWr.wrType}		,#{stockWr.consignCustCode}			,#{stockWr.memo1} , #{stockWr.consignComCode}
+		)}	
+	</select>
+	
+	<!-- 재고수동 품목 등록 2023.09.06 hsg  
+						2024.06.04 supi - 소유업체 cu 추가
+						2024.06.11 supi - pda 처리를 위해 물류센터 기본랙 매개변수 추가
+						2024.06.19 supi - pda 이동처리를 위해 이동후 물류센터 기본랙 매개변수 추가
+	-->
+	<select id="stockWrItemAdd" statementType="CALLABLE" parameterType="HashMap" resultType="stockWrItem">
+		{ CALL panErp.dbo.up_stockWrItemAdd (
+			#{workingType},  #{logComCode},  #{logUserId}
+			,#{stockWrItem.wrNo},		#{stockWrItem.wrSeq},	#{stockWrItem.itemId},  	#{stockWrItem.qty},  	#{stockWrItem.rackCode}	,#{stockWrItem.moveRackCode},  #{stockWrItem.memo1} 	
+			,#{stockWrItem.seqArr},	#{stockWrItem.rackArr}			,#{stockWrItem.moveRackArr} 	,#{stockWrItem.consignCustCode} , #{stockWrItem.logisRackId} , #{stockWrItem.moveLogisRackId}
+		)}	
+	</select>
+
+	<!-- 재고수동품목 1개 목록 - 엑셀업로드에서 조회하는것 때문에 사용. 	2023.09.12 hsg  	-->					
+	<select id="stockWrItemOne" statementType="CALLABLE" parameterType="HashMap" resultType="stockWrItem">
+		{ CALL panErp.dbo.up_stockWrItemList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{stockWrItem.wrNo}, #{stockWrItem.itemNo}, #{stockWrItem.rackCode}, #{stockWrItem.moveRackCode}
+		)}	
+	</select>	
+	
+	<!-- 창고사용 마스터 1개 목록 
+		인쇄 시 사용 2023.10.04 bk -->				
+	<select id="storageReqOne" statementType="CALLABLE" parameterType="HashMap" resultType="storageUseReq">
+		{ CALL panErp.dbo.up_storageUseReqList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId},
+			#{req.storageUseReqNo},#{req.storageMgr}
+			,#{req.chkStatus}	,#{req.orderGroupId}		,#{req.branchCode}	
+		)}	
+	</select>
+
+	<!-- 수주업체매입율 ADD 231107 yoonsang -->				
+	<select id="cCustPurRateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="cCustPurRate">
+		{ CALL panErp.dbo.up_cCustPurRateAdd (
+			#{workingType},	#{comCode}, #{userId},
+			#{cCustPurRate.custCode}	,#{cCustPurRate.purRate}
+		)}	
+	</select>
+	
+	<!-- 수주업체매입율 LIST 231108 yoonsang -->				
+	<select id="cCustPurRateList" statementType="CALLABLE" parameterType="HashMap" resultType="cCustPurRate">
+		{ CALL panErp.dbo.up_cCustPurRateList (
+			#{workingType},	#{comCode}, #{userId}
+			,#{cCustPurRate.selectCustCode}			
+		)}	
+	</select>
+	<!-- 수주업체매입율(제조사별) ADD 231108 yoonsang -->				
+	<select id="cCustPurMakerRateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="cCustPurRate">
+		{ CALL panErp.dbo.up_cCustPurMakerRateAdd (
+			#{workingType},	#{comCode}, #{userId},
+			#{cCustPurRate.makerCode}	,#{cCustPurRate.purRate}	,#{selectCustCode}
+		)}	
+	</select>
+	<!-- 수주업체매입율(아이템별) ADD 231108 yoonsang -->				
+	<select id="cCustPurItemRateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="cCustPurRate">
+		{ CALL panErp.dbo.up_cCustPurItemRateAdd (
+			#{workingType},	#{comCode}, #{userId},
+			#{cCustPurRate.itemId}	,#{cCustPurRate.purRate}	,#{selectCustCode}
+		)}	
+	</select>			
+	
+	<!-- 
+		20231123 supi 출고부품조회 인풋값은 조회하려는 품번 리스트와 시작월 , 마지막월 날짜 양식은 yyyyMM
+		2023.11.27 hsg -  WITH(NOLOCK)  추가 	
+	 -->
+	<select id="rlStockList" statementType="CALLABLE" parameterType="HashMap" resultType="saleItemQty">
+		
+<!-- 			SELECT  comName ,   itemNo , MAX(a.makerName) makerName  ,MAX(a.itemName) itemName , SUM(a.saleQty) saleQty  , MIN(a.stdYm) startYm ,MAX(a.stdYm) endYm  -->
+			SELECT  comName ,   itemNo , MAX(a.makerName) makerName  ,MAX(a.itemName) itemName , SUM(a.saleQty) saleQty  , MIN(a.stdYm) startYm ,MAX(a.stdYm) endYm 
+			FROM panErp.dbo.s_saleQty_m a WITH(NOLOCK) 
+			WHERE a.itemNo IN
+			<foreach  collection="serchItemList" item="item"  index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+			AND (#{startYmSerch} = '전체'  OR a.stdYm > #{startYmSerch} OR a.stdYm = #{startYmSerch}) 
+			AND (#{endYmSerch} = '전체'  OR   #{endYmSerch} >= a.stdYm) 
+			AND a.comName != (SELECT b.custName FROM panErp.dbo.e_cust b WITH(NOLOCK) WHERE b.custCode = 'ZZZ' AND b.comCode = 'ㄱ000' )
+			
+<!--  			GROUP BY a.comName ,  a.itemNo-->
+			GROUP BY a.comName ,  a.itemNo
+			 
+<!-- 			WHERE    a.itemNo = #{serchItem}  00004398400 -->
+		
+	</select>
+	
+	<!-- 4car재고판매할인율 LIST 240105 yoonsang -->				
+	<select id="cCustSaleDcRateList" statementType="CALLABLE" parameterType="HashMap" resultType="cCustSaleDcRate">
+		{ CALL panErp.dbo.up_cCustSaleDcRateList (
+			#{workingType},	#{comCode}, #{userId}
+			,#{selectCustCode}			
+		)}	
+	</select>
+	
+	<!-- 4car재고판매할인율 ADD 240109 yoonsang 
+		20240201 supi 재구현으로 매개변수 변경
+	-->				
+	<select id="cCustSaleDcRateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_cCustSaleDcRateAdd (
+			#{comCode}, #{userId},
+			#{def_MakerCodeArr}	,#{def_dcArr}	,#{def_marginArr}	,
+			#{custCodeArr} , #{selectCustCode},
+			#{sel_MakerCodeArr}	,#{sel_dcArr}	,#{sel_marginArr}	
+		)}	
+	</select>
+	
+	
+	<!-- 4car재고판매할인율 ADD 240109 yoonsang -->				
+<!-- 	<select id="cCustSaleDcRateAdd" statementType="CALLABLE" parameterType="HashMap" resultType="cCustSaleDcRate"> -->
+<!-- 		{ CALL panErp.dbo.up_cCustSaleDcRateAdd ( -->
+<!-- 			#{workingType},	#{comCode}, #{userId}, -->
+<!-- 			#{custCode}	,#{makerCode}	,#{dcRate}	,#{selectCustCode} -->
+<!-- 		)}	 -->
+<!-- 	</select> -->
+	
+
+	<!-- 외부비노출재고목록 2024.04.29  hsg -->					
+	<select id="stockItemOuterNonDspList" statementType="CALLABLE" parameterType="HashMap" resultType="stockItemOuterNonDsp">
+		{ CALL panErp.dbo.up_stockItemOuterNonDspList (
+			#{workingType},	#{logComCode}, #{logUserId}			
+			,#{stockItemOuterNonDsp.itemId}, #{stockItemOuterNonDsp.itemNo}
+		)}	
+	</select>	
+		
+ 	<!-- 외부비노출재고목록 2024.04.29  hsg -->				
+	<select id="stockItemOuterNonDspAdd" statementType="CALLABLE" parameterType="HashMap" resultType="stockItemOuterNonDsp">
+		{ CALL panErp.dbo.up_stockItemOuterNonDspAdd (
+			#{workingType},	#{logComCode}, #{logUserId}	
+			,#{stockItemOuterNonDsp.itemId}, #{stockItemOuterNonDsp.memo1}
+		)}	
+	</select>
+ 	<!-- 주문회수창고사용출고에서 부품바코드 스캔시 해당 정보 조회용 통신 
+ 		//  2024.05.10 supi  - 최초작성	
+ 		//  2024.06.11 supi - 물류센터 기본랙 기반으로 랙정보 받아오는부분 추가
+ 	-->				
+	<select id="barcodeItem" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_barcodeItem (
+			#{logComCode}, #{logUserId}	,#{barCodeType}, 
+			#{wrRegComCode} , #{wrNo} , #{wrSeq},
+			#{itemId} , #{rackCode} , #{itemUnitIdx}  , #{logisRackIdx}
+		)}	
+	</select>
+	<!-- 바코드 발행 통신 
+ 		//  2024.05.13 supi  - 최초작성
+ 		//  2024.05.30 supi  - 위탁업체정보+ 아이템 id를 기반으로 하도록 변경	
+ 	-->			
+	<select id="barcodeAdd" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_barcodeAdd (
+			#{logComCode}, #{logUserId}	,#{barCodeType}, 
+			 #{itemId} , #{rackCode} , #{memo} ,#{consignCustCode} , #{storageCode} , #{rackName}
+		)}	
+	</select>
+			
+			
+	<!-- 물류센터별기본랙 내역 24.06.07 hsg -->
+	<select id="logisRackList" statementType="CALLABLE" parameterType="HashMap" resultType="logisRack">
+		{ CALL panErp.dbo.up_logisRackList (
+			#{workingType},	#{logComCode}, #{logUserId}			
+			,#{logisRack.logisRackId},#{logisRack.logisCode}, #{logisRack.logisName}, #{logisRack.logisRackName}, #{logisRack.validYN}			
+		)}	
+	</select>	
+
+	<!-- 랙등록 등록 2023.11.24 hsg  : 상기 rackAdd, rackUpt, rackDel 은 사용안함. -->
+	<select id="logisRackReg" statementType="CALLABLE"	parameterType="HashMap" resultType="logisRack">
+	{ CALL panErp.dbo.up_logisRackAdd (
+		#{workingType}, #{logComCode}, #{logUserId}
+		,#{logisRack.logisRackId},#{logisRack.logisCode}, #{logisRack.logisRackName}, #{logisRack.memo}, #{logisRack.validYN}				
+	)}	       
+	</select> 
+	
+	<!--  20241025 supi 매개변수로 제공된 수탁업체와 아이템아이디에 해당하는 모든 재고를 불러오는 통신,  -->
+	<select id="stockRackItemFind" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		SELECT  i.itemId , 
+				i.itemNo , 
+				i.itemName , 
+				sr.stockQty , 
+				r.rackCode ,
+				r.rackName ,
+				s.storageCode storCode ,
+				s.storageName storName ,
+				i.centerPrice ,
+				sr.stockQty * i.centerPrice sumCenterPrice,
+				s2.storageName moveStorName,
+				s2.storageCode moveStorCode,
+				r2.rackName moveRackName , 
+				r2.rackCode moveRackCode
+		FROM panErp.dbo.e_stockRack sr
+		LEFT JOIN panErp.dbo.e_item i ON i.itemid = sr.itemId
+		LEFT JOIN panErp.dbo.e_rack r ON r.comCode = sr.comCode AND r.rackCode = sr.rackCode
+		LEFT JOIN panErp.dbo.e_storage s ON s.comCode = r.comCode AND s.storageCode = r.storageCode
+		LEFT JOIN panErp.dbo.e_storage s2 ON s2.comCode = r.comCode AND s2.storageCode = '90000' -- 선종성매니저 창고
+		LEFT JOIN panErp.dbo.e_rack r2  ON r2.comCode = sr.comCode AND s2.storageCode = r2.storageCode and r2.rackName = r.rackName
+		WHERE sr.comCode = #{logComCode} 
+			AND sr.itemId = #{itemId}
+			AND stockQty >0
+			AND r.validYN = 'Y'
+			AND s.validYN = 'Y'
+			<choose>
+				<when test="consignCustCode == null">
+					AND  s.consignCustCode is null
+				</when>
+				<otherwise>
+					AND  s.consignCustCode = #{consignCustCode}
+				</otherwise>
+			</choose> 
+	</select> 	
+	<!--  2024.11.07 supi - 재고수불부 소장님 프로시저 기반으로 작성  -->
+	<select id="inventoryPayment" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_inventoryPayment (
+			#{workingType}, #{logComCode}	,#{logUserId}, 
+			 #{sYmd} , #{eYmd} , #{custCode} ,#{itemId} , #{itemNo} 
+		)}	
+	</select> 	
+</mapper>

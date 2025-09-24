@@ -1,0 +1,162 @@
+
+/* 바코드 인쇄에서 해당영역 안보이도록 */
+@media screen {
+		 #barcodePrintDiv {display: none;}
+	}
+
+
+/* 바코드 인쇄지 (현재 80밀리x40밀리) 라이너 너비등 해서 w48, h33으로 (단위mm)하면 되는데 용지 변경 생각해서 120mm,80mm으로 임시로 해둠 안맞으면 변경 */
+@media print and (max-width:120mm) and (max-height:80mm)  {  
+	   
+		#barcodeInput , .page ,#dialog-form ,.ui-widget-overlay {display: none;}
+		 .ui-dialog  {visibility : hidden;}
+		#barcodePrintDiv {	display: block;}
+		 
+	}
+
+.barcodePrint_Div
+{
+	position: relative; 
+	width: 100vw; 
+	height: 100vh;
+	page-break-before:always;
+}
+.barcodePrint_Box
+{
+	position:absolute; 
+	left:4mm; 
+	top:5mm; 
+}
+.barcodePrint_itemId
+{
+	
+	font-size: 10px; 
+	font-weight: bold;
+	position:absolute;  
+	left:5mm;
+	top:35mm; 
+}
+.barcodePrint_itemDataId
+{
+	font-size: 10px; 
+	font-weight: bold;
+	position:absolute;  
+	left:56mm; 
+	top:35mm;
+}
+.barcodePrint_itemNo
+{
+	font-size: 21px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:26mm; 
+	top:5mm; 
+	word-break:break-all ;
+	line-height: 80%;
+}
+.barcodePrint_itemName
+{
+	font-size: 13px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:26mm; 
+	top:15mm; 
+	word-break:break-all; 
+}
+.barcodePrint_itemYMD
+{
+	font-size: 10px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:65mm; 
+	top:32mm; 
+}
+.barcodePrint_rackName
+{
+	font-size: 20px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:26mm; 
+	top:10mm; 
+	word-break:break-all;  
+}
+.barcodePrint_code
+{
+	font-size: 10px; 
+	font-weight: bold;
+	position:absolute;  
+	
+	left:71mm; 
+	top:29mm; 
+}
+ 
+.barcodePrint_table{ 
+	border-collapse : collapse;  
+  	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	margin: auto;
+} 
+.barcodePrint_th,.barcodePrint_td{
+	  font-size : 11px;
+	  font-weight: bold; 
+      width: 230px;
+      height: 26px;
+      text-align: center;
+      border: 1px solid #000;
+      
+      vertical-align: top;	 
+      vertical-align: bottom;   
+      vertical-align: middle;   
+    } 
+.barcodePrint_th
+{
+	width: 50px;
+}
+.barcodePrint_Label_Box 
+{
+	position:absolute; 
+	right:4mm; 
+	top:3mm; 
+	z-index: 1;
+	 border: 1px solid #000;
+}
+.barcodePrint_storConsignCustCode
+{
+	font-size: 10px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:5mm;
+	top:32mm;  
+}
+.barcodePrint_tdComName ,
+.barcodePrint_reqNo
+{
+	padding-right: 50px;
+}
+/* .barcodePrint_rackCode */
+/* { */
+/* 	font-size: 10px;  */
+/* 	font-weight: bold;   */
+/* 	position:absolute;   */
+/* 	left:5mm;  */
+/* 	top:32mm;  */
+/* } */
+.barcodePrint_itemIdx
+{
+	font-size: 10px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:5mm; 
+	top:29mm; 
+}
+.barcodePrint_logisRackId
+{
+	font-size: 10px; 
+	font-weight: bold;  
+	position:absolute;  
+	left:5mm; 
+	top:32mm; 
+}

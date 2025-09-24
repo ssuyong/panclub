@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=800">
+<meta name="og:title" content="HTML5, 자바스크립트 데이터그리드 AUIGrid">
+<meta name="og:url" content="https://www.auisoft.net/">
+<meta name="og:description" content="HTML5, 자바스크립트 데이타그리드(javascript datagrid) AUISoft">
+<title>AUIGrid 데모, HTML5, 자바스크립트 데이터그리드 AUIGrid</title>
+<link href="https://www.auisoft.net/aui.ico" rel="shortcut icon" />
+
+<!-- 데모 구성용 CSS 입니다. 실제 프로젝트에서는 불필요 하니 추가할 필요 없습니다. -->
+<link href="./demo.css" rel="stylesheet">
+
+<!-- ajax 요청을 위한 스크립트입니다. -->
+<!-- jQuery 사용한다면, 해당 2개의 JS는 불필요 합니다.  -->
+<script type="text/javascript" src="./ajax.js"></script>
+<script type="text/javascript" src="./common.js"></script>
+
+<!-- AUIGrid 테마 CSS 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<!-- 원하는 테마가 있다면, 다른 파일로 교체 하십시오. -->
+<link href="../AUIGrid/AUIGrid_style.css" rel="stylesheet">
+
+<!-- AUIGrid 라이센스 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<script type="text/javascript" src="../AUIGrid/AUIGridLicense.js"></script>
+
+<!-- 실제적인 AUIGrid 라이브러리입니다. 그리드 출력을 위해 꼭 삽입하십시오.--> 
+<script type="text/javascript" src="../AUIGrid/AUIGrid.js"></script>
+<style type="text/css">
+
+/* 커스텀 칼럼 스타일 정의 */
+.my-colum-right {
+	text-align:right;
+}
+</style>
+
+<script type="text/javascript">
+
+// AUIGrid 생성 후 반환 ID
+var myGridID;
+
+// document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+function documentReady() {  
+	
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	
+	// 데이터 요청, 요청 성공 시 AUIGrid 에 데이터 삽입합니다.
+	requestData("./data/normal_kor_500.json");
+};
+
+// AUIGrid 칼럼 설정
+// 데이터 형태는 다음과 같은 형태임,
+var columnLayout = [ {
+		dataField : "name",
+		headerText : "Name",
+		filter : {
+			showIcon : true, // 기본 필터 메뉴 아이콘 표시
+			useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+		},
+		width : 200
+	}, {
+		dataField : "country",
+		headerText : "Country",
+		filter : {
+			showIcon : true, // 기본 필터 메뉴 아이콘 표시
+			useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+		},
+		width : 200
+	}, {
+		dataField : "product",
+		headerText : "Product",
+		filter : {
+			showIcon : true, // 기본 필터 메뉴 아이콘 표시
+			useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+		},
+		width: 200
+	}, {
+		dataField : "quantity",
+		headerText : "Quantity",
+		dataType : "numeric",
+		filter : {
+			showIcon : false, // 기본 필터 메뉴 아이콘 표시
+			inline : false // 인라인 필터 input 표시 안함
+		},
+		width: 120
+	}, {
+		dataField : "price",
+		headerText : "Price",
+		dataType : "numeric",
+		style : "my-colum-right",
+		filter : {
+			showIcon : false, // 기본 필터 메뉴 아이콘 표시
+			inline : false // 인라인 필터 input 표시 안함
+		}
+	}, {
+		dataField : "date",
+		headerText : "Date",
+		filter : {
+			showIcon : false, // 기본 필터 메뉴 아이콘 표시
+			inline : false // 인라인 필터 input 표시 안함
+		}
+	}
+];
+
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	var auiGridProps = {
+		
+		// 필터링 가능 여부
+		enableFilter : true,
+		 
+		// 인라인 필터 행을 표시할지 여부
+		showInlineFilter : true,
+		 
+		// 인라인 필터에서 필터 값 입력 시 반응 딜레이(기본값: 300)
+		// 예로 300 설정 시 사용자가 입력 종료 300ms 이후 필터링 실행
+		// 0 설정하면 매 입력마다 필터링 실행.
+		// 많은 수의 데이터나 사용자의 매 입력의 불필요한 필터링을 원치 않으면 300~500 설정 권함.
+		inlineFilterDelay : 300
+	};
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, auiGridProps);
+	
+	// ready 이벤트 바인딩
+	AUIGrid.bind(myGridID, "ready", function(evt) {
+		var inlineTextStr = getLocalStorageValue("inlineTexts"); // 인라인 필터링 텍스트
+		var inlineTexts = JSON.parse(inlineTextStr); 		
+				
+		// 인라인 필터링 텍스트들 설정 시킴
+		AUIGrid.setFilterInlineTexts(myGridID, inlineTexts);
+	});
+};
+
+
+// 필터 정보를 localStorage 에 저장
+function saveLocalStorage() {
+	
+	// 인라인 필터의 텍스트 값들 얻기.
+	var inlineTexts = AUIGrid.getFilterInlineTexts(myGridID);
+	
+	if(inlineTexts.length <= 0) {
+		alert("현재 인라인 필터링 된 상태가 아닙니다.");
+		return;
+	}
+	
+	if(typeof(Storage) != "undefined") { // Check browser support
+		var str = JSON.stringify(inlineTexts);
+		
+		localStorage.setItem("inlineTexts", str); // locaStorage에 보관
+		
+		alert("인라인 필터링 상태가 보관되었습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 현재 필터링 상태로 그리드가 출력됩니다.");
+	} else {
+		alert("localStorage 를 지원하지 않는 브라우저입니다.");
+		return;
+	}
+};
+
+//localStorage 정보 삭제
+function resetLocalStorage() {
+	if(typeof(Storage) != "undefined") { // Check browser support
+		localStorage.removeItem("inlineTexts");
+		alert("인라인 필터링 상태를 초기화했습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 필터링 없이 원래 상태로 출력됩니다.");
+	} else {
+		alert("localStorage 를 지원하지 않는 브라우저입니다.");
+		return;
+	}
+};
+
+function getLocalStorageValue(key) {
+	if(typeof(Storage) != "undefined") { // Check browser support
+		return localStorage.getItem(key);
+	} else {
+		alert("localStorage 를 지원하지 않는 브라우저입니다.");
+	}
+};
+
+
+</script>
+
+</head>
+<body>
+
+<div id="main">
+	<div class="desc">
+		<p>인라인 필터 행들의 텍스트 값(들)을 얻어 와서 추후에 동일한 그리드 설정이라면 그 텍스트 값(들)로 필터링을 할 수 있습니다.</p>
+		<p>데모는 localStorage 를 활용하여 인라인 필터 행들의 텍스트 값(들) 상태를 저장하고 있습니다. 개발 기획에 따라 해당 정보를 DB 상에 저장도 가능합니다.</p>
+		<p>브라우저 닫을 때 자동으로 상태 저장을 원하면 unload(beforeunload) 이벤트를 활용하십시오.</p>
+		<p>먼저 인라인 필터에서 텍스트 입력하여 필터링을 한 후 "인라인 필터 상재 저장" 버튼을 클릭하여 확인 하십시오.</p>
+		<p><span class="btn" onclick="saveLocalStorage()">인라인 필터 상태 저장</span><span class="btn" onclick="resetLocalStorage()">상태 정보 지우기</span></p>
+		<div class="src_cover"><pre>
+// 인라인 필터의 텍스트들 얻기.
+var inlineTexts = AUIGrid.getFilterInlineTexts(myGridID);
+
+... 
+
+// 인라인 필터링 텍스트들 설정 시켜 필터링 실행하기.
+AUIGrid.setFilterInlineTexts(myGridID, inlineTexts);</pre></div>
+	<p>참고 : 해당 기능은 v3.0.11.10 에서 사용 가능합니다.</p>
+	</div>
+	<div>
+		<!-- 에이유아이 그리드가 이곳에 생성됩니다. -->
+		<div id="grid_wrap" style="width:1200px; height:320px; margin:0 auto;"></div>
+	</div>
+	<div class="desc_bottom">
+		<p id="ellapse"></p>
+	</div>
+</div>
+<div id="footer">
+     <div class="copyright">
+        <p>Copyright ©2022 AUISoft </p>
+    </div>
+</div>
+
+</body>
+</html>

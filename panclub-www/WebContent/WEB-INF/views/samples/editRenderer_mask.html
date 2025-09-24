@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=800">
+<meta name="og:title" content="HTML5, 자바스크립트 데이터그리드 AUIGrid">
+<meta name="og:url" content="https://www.auisoft.net/">
+<meta name="og:description" content="HTML5, 자바스크립트 데이타그리드(javascript datagrid) AUISoft">
+<title>AUIGrid 데모, HTML5, 자바스크립트 데이터그리드 AUIGrid</title>
+<link href="https://www.auisoft.net/aui.ico" rel="shortcut icon" />
+
+<!-- 데모 구성용 CSS 입니다. 실제 프로젝트에서는 불필요 하니 추가할 필요 없습니다. -->
+<link href="./demo.css" rel="stylesheet">
+
+<!-- ajax 요청을 위한 스크립트입니다. -->
+<!-- jQuery 사용한다면, 해당 2개의 JS는 불필요 합니다.  -->
+<script type="text/javascript" src="./ajax.js"></script>
+<script type="text/javascript" src="./common.js"></script>
+
+<!-- AUIGrid 테마 CSS 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<!-- 원하는 테마가 있다면, 다른 파일로 교체 하십시오. -->
+<link href="../AUIGrid/AUIGrid_style.css" rel="stylesheet">
+
+<!-- AUIGrid 라이센스 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<script type="text/javascript" src="../AUIGrid/AUIGridLicense.js"></script>
+
+<!-- 실제적인 AUIGrid 라이브러리입니다. 그리드 출력을 위해 꼭 삽입하십시오.--> 
+<script type="text/javascript" src="../AUIGrid/AUIGrid.js"></script>
+<style type="text/css">
+
+/* 커스텀 칼럼 스타일 정의 */
+.my-left-column {
+	text-align:left;
+}
+.my-right-column {
+	text-align:right;
+}
+.my-center-column {
+	text-align:center;
+}
+</style>
+<script type="text/javascript">
+
+// AUIGrid 생성 후 반환 ID
+var myGridID;
+
+// document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+function documentReady() {  
+	
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	
+	// AUIGrid 에 데이터 삽입합니다.
+	AUIGrid.setGridData(myGridID, gData);
+
+};
+
+// AUIGrid 칼럼 설정
+var columnLayout = [{
+		headerText : "applyMaskValue",
+		headerTooltip : { // 헤더 툴팁 표시 HTML 양식
+		    show : true,
+		    tooltipHtml : "applyMaskValue 는 마스크 적용된 값 | 풀린 값 중 어떤 값이 실제 데이터로 적용될지를 지정합니다.<br/>true, false 설정된 각각의 값을 변경 하고 그리드 하단 실 적용 값 확인하여 비교하십시오."
+		},
+		children : [{
+						dataField : "date",
+						headerText : "false 날짜",
+						dataType : "date",
+						formatString : "yyyy년 mm월 dd일",
+						width : 120,
+						editRenderer : {
+							type : "MaskEditRenderer",
+							mask : "9999-99-99", // 숫자 8 자리만 입력 가능
+							placeholder : "yyyy-mm-dd", // 플레이스홀더
+							applyMaskValue : false, // 실제 데이터 적용은 마스크 풀린 값이 적용됨.
+							validator : function(oldValue, newValue, item) { // 에디팅 유효성 검사
+								var m,d;
+								var isValid = true;
+								m = parseInt(newValue.substring(4,6));
+								d = parseInt(newValue.substring(6,8));
+								if(isNaN(m) || isNaN(d) || m > 12 || d > 31) { // 월은 12월, 일은 31일을 넘지 않게.
+									isValid = false;
+								} else {
+									isValid = true;
+								}
+								// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+								return { "validate" : isValid, "message"  : "유효한 날짜 형식으로 입력해주세요." };
+							}
+						}
+					}, {
+						dataField : "date2",
+						headerText : "true 날짜",
+						dataType : "date",
+						formatString : "yyyy년 mm월 dd일",
+						width : 120,
+						editRenderer : {
+							type : "MaskEditRenderer",
+							mask : "9999-99-99", // 숫자 8 자리만 입력 가능
+							placeholder : "yyyy-mm-dd", // 플레이스홀더
+							applyMaskValue : true, // 실제 데이터 적용은 마스크 적용된 값
+							validator : function(oldValue, newValue, item) { // 에디팅 유효성 검사
+								var m,d;
+								var isValid = true;
+								m = parseInt(newValue.substring(5,7));
+								d = parseInt(newValue.substring(8,10));
+								if(isNaN(m) || isNaN(d) || m > 12 || d > 31) { // 월은 12월, 일은 31일을 넘지 않게.
+									isValid = false;
+								} else {
+									isValid = true;
+								}
+								// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+								return { "validate" : isValid, "message"  : "유효한 날짜 형식으로 입력해주세요." };
+							}
+						}
+					}]
+	}, {
+		dataField : "time",
+		headerText : "시간",
+		width : 120,
+		labelFunction : function( rowIndex, columnIndex, value, headerText, item ) {
+			return AUIGrid.makeValueMasked("99:99:99", value);
+		},
+		editRenderer : {
+			type : "MaskEditRenderer",
+			mask : "99:99:99",
+			textAlign : "center",
+			placeholder : "__:__:__", // 플레이스홀더
+			applyMaskValue : false // 실제 데이터 적용은 마스크 풀린 값이 적용됨.
+		}
+	}, {
+		dataField : "card",
+		headerText : "카드번호",
+		width : 150,
+		labelFunction : function( rowIndex, columnIndex, value, headerText, item ) {
+			// 실제 데이터는 16자리 숫자로 구성되어 있기 때문에 사용자에게 이쁘게 보이기 위해 4자리씩 끊어서 출력 시킴
+			return AUIGrid.makeValueMasked("9999 9999 9999 9999", value);
+		},
+		editRenderer : {
+			type : "MaskEditRenderer",
+			mask : "9999 9999 9999 9999",
+			applyMaskValue : false // 실제 데이터 적용은 마스크 풀린 값이 적용됨.
+		}
+	}, {
+		dataField : "id",
+		headerText : "생년월일-성별",
+		width : 120,
+		headerTooltip : { // 헤더 툴팁 표시 HTML 양식
+		    show : true,
+		    tooltipHtml : "autoEnter=true 설정<br/>유효한 자릿수 모두 입력하면 엔터로 입력 완료된 것으로 간주"
+		},
+		labelFunction : function( rowIndex, columnIndex, value, headerText, item ) {
+			return AUIGrid.makeValueMasked("999999-9xxxxxx", value);
+		},
+		editRenderer : {
+			type : "MaskEditRenderer",
+			mask : "999999-9xxxxxx",
+			autoEnter : true, // 유효한 자릿수 모두 입력하면 엔터로 입력 완료된 것으로 간주
+			applyMaskValue : false // 실제 데이터 적용은 마스크 풀린 값이 적용됨.
+		}
+	}, {
+		dataField : "a592",
+		headerText : "영대문자 3개<br>숫자2개만 입력",
+		width : 120,
+		labelFunction : function( rowIndex, columnIndex, value, headerText, item ) {
+			return AUIGrid.makeValueMasked("AAA-99", value);
+		},
+		editRenderer : {
+			type : "MaskEditRenderer",
+			mask : "AAA-99",
+			applyMaskValue : false // 실제 데이터 적용은 마스크 풀린 값이 적용됨.
+		}
+	}];
+
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	// 그리드 속성 설정
+	var gridPros = {
+		
+		selectionMode : "multipleCells",
+		
+		editable : true,
+	
+		// 상태 칼럼 사용
+		showStateColumn : true,
+		
+		// 칼럼 끝에서 오른쪽 이동 시 다음 행, 처음 칼럼으로 이동할지 여부
+		wrapSelectionMove : true,
+		
+		// 엔터키가 다음 행이 아닌 다음 칼럼으로 이동할지 여부 (기본값 : false)
+		enterKeyColumnBase : true
+	};
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, gridPros);
+	
+	AUIGrid.bind(myGridID, "cellEditEnd", function(event) {
+		document.getElementById("ellaspe").innerHTML = "실제 데이터에 적용된 값 : " + event.value;
+	});
+};
+
+var gData = [{
+	"date" : "20210101", "date2" : "2021-01-01", "time" : "133015", "card" : "3141031782833919", "id" : "9102031", "a592" : "ABC92"
+}, {
+	"date" : "20210102", "date2" : "2021-01-02", "time" : "133116", "card" : "3541031782833910", "id" : "9202132", "a592" : "ACD21"
+}, {
+	"date" : "20210103", "date2" : "2021-01-03", "time" : "133217", "card" : "3441031782833912", "id" : "9303041", "a592" : "EFT38"
+}, {
+	"date" : "20210104", "date2" : "2021-01-04", "time" : "133325", "card" : "3141031782833919", "id" : "9406082", "a592" : "TCA95"
+}, {
+	"date" : "20210105", "date2" : "2021-01-05", "time" : "133435", "card" : "3541031782833910", "id" : "9504111", "a592" : "FCD88"
+}, {
+	"date" : "20210106", "date2" : "2021-01-06", "time" : "133545", "card" : "3441031782833912", "id" : "9612132", "a592" : "TYU24"
+}]
+
+
+</script>
+
+</head>
+<body>
+
+<div id="main">
+	<div class="desc">
+		<p>입력을 강제 시킬 마스크(mask)를 설정합니다. 마스크는 미리 정해진 <strong>자릿수</strong>와 해당 자리에 입력 가능한 <strong>패턴</strong>을 의미합니다.</p>
+		<p>마스크 편집 렌더러를 사용하기 위해서는 mask 속성을 반드시 설정해야 합니다.</p>
+		<p>이 편집 렌더러는 사용자가 수정한 값의 유효성 검사(validator) 을 할 수 있습니다.</p>
+		<p>클립보드의 값을 마스크 설정된 칼럼에 붙여 넣기 할 때 설정된 mask 규칙에 어긋나면 붙여 넣기 되지 않습니다.</p>
+		<p>마스크 설정의 입력 유효 패턴은 다음과 같습니다.</p>
+		<ul><li>9 : 숫자만 입력 가능</li>
+			<li>a : 영문자(대소문자)만 입력 가능</li>
+			<li>A : 영문자 대문자만 입력 가능</li>
+			<li>* : 숫자, 영문 대소문자 입력 가능</li>
+			<li>~ : 양부호, 음부호(+, -) 둘 중 하나 입력 가능</li>
+		</ul>
+<div class="src_cover"><pre>
+		dataField : "date",
+		headerText : "날짜",
+		width : 123,
+		editRenderer : {
+			type : "MaskEditRenderer",
+			mask : "9999-99-99", // 숫자 8 자리만 입력 가능
+			placeholder : "yyyy-mm-dd" // 플레이스홀더
+		}
+</pre></div>
+	</div>
+	<div>
+		<!-- 에이유아이 그리드가 이곳에 생성됩니다. -->
+		<div id="grid_wrap" style="width:1200px; height:280px; margin:0 auto;"></div>
+	</div>
+	<div class="desc_bottom">
+		<p id="ellaspe"></p>
+	</div>
+</div>
+<div id="footer">
+     <div class="copyright">
+        <p>Copyright ©2022 AUISoft </p>
+    </div>
+</div>
+
+</body>
+</html>

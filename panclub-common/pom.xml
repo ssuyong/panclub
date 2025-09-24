@@ -1,0 +1,507 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>kr.co.panclub</groupId>
+    <artifactId>panclub-root</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>panclub-common</artifactId>
+  
+     	<!-- 버전설정 -->
+  	<properties>
+		<java-version>1.8</java-version>
+		<org.springframework-version>5.1.4.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.9.2</org.aspectj-version>
+		<org.slf4j-version>1.7.25</org.slf4j-version>		
+		<maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	
+	<!-- 함승구: mssql관련 jar 사용하기 위해 추가 -->
+	<repositories>
+		<repository>
+			<id>project.in.repositoory</id>
+			<name>project jars</name>
+			<url>file://${project.basedir}/lib</url>
+		</repository>		
+	</repositories>
+	
+	<dependencies>
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework-version}</version>
+			<exclusions>
+				<!-- Exclude Commons Logging in favor of SLF4j -->
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				 </exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+				
+		<!-- AOP: AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>	
+		
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>jms</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- @Inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+
+ 		<!-- 함승구: 자바서블릿 변경후-->  
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+	
+		<!-- Test -->
+		<!-- 함승구: 4.7에서 4.12로 변경-->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- 여기 부터는 기본설정이 아닌 함승구가 삽입한 레포지토리 -->
+        <!-- 여기 부터는 기본설정이 아닌 함승구가 삽입한 레포지토리 -->
+		<!-- 여기 부터는 기본설정이 아닌 함승구가 삽입한 레포지토리 -->
+        <!-- 여기 부터는 기본설정이 아닌 함승구가 삽입한 레포지토리 -->
+        				
+		<!-- 함승구: db연결하기 위해 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.38</version>
+		</dependency>
+<!-- 2022.09.13 Missing artifact sqljdbc4:sqljdbc4:jar:4.0 오류발생해서 아래것으로 변경-->
+	<!-- 	<dependency>
+       		<groupId>sqljdbc4</groupId>
+        	<artifactId>sqljdbc4</artifactId>
+        	<version>4.0</version>
+    	</dependency>    	  -->
+	<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+ 	<dependency>
+	    <groupId>com.microsoft.sqlserver</groupId>
+	    <artifactId>mssql-jdbc</artifactId>
+	    <version>8.2.2.jre8</version>
+	</dependency> 
+
+		<!-- 함승구: 마이바티스 사용하기 위해 -->
+  		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis</artifactId>
+		    <version>3.4.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis-spring</artifactId>
+		    <version>1.3.0</version>
+		</dependency>
+		
+		<!-- 함승구: 로그기록용. -->
+		<dependency>
+		    <groupId>org.bgee.log4jdbc-log4j2</groupId>
+		    <artifactId>log4jdbc-log4j2-jdbc4</artifactId>
+		    <version>1.16</version>
+		</dependency>
+  
+		<!-- 함승구: json사용하기 위한 것 같은데.. 기억이 안남. -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
+		<!-- 함승구: JSON View. json용도인듯.. -->
+		<dependency>
+		    <groupId>net.sf.json-lib</groupId>
+		    <artifactId>json-lib-ext-spring</artifactId>
+		    <version>1.0.2</version>
+		</dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+        
+ 		<!-- 함승구: json용인듯 한데..정확히 모름.. -->
+ 		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
+
+		<!-- 함승구: json 파싱용. LG유플러스 메시지허브 알림톡 파싱용으로 사용. 2021.04.15 -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20211205</version>
+		</dependency>
+
+		<!-- 함승구: junit 테스트용도 -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>   
+
+		<!-- 함승구: 파일업로드용인듯.. --> 
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.2.2</version>
+		</dependency>
+		<!-- 함승구: 파일업로드용: 위의 commons-fileupload와 같이 추가됨.. -->
+		<!-- MultipartHttpServletRequset -->
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.11.0</version>
+		</dependency>
+				
+		<!-- 함승구: 이미지 업로드용 관련인듯.. -->
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+		</dependency>
+
+		
+		<!-- 함승구: 암호화관련 인듯.. -->
+   		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.10</version>
+		</dependency>
+
+		<!-- 함승구: request 보내기 -다른 서버로 보터 request를 보내 response 받아 데이터를 처리해야할 때-->
+		<dependency>
+        	<groupId>org.apache.httpcomponents</groupId>
+        	<artifactId>httpclient</artifactId>
+        	<version>4.3.4</version>
+    	</dependency>
+
+		<!-- 함승구: 메일 발송.. -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>${org.springframework-version}</version>
+		</dependency>
+    	<dependency>
+		    <groupId>com.sun.mail</groupId>
+		    <artifactId>javax.mail</artifactId>
+		    <version>1.5.6</version>
+		</dependency>
+		
+		<!-- : 엑셀업로드.. -->
+		<dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi</artifactId>
+	        <version>5.2.3</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-ooxml</artifactId>
+	        <version>5.2.3</version>
+	    </dependency>
+	    	
+		<!-- 함승구: 스프링시큐리티.. 80->443. http->https용도.. -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-web</artifactId>
+		    <version>3.2.3.RELEASE</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>3.2.3.RELEASE</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.11.3</version>
+		</dependency>
+			
+		<!-- 함승구: 텍닥용 -->
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.2.6</version>
+        </dependency>
+        
+<!--    2022.09.13 이거 주석 안하면 맨위에서   Missing artifact org.glassfish.jaxb:txw2:jar:2.4.0-b180608.0325 오류가 발생했음.   
+         <dependency>
+		    <groupId>com.sun.xml.ws</groupId>
+		    <artifactId>rt</artifactId>
+		    <version>2.3.1</version>
+		</dependency>
+         -->
+        
+        <!-- 함승구: 디바이스구분:모바일인지..2020.03.05  -->
+        <dependency>
+		    <groupId>org.springframework.mobile</groupId>
+		    <artifactId>spring-mobile-device</artifactId>
+		    <version>1.1.5.RELEASE</version>
+		</dependency>
+        			
+        <!-- 함승구: 셀레니엄(크롤링용)  2020.04.16 버전이 3.0 대인 경우 톰캣 9에서 오류 발생?-->				    	
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-java</artifactId>
+		    <version>2.53.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>3.7.1</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>com.google.guava</groupId>
+		    		<artifactId>guava</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
+		
+		<!-- sunset: 이미지썸네일 : 2020.06.03 -->
+		<dependency>
+    		<groupId>org.imgscalr</groupId>
+    		<artifactId>imgscalr-lib</artifactId>
+    		<version>4.2</version>
+		</dependency>
+		<!-- sunset: 동영상 이미지썸네일 : 2020.06.03 -->
+		<dependency>
+		    <groupId>org.jcodec</groupId>
+		    <artifactId>jcodec</artifactId>
+		    <version>0.2.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.jcodec</groupId>
+		    <artifactId>jcodec-javase</artifactId>
+		    <version>0.2.3</version>
+		</dependency> 
+		
+		<!-- tellmenow by sunset at 2020.06.05 : image EXIF read --> 
+		<dependency> 
+			<groupId>com.drewnoakes</groupId> 
+			<artifactId>metadata-extractor</artifactId> 
+			<version>2.9.1</version> 
+		</dependency>
+
+		<!-- Unirest REST API 호출. 2022.03.17 -->
+		<dependency>
+		    <groupId>com.konghq</groupId>
+		    <artifactId>unirest-java</artifactId>
+		    <version>3.13.6</version>
+		</dependency>
+        				  
+        <dependency>
+		    <groupId>com.squareup.okhttp3</groupId>
+		    <artifactId>okhttp</artifactId>
+		    <version>3.4.2</version>
+	    </dependency>
+		  				  
+        <!-- 메뉴 권한 처리 위해. 2023.01.30. 추가는 했으나 사용은 안함. -->
+		<dependency> 
+		    <groupId>org.springframework.security</groupId> 
+		    <artifactId>spring-security-taglibs</artifactId> 
+		    <version>3.2.3.RELEASE</version>
+		</dependency>
+        
+        <!-- jjwt token 사용위해. 2023.01.31. 
+        	토큰 라이브러리 jwt 의존성 2024.11.05 supi
+        -->
+		<dependency>
+	        <groupId>io.jsonwebtoken</groupId>
+	        <artifactId>jjwt</artifactId>
+	        <version>0.12.6</version>
+  		</dependency> 
+      
+      	<!-- BEGIN: EHCache 위한 추가. 2023.01.31 -->
+        <!-- EHCache 모듈 (블로그 작성 시점에서 2.10.6이 최신이다.) -->
+		<dependency>
+		    <groupId>net.sf.ehcache</groupId>
+		    <artifactId>ehcache</artifactId>
+		    <version>2.10.6</version> 
+		</dependency>
+		
+		<!-- Spring Caching Interface -->
+		<!-- <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>4.3.20.RELEASE</version>
+		</dependency> -->
+		
+		<!-- EHCache Support 모듈, 다른 Caching 지원모듈 -->
+		<!-- <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>4.3.20.RELEASE</version>
+		</dependency>    	 -->		
+		<!-- END: EHCache 위한 추가. 2023.01.31 -->
+
+		<!-- 세션 db저장 2023.02.01-->
+		<dependency>
+		    <groupId>org.springframework.session</groupId>
+		    <artifactId>spring-session</artifactId>
+		    <version>1.3.5.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.session</groupId>
+		    <artifactId>spring-session-jdbc</artifactId>
+		    <version>2.5.3</version>
+		</dependency>
+
+        <!-- @Resource 어노테이션 사용 2023.02.23 -->
+		<dependency>
+		    <groupId>javax.annotation</groupId>
+		    <artifactId>javax.annotation-api</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+		
+		<!-- QR코드 생성 2023.05.17 BK-->
+		 <dependency>
+		    <groupId>com.google.zxing</groupId>
+		    <artifactId>javase</artifactId>
+		    <version>3.1.0</version>
+		</dependency>
+		 
+  		<!-- 롬복 의존성 2024.11.05 supi -->
+  		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.4</version>
+			<scope>provided</scope>
+		</dependency>
+		           				    			        
+	</dependencies>
+	
+    <build>
+        <plugins>
+                              
+            
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+                    </additionalProjectnatures>
+                    <additionalBuildcommands>
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+                    </additionalBuildcommands>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>org.test.int1.Main</mainClass>
+                </configuration>
+            </plugin>
+            
+            
+            
+
+        </plugins>
+    </build>
+</project>

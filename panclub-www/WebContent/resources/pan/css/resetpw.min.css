@@ -1,0 +1,16 @@
+*{
+	font-family: 'IBM Plex Sans KR', sans-serif;	
+}
+h2{
+	border-bottom : 1px solid black;
+	margin-bottom: 3px;
+}
+.form-control{
+	height: 30px;
+}
+.form-label{
+	margin-top: 20px;
+}
+#btnResetPw {
+	height: 30px;
+}

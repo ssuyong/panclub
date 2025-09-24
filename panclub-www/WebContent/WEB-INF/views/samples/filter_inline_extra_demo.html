@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=800">
+<meta name="og:title" content="HTML5, 자바스크립트 데이터그리드 AUIGrid">
+<meta name="og:url" content="https://www.auisoft.net/">
+<meta name="og:description" content="HTML5, 자바스크립트 데이타그리드(javascript datagrid) AUISoft">
+<title>AUIGrid 데모, HTML5, 자바스크립트 데이터그리드 AUIGrid</title>
+<link href="https://www.auisoft.net/aui.ico" rel="shortcut icon" />
+
+<!-- 데모 구성용 CSS 입니다. 실제 프로젝트에서는 불필요 하니 추가할 필요 없습니다. -->
+<link href="./demo.css" rel="stylesheet">
+
+<!-- ajax 요청을 위한 스크립트입니다. -->
+<!-- jQuery 사용한다면, 해당 2개의 JS는 불필요 합니다.  -->
+<script type="text/javascript" src="./ajax.js"></script>
+<script type="text/javascript" src="./common.js"></script>
+
+<!-- AUIGrid 테마 CSS 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<!-- 원하는 테마가 있다면, 다른 파일로 교체 하십시오. -->
+<link href="../AUIGrid/AUIGrid_style.css" rel="stylesheet">
+
+<!-- AUIGrid 라이센스 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<script type="text/javascript" src="../AUIGrid/AUIGridLicense.js"></script>
+
+<!-- 실제적인 AUIGrid 라이브러리입니다. 그리드 출력을 위해 꼭 삽입하십시오.--> 
+<script type="text/javascript" src="../AUIGrid/AUIGrid.js"></script>
+<style type="text/css">
+.feature_ul {
+	list-style-type:disc;
+	list-style-position: inside;
+	line-height:1.5em;
+}
+
+/* 커스텀 칼럼 스타일 정의 */
+.my-colum-right {
+	text-align:right;
+}
+</style>
+
+<script type="text/javascript">
+
+// AUIGrid 생성 후 반환 ID
+var myGridID;
+
+// document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+function documentReady() {  
+	
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	
+	// 데이터 요청, 요청 성공 시 AUIGrid 에 데이터 삽입합니다.
+	requestData("./data/normal_kor_500.json");
+};
+
+// AUIGrid 칼럼 설정
+// 데이터 형태는 다음과 같은 형태임,
+//[{"id":"#Cust0","date":"2014-09-03","name":"Han","country":"USA","product":"Apple","color":"Red","price":746400}, { .....} ];
+var columnLayout = [ {
+		dataField : "name",
+		headerText : "Name",
+		filter : {
+			showIcon : true, // 기본 필터 메뉴 아이콘 표시
+			useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+		},
+		width : 200
+	}, {
+		dataField : "country",
+		headerText : "Country",
+		filter : {
+			showIcon : true, // 기본 필터 메뉴 아이콘 표시
+			useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+		},
+		width : 200
+	}, {
+		dataField : "product",
+		headerText : "Product",
+		filter : {
+			showIcon : true, // 기본 필터 메뉴 아이콘 표시
+			useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+		},
+		width: 200
+	}, {
+		dataField : "quantity",
+		headerText : "Quantity",
+		dataType : "numeric",
+		filter : {
+			inline : false // 인라인 필터 input 표시 안함
+		},
+		width: 120
+	}, {
+		dataField : "price",
+		headerText : "Price",
+		dataType : "numeric",
+		style : "my-colum-right",
+		filter : {
+			inline : false // 인라인 필터 input 표시 안함
+		}
+	}, {
+		dataField : "date",
+		headerText : "Date",
+		filter : {
+			inline : false // 인라인 필터 input 표시 안함
+		}
+	}
+];
+
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	var auiGridProps = {
+		
+		// 필터링 가능 여부
+		enableFilter : true,
+		 
+		// 인라인 필터 행을 표시할지 여부
+		showInlineFilter : true,
+		 
+		// 인라인 필터에서 필터 값 입력 시 반응 딜레이(기본값: 300)
+		// 예로 300 설정 시 사용자가 입력 종료 300ms 이후 필터링 실행
+		// 0 설정하면 매 입력마다 필터링 실행.
+		// 많은 수의 데이터나 사용자의 매 입력의 불필요한 필터링을 원치 않으면 300~500 설정 권함.
+		inlineFilterDelay : 300
+	};
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, auiGridProps);
+};
+
+</script>
+
+</head>
+<body>
+
+<div id="main">
+	<div class="desc">
+		<p>인라인 필터의 인풋(input)에 순수 값에 AND(&), OR(|), NOT(!) 확장 기능을 사용하도록 설정한 모습입니다.</p>
+<div class="src_cover"><pre>
+var columnLayout = [ {
+	dataField : "name",
+	headerText : "Name",
+	filter : {
+		useInlineExtra : true // AND OR NOT 확장 인라인 필터 사용 (기본값 : false)
+	},
+	....</pre></div>
+		<p>useInlineExtra 를 설정하면 해당 칼럼의 인라인 필터에서 AND(&), OR(|), NOT(!)을 같이 사용할 수 있습니다.</p>
+		<p>useInlineExtra 를 설정하면 & | ! 은 값으로 인식되지 않습니다. 연산자로 인식됩니다.</p>
+		<ul class="feature_ul">
+			<li>a<strong style="color:#ff0000;">&</strong>e : a 와 e 를 모두 포함하는 문자열로 필터링 - AND</li>
+			<li>an<strong style="color:#ff0000;">|</strong>em : an 또는 em 을 포함하는 문자열로 필터링 - OR</li>
+			<li><strong style="color:#ff0000;">!</strong>a : a 를 포함하지 않는 문자열로 필터링 - NOT</li>
+		</ul>
+		<p>참고 : 해당 기능은 v3.0.11.10 에서 사용 가능합니다.</p>
+</div>
+	<div>
+		<!-- 에이유아이 그리드가 이곳에 생성됩니다. -->
+		<div id="grid_wrap" style="width:1200px; height:320px; margin:0 auto;"></div>
+	</div>
+	<div class="desc_bottom">
+		<p id="ellapse"></p>
+	</div>
+</div>
+<div id="footer">
+     <div class="copyright">
+        <p>Copyright ©2022 AUISoft </p>
+    </div>
+</div>
+
+</body>
+</html>

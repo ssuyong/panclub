@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+<meta http-equiv="Content-Style-Type" content="text/css"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+<meta name="title" content="HTML5, 자바스크립트 데이터그리드 AUIGrid"/>
+<meta name="url" content="https://www.auisoft.net/">
+<meta name="description" content="HTML5, 자바스크립트 데이타그리드(javascript datagrid) AUISoft"/>
+<title>AUIGrid 자바스크립트 데이터그리드(Javascript DataGrid  AUIGrid)</title>
+<link href="https://www.auisoft.net/aui.ico" rel="shortcut icon" />
+
+<link href="./style/AUIGrid_style.css" rel="stylesheet"/>
+
+
+<!-- 데모를 위한 스크립트입니다. -->
+<script type="text/javascript" src="./js/demo.js"></script>
+
+<!-- 공용 Ajax 요청 스크립트 -->
+<script type="text/javascript" src="./js/common.js"></script>
+
+<!-- AUIGrid 라이센스 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<script type="text/javascript" src="./js/AUIGridLicense.js"></script>
+<script type="text/javascript" src="../AUIGrid/AUIGrid.js"></script>
+<style type="text/css">
+.custom-right {
+	text-align:right;
+}
+</style>
+
+<script type="text/javascript">
+
+// AUIGrid 생성 후 반환 ID
+var myGridID;
+
+// document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+function documentReady() {  
+	
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	
+	AUIGrid.setGridData(myGridID, gridData);
+};
+
+// AUIGrid 칼럼 설정
+var columnLayout = [{
+		dataField : "f0",
+		headerText : "InputEditRenderer",
+		editRenderer : {
+			type : "InputEditRenderer",
+			inputMode : "decimal"
+		}
+	}, {
+		dataField : "f1",
+		headerText : "NumberStepRenderer",
+		dataType : "numeric",
+		formatString : "#,##0",
+		style : "custom-right",
+		renderer : {
+			type : "NumberStepRenderer",
+			inputMode : "decimal",
+			min : -100000,
+			max : 1000000,
+			step : 1000
+		}
+	}, {
+		dataField : "f2",
+		headerText : "NumberStepRenderer",
+		dataType : "numeric",
+		formatString : "#,##0",
+		style : "custom-right",
+		editRenderer : {
+			type : "NumberStepRenderer",
+			inputMode : "decimal",
+			min : -100000,
+			max : 1000000,
+			step : 1000
+		}
+	}, {
+		dataField : "f3",
+		headerText : "CalendarRenderer",
+		dataType : "date",
+		formatString : "yyyy년 mm월 dd일",
+		editRenderer : {
+			type : "CalendarRenderer",
+			inputMode : "decimal",
+			mask : "9999/99/99",
+			showExtraDays : false, // 지난 달, 다음 달 여분의 날짜(days) 출력 안함
+			onlyCalendar : false, // 사용자 입력 불가, 즉 달력으로만 날짜입력 (기본값 : true)
+			defaultFormat : "yyyy/mm/dd", // 달력 선택 시 데이터에 적용되는 날짜 형식
+			validator : function(oldValue, newValue, rowItem) { // 에디팅 유효성 검사
+				if(isNaN(Date.parse(new Date(newValue)))) { // 그냥 막 입력한 경우 인지 조사. 즉, JS 가 Date 로 파싱할 수 있는 형식인지 조사
+					isValid = false;
+				} else {
+					isValid = true;
+				}
+				// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+				return { "validate" : isValid, "message"  : "알 수 없는 날짜입니다. 확인 후 다시 입력해 주십시오." };
+		}
+		}
+	}, {
+		dataField : "f4",
+		headerText : "ComboBoxRenderer",
+		editRenderer : {
+			type : "ComboBoxRenderer",
+			inputMode : "decimal",
+			list : [0, 1, 2, 3, 4, 5]
+		}
+	}, {
+		dataField : "f5",
+		headerText : "MaskEditRenderer",
+		editRenderer : {
+			type : "MaskEditRenderer",
+			inputMode : "decimal",
+			mask : "999-99-99999",
+			applyMaskValue : false
+		}
+	}];
+
+
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	var auiGridProps = {
+			
+			editable : true,
+			
+			// 모바일 기기에서 스크롤 크기 작게
+			autoScrollSize : true,
+			
+			// 모바일 기기에서 무조건 싱글 탭(1번 클릭) 으로 편집 모드 진입
+			// 즉, editingBeginMode="doubleClick" 인 경우 PC는 더블클릭이라도 모바일은 싱글 탭임.
+			autoEditBeginMode : true,
+			
+			// 모바일 기기의 스크롤 크기
+			scrollHeight4Mobile : 4,
+			
+			// 셀을 클릭하면 가상 키보드가 올라오나요?
+			// enableFocus  = false 설정하십시오.
+			enableFocus : false
+			
+	};
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, auiGridProps);
+};
+
+var timerId = null;
+
+//리사이즈 이벤트
+window.onresize = function() {
+	// 200ms 보다 빠르게 리사이징 된다면..
+	if(timerId !== null) {
+		clearTimeout(timerId);
+	}
+	
+	timerId = setTimeout(function() {
+		
+		// 그리드 리사이징
+		if(myGridID) {
+			AUIGrid.resize(myGridID);
+		}
+	}, 200);  // 현재 200ms 민감도....환경에 맞게 조절하세요.
+};
+
+// 그리드 데이터
+var gridData = [{"f0":"0, 0","f1":29677,"f2":59879,"f3":"2021/07/10","f4":"0","f5":"1234567890","f6":"0, 6"},{"f0":"1, 0","f1":76860,"f2":7849,"f3":"2021/07/11","f4":"1","f5":"1234567890","f6":"1, 6"},{"f0":"2, 0","f1":14687,"f2":33467,"f3":"2021/07/12","f4":"2","f5":"1234567890","f6":"2, 6"},{"f0":"3, 0","f1":17230,"f2":86930,"f3":"2021/07/13","f4":"3","f5":"1234567890","f6":"3, 6"},{"f0":"4, 0","f1":14158,"f2":72487,"f3":"2021/07/14","f4":"4","f5":"1234567890","f6":"4, 6"},{"f0":"5, 0","f1":26087,"f2":32989,"f3":"2021/07/15","f4":"5","f5":"1234567890","f6":"5, 6"},{"f0":"6, 0","f1":46746,"f2":53724,"f3":"2021/07/16","f4":"0","f5":"1234567890","f6":"6, 6"},{"f0":"7, 0","f1":85937,"f2":60554,"f3":"2021/07/17","f4":"1","f5":"1234567890","f6":"7, 6"},{"f0":"8, 0","f1":20398,"f2":28162,"f3":"2021/07/18","f4":"2","f5":"1234567890","f6":"8, 6"},{"f0":"9, 0","f1":31161,"f2":98439,"f3":"2021/07/19","f4":"3","f5":"1234567890","f6":"9, 6"},{"f0":"10, 0","f1":54351,"f2":94300,"f3":"2021/07/20","f4":"4","f5":"1234567890","f6":"10, 6"},{"f0":"11, 0","f1":40631,"f2":67554,"f3":"2021/07/21","f4":"5","f5":"1234567890","f6":"11, 6"},{"f0":"12, 0","f1":17488,"f2":55720,"f3":"2021/07/22","f4":"0","f5":"1234567890","f6":"12, 6"},{"f0":"13, 0","f1":62572,"f2":74623,"f3":"2021/07/23","f4":"1","f5":"1234567890","f6":"13, 6"},{"f0":"14, 0","f1":88465,"f2":3142,"f3":"2021/07/24","f4":"2","f5":"1234567890","f6":"14, 6"}];
+</script>
+
+</head>
+<body>
+
+<div style="margin:4px;">
+	<div>
+		<div style="margin:10px;">
+			<p>본 데모를 모바일 기기에서 확인하십시오.</p>
+			<p>가상 키보드(소프트 키보드)의 종류 지정은 다음 editRenderer 에서 가능합니다.</p>
+			<p>■ 기본 편집 렌더러(InputEditRenderer)</p>
+			<p>■ 넘버스텝렌더러(NumberStepRenderer) - renerer 의 type 설정으로도 가능</p>
+			<p>■ 달력 편집 렌더러(CalendarRenderer, JQCalendarRenderer, BTCalendarRenderer)</p>
+			<p>■ 콤보박스 편집 렌더러(ComboBoxRenderer)</p>
+			<p>■ 마스크 편집 렌더러(MaskEditRenderer)</p>
+			<p>아래 데모는 위의 editRenderer 에 모두 가상 키보드 "decimal"을 적용 시킨 데모입니다.</p>
+ 			<p><a href="./editing_touch_vkey.html">기본 가상 키보드 적용 데모 보기</a></p>
+ 			<div id="test"></div>
+		</div>
+		
+		<!-- 에이유아이 그리드가 이곳에 생성됩니다. -->
+		<div id="grid_wrap" style="width:100%; height:380px;"></div>
+	</div>
+</div>
+
+<div id="footer">
+     <div class="copyright">
+        <p>Copyright © 2022 AUISoft </p>
+    </div>
+</div>
+
+</body>
+</html>

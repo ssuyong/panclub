@@ -1,0 +1,700 @@
+
+/* Begin : Date Picker Date Range*/
+var today = new Date();
+let yearAgo = new Date(today.getTime() - (730*24*60*60*1000)); // 2년전부 오늘까지
+var picker = tui.DatePicker.createRangePicker({
+	language: 'ko',
+    startpicker: {
+        date: today,
+    	input: '#startpicker-input',
+        container: '#startpicker-container'
+    },
+    endpicker: {
+        date: today,
+        input: '#endpicker-input',
+        container: '#endpicker-container'
+    }
+});
+/* End : Date Picker Date Range*/
+
+// 그리드 생성 후 해당 ID 보관 변수
+var myGridID;
+
+$(document).ready(function(){
+			  
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	/*
+	if (lcd == 'ㄱ000') {  //2023.10.26 
+		AUIGrid.showColumnByDataField(myGridID, ["custCode", "custName"]);
+	} else {
+		AUIGrid.hideColumnByDataField(myGridID, ["custCode", "custName"]);
+	}
+	
+	if(lcd =='ㄱ000' || lcd == 'ㄱ121') {  //2024.02.19 P,그린파츠 아닌경우 판매가합계,이익 비노출
+		AUIGrid.showColumnByDataField(myGridID, ["sumSalePrice", "profitsPrice"]);
+	} else {
+		AUIGrid.hideColumnByDataField(myGridID, ["sumSalePrice", "profitsPrice"]);
+	}
+	*/
+			
+	srCodeSelect("/base/sr-list");  //2023.10.16 bk
+	
+	//hash값 있는 경우 조회처리(뒤로가기해서 오는 경우)
+	
+	if(document.location.hash){
+        var HashLocationName = document.location.hash;
+        HashLocationName = decodeURI(HashLocationName.replace('#info','')); //decodeURI 한글깨짐처리 
+        
+        var info = HashLocationName.split("!");
+        
+        scrollYN = "Y";
+        
+        var page = info[0];
+        var sYmd = info[1];
+        var eYmd = info[2];
+        var ledgType = info[3];
+        var itemId = info[4];
+        var itemNo = info[5];
+        
+ 
+        if ( typeof sYmd == 'undefined'){ sYmd = ''	}
+        if ( typeof eYmd == 'undefined'){ eYmd = ''	}
+        if ( typeof ledgType == 'undefined'){ ledgType = ''	}
+        if ( typeof itemId == 'undefined'){ itemId = ''	}
+        if ( typeof itemNo == 'undefined'){ itemNo = ''	}
+       
+		$("#startpicker-input").val(sYmd);
+		$("#endpicker-input").val(eYmd);
+		$("#ledgType").val(ledgType);
+		$("#itemId").val(itemId);
+		$("#itemNo").val(itemNo);
+		
+        findDataToServer("/biz/transaction-list",page);
+  	}
+  	
+  	$("#btnPrint").click(function() {	
+	 print();	
+	});
+  	
+	$("#btnFind").click(function(){
+		//새로고침하면 이전값 지우기 위해 추가
+		var currentPage = 1;
+		var sYmd = document.getElementById("startpicker-input").value;
+		var eYmd = document.getElementById("endpicker-input").value;
+		var ledgType_val =$("#ledgType").val();
+		var itemId_val =$("#itemId").val();
+		var itemNo_val =$("#itemNo").val();
+				
+		document.location.hash = '#info'+currentPage+"!"+sYmd+"!"+eYmd+"!"+ledgType_val+"!"+itemId_val+"!"+itemNo_val;
+		 findDataToServer("/biz/transaction-list",page);
+	});
+	
+});
+
+// 브라우저 닫을 때 자동으로 저장하기 원하면 주석 제거
+// 크롬인 경우 onbeforeunload 이벤트 사용
+window.onbeforeunload = function() {
+};
+	
+// 칼럼 레이아웃 작성
+var columnLayout = [ 
+	{  headerText : "기본정보", 
+		children: [
+			{ dataField: "stdYmd",        headerText: "일자"      , width: 100 , editable: false  },
+			{ dataField: "ledgType",        headerText: "구분"      , width: 86 , visible: false}, 		
+			{ dataField: "ledgCateg",        headerText: "구분"      , width: 88   },
+			//{ dataField: "custCode",        headerText: "거래처코드"      , width: 140 , visible: false  }, 
+			//{ dataField: "custName",        headerText: "거래처명"      , width: 140  , style : "left" }, 
+        	{ dataField: "carNo",      headerText: "차량번호", width : 80, editable: false, visible: false }  ,
+        	{ dataField: "summary2",      headerText: "적요" ,      width: 140  , editable: false },
+        	{ dataField: "summary",      headerText: "적요" ,      width: 140  , editable: false , visible: false},
+        	//{ dataField: "summary",      headerText: "적요" ,      width: 140  , editable: false    
+        	// 		, styleFunction: function (rowIndex, columnIndex, value, headerText, item, dataField) { if (value != "0") {	return "auigrid-color-style-link";	}	return null;	}},    //출고번호/반입번호
+        	{ dataField: "seq",      headerText: "순번" ,      width: 40  , editable: false},        		 	     	
+        ]
+    },   
+     {  headerText : "부품", 
+		children: [
+			{ dataField : "className",      headerText : "구분", width : 80, editable : false },
+			{ dataField: "itemId",        headerText: "부품ID"  , width : 100,style: "left",editable: false    },
+			{ dataField: "makerCode",        headerText: "제조사"  , width : 100,editable: false , visible: false   },
+			{ dataField: "makerName",        headerText: "제조사"  , width : 100,editable: false    },
+        	{ dataField: "itemNo",         headerText: "부품번호", width : 120, style: "left" , editable: false },
+        	{ dataField: "factoryNo", headerText: "공장품번", width: 120 },
+        	{ dataField: "itemName",         headerText: "부품명", width : 180, editable: false , style : "left"  },
+        ]
+    },
+			{ dataField: "cnt",        headerText: "수량"  , width : 40, dataType: "numeric", formatString: "#,##0", style: "right", editable: false    },
+        	{ dataField: "centerPrice",         headerText: "표준단가", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false },
+        	{ dataField: "costPrice",         headerText: "입고단가", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false , visible: false   },
+        	{ dataField: "unitPrice",         headerText: "단가", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false },
+        	{ dataField: "sumPrice",         headerText: "공급가액", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false   },
+        	{ dataField: "taxPrice",         headerText: "세액", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false   },
+        	{ dataField: "sumPriceTax",      headerText: "합계금액", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false }  ,
+        	{ dataField: "sumCenterPrice",      headerText: "표준가합계", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false }  ,
+        	//{ dataField: "sumSalePrice",      headerText: "판매가격합계", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false }  ,
+        	//{ dataField: "profitsPrice",      headerText: "이익", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false }  ,
+        	
+        	//{ dataField: "custOrderNo",      headerText: "거래처주문번호", width : 140, editable: false }  ,
+        	//{ dataField: "unitPrice",         headerText: "단가", width : 86, dataType: "numeric", formatString: "#,##0", style: "right" , editable: false },
+        	{ dataField: "orderGroupId",      headerText: "주문그룹ID", width : 86, visible: false, editable: false
+        	, styleFunction: function (rowIndex, columnIndex, value, headerText, item, dataField) { if (value != "0") {	return "auigrid-color-style-link";	}	return null;	} }  ,
+        	//{ dataField: "rcvCustCode",      headerText: "주문처", width : 120, editable: false }  ,
+        	//{ dataField: "clType",      headerText: "일반/보험", width : 68, editable: false, visible: false }  ,
+        	//{ dataField: "carType",      headerText: "차종", width : 60, editable: false }  , 	
+        	{ dataField: "memo",      headerText: "비고", width : 140, editable: false , style : "left"}  ,
+        	{ dataField: "userName",      headerText: "작성자", width : 80, editable: false, visible: false }  ,
+        	//{ dataField : "srCode",      headerText : "관리그룹"  , width : 80 , visible: false  } //2023.10.16 bk
+    
+];
+ 
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	// 푸터 설정
+	var footerLayout = [{
+		labelText: "누계",
+		positionField: "#base",
+		style: "aui-grid-my-column"
+	}, {
+		dataField: "cnt",
+		positionField: "cnt",
+		operation: "SUM",
+		formatString: "#,##0"
+		,style: "right"
+	}, {
+		dataField: "sumPrice",
+		positionField: "sumPrice",
+		operation: "SUM",
+		formatString: "#,##0"
+		,style: "right"
+	}, {
+		dataField: "taxPrice",
+		positionField: "taxPrice",
+		operation: "SUM",
+		formatString: "#,##0"
+		,style: "right"
+		//,labelFunction: function (value, columnValues, footerValues) {  //2024.06.13 sg. 공급가액합계*0.1=부가세->2024.06.26 주석처리
+		//	var newValue = footerValues[2]*0.1;
+		//	return newValue;
+		//}
+	}, {
+		dataField: "sumPriceTax",
+		positionField: "sumPriceTax",
+		operation: "SUM",
+		formatString: "#,##0"
+		,style: "right"
+		//,labelFunction: function (value, columnValues, footerValues) {  //2024.06.13 sg. 합계금액 = 공급가액합계+(공급가액합계*0.1)->2024.06.26 주석처리
+		//	var newValue = footerValues[2] + footerValues[3];
+		//	return newValue;
+		//}
+	}, {
+		dataField: "sumCenterPrice",
+		positionField: "sumCenterPrice",
+		operation: "SUM",
+		formatString: "#,##0"
+		,style: "right"
+	}		
+	];
+	
+	var auiGridProps = {			
+			// 페이징 사용		
+			usePaging: true,
+			// 한 화면에 출력되는 행 개수 20(기본값:20)
+			pageRowCount: 500,
+
+			// 페이지 행 개수 select UI 출력 여부 (기본값 : false)
+			showPageRowSelect: true,
+
+			selectionMode : "multipleCells",
+			
+			//footer 노출
+			showFooter: true,
+						
+			// 그룹핑 패널 사용
+			useGroupingPanel: false,
+		
+			// 그룹핑 후 셀 병합 실행
+			enableCellMerge: true,
+			// enableCellMerge 할 때 실제로 rowspan 적용 시킬지 여부
+			// 만약 false 설정하면 실제 병합은 하지 않고(rowspan 적용 시키지 않고) 최상단에 값만 출력 시킵니다.
+			cellMergeRowSpan: true,
+
+			// 브랜치에 해당되는 행을 출력 여부
+			showBranchOnGrouping: false,
+			
+			// 최초 보여질 때 모두 열린 상태로 출력 여부
+			//displayTreeOpen: true,
+			showAutoNoDataMessage : false, 
+			
+			// addcheckbox  2023.06.29 bk
+			showRowCheckColumn: false,
+	
+			// 엑스트라 체크박스 표시 설정
+			showRowCheckColumn: false,
+	
+			// 엑스트라 체크박스에 shiftKey + 클릭으로 다중 선택 할지 여부 (기본값 : false)
+			enableRowCheckShiftKey: true,
+	
+			// 전체 체크박스 표시 설정
+			showRowAllCheckBox: true,
+					
+			// 그리드 ROW 스타일 함수 정의
+			rowStyleFunction: function (rowIndex, item) {
+
+				if (item._$isGroupSumField) { // 그룹핑으로 만들어진 합계 필드인지 여부
+
+					// 그룹핑을 더 많은 필드로 하여 depth 가 많아진 경우는 그에 맞게 스타일을 정의하십시오.
+					// 현재 3개의 스타일이 기본으로 정의됨.(AUIGrid_style.css)
+					switch (item._$depth) {  // 계층형의 depth 비교 연산
+						case 2:
+							return "aui-grid-row-depth3-style";
+						case 3:
+							return "aui-grid-row-depth2-style";
+						case 4:
+							return "aui-grid-row-depth3-style";
+						default:
+							return "aui-grid-row-depth-default-style";
+					}
+				}
+
+				return null;
+			} // end of rowStyleFunction
+	};
+	
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, auiGridProps);
+	
+	var rowPos = 'first';
+	
+	// 푸터 레이아웃 세팅
+	AUIGrid.setFooter(myGridID, footerLayout);
+
+	// 선택 변경 이벤트 바인딩
+	AUIGrid.bind(myGridID, "selectionChange", function(event) {
+		// 선택 대표 셀 정보 
+		var primeCell = event.primeCell; 
+		
+		// 하단에 행인덱스, 헤더 텍스트, 수정 가능여부 출력함.
+		//document.getElementById("selectionDesc").innerHTML = "현재 셀 : ( " + primeCell.rowIndex + ", " + primeCell.headerText + " ) : editable : " + primeCell.editable + ", 행 고유값(PK) : " + primeCell.rowIdValue;
+	});
+
+	// 페이지 변경 이벤트(pageChange) 바인딩 : 현재페이지 기록
+	var currentPage = 1;
+	AUIGrid.bind(myGridID, "pageChange", function (event) {
+		currentPage = event.currentPage;
+	});
+		
+	// 셀 더블클릭 이벤트 바인딩 : 거래처등록 페이지로 이동
+	AUIGrid.bind(myGridID, "cellDoubleClick", function (event) {
+
+		//console.log("columnIndex:"+event.columnIndex);  
+	/*
+		if (event.columnIndex == 6) {   
+			//hash값 추가. 뒤로가기해서 넘어올때. 조건 기억하게 하기 위해
+			var sYmd = document.getElementById("startpicker-input").value;
+			var eYmd = document.getElementById("endpicker-input").value;
+			var summary = event.item.summary;
+			var ledgType = event.item.ledgType;
+			var pageMoveYN = "Y";
+				
+			//console.log ("summary" +summary);	
+			//console.log ("ledgCateg" +ledgCateg);	
+			//return;
+				//window.location.href = '/logis/rl-item-list?rlNo=' ;
+			if (ledgType == '출고'|| ledgType == '출고(운송비)') {   
+				$.fancybox.open({
+				  href : '/logis/rl-item-list?rlNo='+summary+ "&pageMoveYN=" + pageMoveYN, // 불러 올 주소
+				  type : 'iframe',
+				  width : '90%',
+				  height : '90%',
+				  padding :0,
+				  fitToView: false,
+				  autoSize : false,
+				  modal :true
+				});
+			}	
+			if (ledgType == '입고') {   
+				$.fancybox.open({
+				  href : '/logis/wh-item-list?whNo='+summary+ "&pageMoveYN=" + pageMoveYN    , // 불러 올 주소
+				  type : 'iframe',
+				  width : '90%',
+				  height : '90%',
+				  padding :0,
+				  fitToView: false,
+				  autoSize : false,
+				  modal :true
+					});					
+				}	
+				if (ledgType == '출고(반입)') {   
+				$.fancybox.open({
+				  href : '/logis/ri-item-list?riNo='+summary+ "&pageMoveYN=" + pageMoveYN    , // 불러 올 주소
+				  type : 'iframe',
+				  width : '90%',
+				  height : '90%',
+				  padding :0,
+				  fitToView: false,
+				  autoSize : false,
+				  modal :true
+				});					
+			}	
+			if (ledgType == '입고(반출)') {   
+				$.fancybox.open({
+				  href : '/logis/ro-item-list?roNo='+summary + "&pageMoveYN=" + pageMoveYN   , // 불러 올 주소
+				  type : 'iframe',
+				  width : '90%',
+				  height : '90%',
+				  padding :0,
+				  fitToView: false,
+				  autoSize : false,
+				  modal :true
+				});					
+			}	
+			if (ledgType == '입고(운송비)'){
+		let f = document.createElement('form');	    
+		    let obj;
+		    obj = document.createElement('input');
+		    obj.setAttribute('type', 'hidden');
+		    obj.setAttribute('name', 'placeNo');
+		    obj.setAttribute('value', event.value);
+		    
+		    f.appendChild(obj);
+		    f.setAttribute('method', 'post');
+		    f.setAttribute('action', '/order/place-up');
+		    document.body.appendChild(f);
+		    f.submit();
+			}
+		}  
+			if (event.columnIndex == 18) {   
+			//주문그룹 이동 0829
+			var sYmd = document.getElementById("startpicker-input").value;
+			var eYmd = document.getElementById("endpicker-input").value;
+			var summary = event.item.summary;
+			let f = document.createElement('form');	
+			let obj;
+		    obj = document.createElement('input');
+		    obj.setAttribute('type', 'hidden');
+		    obj.setAttribute('name', 'orderGroupId');
+		    obj.setAttribute('value', event.value);
+		    
+		    f.appendChild(obj);
+		    f.setAttribute('method', 'post');
+		    f.setAttribute('action', '/order/order-group-item-list');
+		    document.body.appendChild(f);
+		    f.submit();
+				
+		}  */
+	});
+		
+}
+
+
+
+function findDataToServer(url,page) {
+	var list = [];
+	//var sYmd = $("#sYmd").val();
+	//var eYmd = $("#eYmd").val();
+	$("#iDiv_noSrchPop").css("display","none");
+	$("#iDiv_noDataPop").css("display","none");
+	
+	var sYmd = document.getElementById("startpicker-input").value;
+	var eYmd = document.getElementById("endpicker-input").value;
+	var ymdIgnoreYN = "N";// $("#ymdIgnoreYN").val();
+	if ($('input:checkbox[name=ymdIgnoreYN]').is(':checked') == true){
+		ymdIgnoreYN = "Y";
+	}
+
+	var custCode = $("#custCode").val();  //2023.10.26
+	//var clType = $("#clType").val(); 
+	//var ledgType = $("#ledgType").val(); 
+	
+//	var orderGroupId = $("#orderGroupId").val(); 
+//	var carNo = $("#carNo").val(); 
+	var itemId = $("#itemId").val(); 
+	var itemNo = $("#itemNo").val(); 
+//	var srCode = $("#srCode").val(); //2023.10.16 bk
+	
+	/*
+	if (spaceDel(custCode)=='' ) {
+		alert("거래처를 입력하세요.");
+		return false;
+	}*/
+	//console.log("srCode"+$("#srCode").val());
+	$.ajax(	{
+		type : "POST",
+		url : url,
+		dataType : "json",
+		data: {		
+			"sYmd":sYmd,
+			"eYmd":eYmd,
+//			"ymdIgnoreYN":ymdIgnoreYN,
+			"custCode":custCode,
+//			"clType":clType,
+			//"ledgType":ledgType,
+			"workingType":"OUT_PL_LIST",
+//			"orderGroupId":orderGroupId,
+//			"carNo":carNo,
+			"itemId":itemId,
+			"itemNo":itemNo,
+//			"srCode": srCode
+		},
+		async: false,
+		//contentType: "application/json; charset=utf-8",
+		contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+		success:function(data){
+		 
+			if (data.transactionList.length == 0){
+				//alert("조건에 맞는 자료가 없습니다.");
+				$("#iDiv_noDataPop").css("display","block");			
+				AUIGrid.clearGridData(myGridID);
+			}else{
+				for(i=0;i<data.transactionList.length;i++){
+					list.push({
+						 stdYmd: data.transactionList[i].stdYmd 
+						,summary: data.transactionList[i].summary 
+						//,custCode: data.transactionList[i].custCode 
+						,ledgType: data.transactionList[i].ledgType
+						//,custName: data.transactionList[i].custName 
+						,regYmd: data.transactionList[i].regYmd 
+						,regHms: data.transactionList[i].regHms 
+						,seq: data.transactionList[i].seq 
+						,cnt: data.transactionList[i].cnt
+						,unitPrice: data.transactionList[i].unitPrice
+						,sumPrice: data.transactionList[i].sumPrice
+						,taxPrice: data.transactionList[i].taxPrice
+						,sumPriceTax: data.transactionList[i].sumPriceTax
+						,itemId: data.transactionList[i].itemId
+						,itemNo: data.transactionList[i].itemNo
+						,itemName: data.transactionList[i].itemName
+						,memo: data.transactionList[i].memo
+						,carNo: data.transactionList[i].carNo
+						,carType: data.transactionList[i].makerCode + data.transactionList[i].carType
+						,orderGroupId: data.transactionList[i].orderGroupId
+						,clType: data.transactionList[i].clType
+						,regUserId: data.transactionList[i].regUserId
+						,userName: data.transactionList[i].userName
+						,custOrderNo: data.transactionList[i].custOrderNo
+						,ledgCateg: data.transactionList[i].ledgType
+						,rcvCustCode: data.transactionList[i].rcvCustCode
+						,centerPrice: data.transactionList[i].centerPrice
+						,costPrice: data.transactionList[i].costPrice   // 2023.07.27 hsg
+						,srCode: data.transactionList[i].srCode   // 2023.10.16 bk
+						,makerCode: data.transactionList[i].makerCode   // 2023.10.16 bk
+						,sumCenterPrice: data.transactionList[i].centerPrice * data.transactionList[i].cnt  // vat별도 2023.11.30 
+						//,sumSalePrice : data.transactionList[i].salePrice * data.transactionList[i].cnt //2024.01.12 supi 판매가격합계 (판매단가 * 갯수)
+						
+						//,profitsPrice : (data.transactionList[i].salePrice * data.transactionList[i].cnt)==0?
+						//0:
+						//((data.transactionList[i].salePrice * data.transactionList[i].cnt) - data.transactionList[i].sumPrice)  // 2024.01.12 supi 차액(판매가격합계 - 공급가액) // 판매가격이 0원인 수동출고의 경우 0으로 표시
+
+						,summary2: data.transactionList[i].summary2 // 240116 yoonsang 
+						
+						,makerName: data.transactionList[i].makerName
+						,className: data.transactionList[i].className
+						,factoryNo: data.transactionList[i].factoryNo
+					});		
+				}		
+				 AUIGrid.setGridData("#grid_wrap", list);
+				 // 해당 페이지로 이동
+				 if (page > 1) {
+			     	AUIGrid.movePageTo(myGridID, Number(page));
+			     }
+			}
+		},
+		error:function(x,e){
+			if(x.status==0){
+	            alert('조회에 실패했습니다. 추후 다시 시도해 주세요.\n(You are offline!!n Please Check Your Network.)');
+	        }else if(x.status==404){
+	            alert('조회에 실패했습니다. 추후 다시 시도해 주세요.\n(Requested URL not found.)');
+	        }else if(x.status==500){
+	            alert('조회에 실패했습니다. 추후 다시 시도해 주세요.\n(Internel Server Error.)');
+	        }else if(e=='parsererror'){
+	            alert('시간경과로 로그아웃되었습니다.\n재로그인 후  다시 조회하세요.\n(Error.nParsing JSON Request failed.)');
+	        }else if(e=='timeout'){
+	            alert('조회에 실패했습니다. 추후 다시 시도해 주세요.\n(Request Time out.)');
+	        }else {
+	            alert('조회에 실패했습니다. 추후 다시 시도해 주세요.\n(Unknow Error.n'+x.responseText+')');
+	        }
+		}
+	});
+}
+
+// 에디팅 시작 시 해당 행 인덱스 보관
+var currentRowIndex;
+
+//다이얼로그창 선택하는 경우 그리드에 디스플레이
+function updateGridRow() {
+	var mCodeSel = $("#mCode option:selected"); //$("#memberSel option:selected").text();
+	var mCode = mCodeSel.val();
+ 	var mName = mCodeSel.attr('mname');
+
+	var item = {};
+	item.admCode = mCode; // $("#name").val();
+	item.admName = mName; //$("#country").val();
+
+	AUIGrid.updateRow(myGridID, item, currentRowIndex);
+
+}
+
+
+
+//프린트
+//인쇄버튼 클릭 
+$("#print").click(function() {
+	var  custCode = $("#custCode").val();
+	var sYmd = document.getElementById("startpicker-input").value;
+	var eYmd = document.getElementById("endpicker-input").value;
+	var printType = $(':radio[name="printType"]:checked').val();
+	
+	window.location.href = "/biz/cust-ledge-print?custCode="+custCode+"&sYmd="+sYmd+"&eYmd="+eYmd+"&printType="+printType;
+	
+});
+//품목내역 인쇄 클릭 
+$("#printDtl").click(function() {
+	var  custCode = $("#custCode").val();
+	var sYmd = document.getElementById("startpicker-input").value;
+	var eYmd = document.getElementById("endpicker-input").value;
+	var printType = $(':radio[name="printType"]:checked').val();
+	
+	window.location.href = "/biz/cust-ledge-dtl-print?custCode="+custCode+"&sYmd="+sYmd+"&eYmd="+eYmd+"&printType="+printType;
+	
+});
+
+
+//이미지 다운로드 버튼 클릭
+$("#btnDownload").click(function() {
+	var  custCode = $("#custCode").val();
+	var imgYN = "Y";	
+	var sYmd = document.getElementById("startpicker-input").value;
+	var eYmd = document.getElementById("endpicker-input").value;
+	var printType = $(':radio[name="printType"]:checked').val();
+	
+	window.location.href = "/biz/cust-ledge-print?custCode="+custCode+"&sYmd="+sYmd
+														+"&eYmd="+eYmd+"&printType="+printType+"&imgYN="+imgYN;
+	
+});
+
+
+function print() {
+	
+	var dialogPrint;
+	dialogPrint = $( "#dialogPrint-form" ).dialog({
+	    autoOpen: false,
+	    height: 300,
+	    width: "30%",
+	    modal: true,
+	    buttons: {
+	      /* "Create an account": addUser, */
+	         "닫기": function() {
+	        	 dialogPrint.dialog( "close" );
+	      }
+	    }, 
+	    close: function() {
+	    }
+	  });
+	  $(".ui-dialog-titlebar-close").html("X");
+	  dialogPrint.dialog( "open" );
+}
+
+//다이얼로그창 선택하는 경우 그리드에 디스플레이 
+function updateGridRowCust(obj, name) {
+
+	var i, rowItem, rowInfoObj, dataField;
+	var selectedItems = AUIGrid.getSelectedItems(myGridIDCust);
+	rowInfoObj = selectedItems[0];
+	rowItem = rowInfoObj.item;
+
+	$(obj).val(rowItem.custCode);
+	$("#" + name + "").val(rowItem.custName);
+
+	var dialogCust;
+	dialogCust = $("#dialog-form-cust");
+	dialogCust.dialog("close");
+
+}	
+
+//wdReqadd 2023.06.29
+function wdReq(){
+ 
+ 	var checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+	if (checkedItems.length <= 0) {
+		alert("출금요청할 입고를 선택하세요!");
+		return;
+	}
+
+	var rowItem;
+	var jobArr = ""
+	var sumPrice = 0;
+	var custCode = "";
+	var custName = "";
+	
+	var errCnt = 0;
+	var errCnt2 = 0;  
+	var custArr = [];
+	var j = 1
+	var errCustName = "";
+	var inArr = "Y";  // 배열등록대상
+	
+	var ledgArr = ""
+	var seqArr = ""
+
+	
+	
+	for (var i = 0, len = checkedItems.length; i < len; i++) {
+		rowItem = checkedItems[i];
+		jobArr = jobArr + "^" +rowItem.item.summary;
+		sumPrice = sumPrice + rowItem.item.sumPriceTax;	
+		ledgArr = ledgArr+ "^" +rowItem.item.ledgType; //ledgetypecateg 
+		seqArr = seqArr+ "^" +rowItem.item.seq; //
+		if (i==0){
+			custCode = rowItem.item.custCode;
+			custName = rowItem.item.custName;
+			custArr[0] = custName;
+		}
+			inArr = "Y"
+			if (custCode != rowItem.item.custCode ) {
+			errCustName = rowItem.item.custName;
+			errCnt2 = errCnt2 + 1;
+  			for (var k=0, len2 = custArr.length; k < len2; k++) {
+				//console.log("cusArr:"+custArr[k] + "--" + errCustName);
+				if ( custArr[k] == errCustName) 	{
+					inArr = 'N';
+				}	
+			}
+			if  (inArr == 'Y') {
+				custArr[j] = errCustName; 
+				j = j + 1;
+			}
+		}		
+		 if (rowItem.item.ledgType == '출고'|| rowItem.item.ledgType === '출고(반입)') {
+        errCnt = errCnt + 1;
+    	}
+	}		
+		if (errCnt2 > 0) {
+		errCustNameArr="";
+		for (var l=0, len3 = custArr.length; l < len3; l++) {
+			errCustNameArr = errCustNameArr + "/"+custArr[l];
+		}
+		alert("발주처가 다른 경우 출금요청을 할 수 없습니다!!\n\n선택된 발주처: "+errCustNameArr);
+		return;
+		
+	}
+	if (errCnt > 0) {
+		alert("출고는 출금요청을 할 수 없습니다!!")
+		return;}
+		
+	$.fancybox.open({
+	  href : '/biz/wd-req-up?wdReqType=입고출금&custCode='+custCode+'&custName='+encodeURIComponent(custName)+'&sumPrice='+sumPrice
+	  				+'&jobArr='+encodeURIComponent(jobArr) +'&ledgArr='+encodeURIComponent(ledgArr)+'&seqArr='+encodeURIComponent(seqArr)  , // 불러 올 주소
+	  type : 'iframe',
+	  width : '60%',
+	  height : '60%',
+	  padding :0,
+	  fitToView: false,
+	  autoSize : false,
+	  modal :true
+	});
+}  
+

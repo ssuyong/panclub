@@ -1,0 +1,104 @@
+
+
+*{
+	font-family: 'IBM Plex Sans KR', sans-serif;	
+	background-color: white;
+	
+}
+body{
+	background-color: white;
+	padding: 50px;
+}
+.contents-wrap{
+	height: 100%;
+}
+.heading-01{
+	font-size:25px;	
+	margin-top: 10px;
+	margin-left: 10px;
+}
+.heading-desc-01{
+	font-size: 16px;
+	margin-left: 10px;
+	color:#3a3a3a;
+}
+
+.board-view-heading{
+	visibility:hidden;
+	font-size: 20px;
+	background-color: none;
+}
+#title{	font-size: 20px;
+			font-weight: bold;
+			border: none;
+			border-bottom: 1px solid black;
+			width:100%;
+}
+#regYmd{
+	color: #444444;
+	border: none;
+	font-size:14px;
+}
+#regUserName{
+	color: #444444;
+	border: none;
+	font-size:14px;
+}
+
+input:disabled{
+	color: black;
+}
+
+.board-view-wrap-03{
+	text-align: right;
+	font-size: 14px;
+	color: #444444;
+}
+#noticeNo{
+	border: none;
+	font-size:14px;
+}
+.board-view-contents{
+	visibility: hidden;
+}
+#contents{
+	border: none;
+	font-size: 16px;	
+	/* margin-bottom: 20px; */
+	padding: 0;
+	border-width: 0;
+	 box-sizing : border-box;
+	 display: flex; 
+	 width:1200px;
+	 height: 500px;
+}
+.align-center{
+	width: 100%;
+	margin: 0px auto;
+	text-align: center;
+}
+button{
+	color:#ffffff;
+	font-size: 14px;
+	background:#333333;
+	padding: 1px 6px;
+	width: 70px;
+	height: 40px;
+/* 	margin-top: 50px */;	
+	    margin-left: 5px;
+          margin-right: 5px;
+          border:none;
+}
+#buttonBox{
+	border: none;
+	width: auto;
+	height:6vw;
+	margin: auto;
+      /* box-shadow: 0 0 3px 0 gray; */
+      /*padding: 50px 140px 50px 140px;*/
+    text-align: center;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+}

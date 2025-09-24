@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.IMemberDao">
+
+	<!-- 사용자 1명 조회 : 로그인 등 -->
+	<select id="userOne" statementType="CALLABLE" parameterType="HashMap" resultType="user">
+		{ CALL panErp.dbo.up_userList(
+			#{workingType}, #{page},	#{qty},	#{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logIP}, 
+			#{logComCode}, #{logUserId}, #{pwdEnc}, 
+			#{autoLoginSession}
+		)}
+	</select>		
+
+	<!-- 사용자 메뉴권한 -->
+	<select id="userMenuAuth" statementType="CALLABLE" parameterType="HashMap" resultType="user">
+		{ CALL panErp.dbo.up_userList(
+			#{workingType}, #{page},	#{qty},	#{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logIP}, 
+			#{logComCode}, #{logUserId}, #{pwdEnc}, 
+			#{autoLoginSession}
+		)}
+	</select>		
+	
+	<!-- 패스워드 찾기-->
+	<select id="findPwd" statementType="CALLABLE" parameterType="HashMap" resultType="user">
+		{ CALL panErp.dbo.up_userList(
+			#{workingType}, #{page},	#{qty},	#{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logIP}, 
+			#{logComCode}, #{logUserId}, #{pwdEnc},   
+			#{autoLoginSession}, '','',#{logUserName} 
+		)}
+	</select>		
+	
+	<!-- 패스워드 변경하기-->
+	<select id="resetPw" statementType="CALLABLE" parameterType="HashMap" resultType="user">
+		{ CALL panErp.dbo.up_userAdd(
+			#{workingType},			#{logComCode}, 			#{logUserId} 				
+			,#{user.userId}			,#{user.userName},		#{user.pwdEnc},			#{user.divisionCode},	#{user.userTypeCode} 
+			,#{user.validYN},		#{user.comCode}
+		)}
+		
+	</select>		
+	
+	<!-- 20231207 supi 현재 로그인한 계정의 id,name,comCode를 받아서 동일 id,name,pwd를 가지는 다른 회사의 목록을 가져오는 쿼리  
+	2024.01.18 hsg - WITH(NOLOCK)  추가-->
+	<select id="getCAComCode"   parameterType="HashMap" resultType="string">
+		SELECT  c.custName
+		FROM panErp.dbo.e_user a  WITH(NOLOCK) 
+		JOIN dbo.e_cust c  WITH(NOLOCK)  ON a.comCode = c.custCode AND c.comCode = 'ㄱ000'
+		WHERE  a.userId = #{userId} AND  a.userName = #{userName}
+		AND (SELECT b.pwdEnc FROM panErp.dbo.e_user b WITH(NOLOCK)  WHERE  b.userId=#{userId} AND  b.userName=#{userName} AND b.comCode=#{comCode}) = a.pwdEnc
+		AND a.comCode != 'zzz'
+	</select>
+	<!-- 20231207 supi 현재 로그인한 id,name,comCode와 변경하고 싶은 comName를 받아서 변경된 comCode와 해당 회사의 헤더 dpColor를 반환 받는 쿼리 -->
+	<select id="cComCode"  statementType="CALLABLE"  parameterType="HashMap" resultType="user">		
+<!-- 		SELECT  c.custCode comCode , cc.dpColor -->
+<!-- 		FROM panErp.dbo.e_user a -->
+<!-- 		JOIN dbo.e_cust c ON a.comCode = c.custCode AND c.comCode = 'ㄱ000' -->
+<!-- 		LEFT JOIN dbo.c_cust cc ON cc.custCode = c.custCode  -->
+<!-- 		WHERE  a.userId = #{curUserId} AND  a.userName = #{curUserName} AND c.custName = #{changeComName} -->
+<!-- 		AND (SELECT b.pwdEnc FROM panErp.dbo.e_user b WHERE  b.userId=#{curUserId} AND  b.userName=#{curUserName} AND b.comCode=#{curComCode}) = a.pwdEnc -->
+<!-- 		AND a.comCode != 'zzz' -->
+		
+		{ CALL panErp.dbo.up_cComCode(
+			#{curUserId},	#{curUserName}, #{curComCode},#{changeComName}	 
+		)} 
+	</select>
+	<!--  20231211 supi - 볼수 있는 알림리스트 받아오는 통신 -->
+	<select id="notiListRead" statementType="CALLABLE" parameterType="HashMap" resultType="forcarnotification">		
+		{ CALL panErp.dbo.up_notiListRead( 
+			#{comCode} , #{userId}
+		)}
+	</select>
+	<!-- 20231212 supi -  알림을 닫을때의 처리 -->
+	<select id="notiClose" statementType="CALLABLE" parameterType="HashMap"  >		
+		{ CALL panErp.dbo.up_notiClose( 
+			#{comCode} , #{userId} ,#{notiMsgIdx} , #{foreverNotView}
+		)}
+	</select>
+	<!-- 20240103 supi 자기자신이 계열사인지 반환받는 쿼리 -->
+	<select id="getErpYN" statementType="CALLABLE" parameterType="HashMap" resultType="String" >		
+		SELECT ISNULL((SELECT MAX(erpYN) FROM dbo.c_cust WITH(NOLOCK) WHERE #{logComCode} =custCode),'N') 
+	</select>
+	<!--20240620 supi 두개의 파라미터가 관계사인지 반환하는 쿼리 -->
+	<select id="getRelationYN" statementType="CALLABLE" parameterType="HashMap" resultType="String" >		
+		SELECT ISNULL((select TOP(1) 'Y' from dbo.e_comCodeParent p1
+					   JOIN dbo.e_comCodeParent p2 on p1.parentComCode = p2.parentComCode 
+					   where (p1.comCode=#{com}  or p1.parentComCode = #{com}) and (p2.comCode = #{com2} or p2.parentComCode = #{com2})),
+			'N') 
+	</select>
+	<!-- 20240729 supi 해당 코드에 권한 있는지 체크하는 통신 
+	-->
+	<select id="permissionCheckYN" statementType="CALLABLE" parameterType="HashMap" resultType="String" >		
+		SELECT dbo.UF_PermissionCheck (#{logComCode} , #{userId} , #{checkCode})
+	</select>
+	<!--  2024.11.12 supi - 일정관리  -->
+	<select id="scheduleByMem" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_scheduleByMem (
+			#{workingType}, #{year}	,#{logComCode}, 
+			 #{logUserId} , #{finExceptYN}  
+		)}	
+	</select> 
+	<!-- 2024.11.13 supi 특정 사원의 특정 유형에 일정 리스트 받아오는 통신
+	-->
+	<select id="scheduleByMemDetail" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap" >		
+		SELECT c.custName , s.schIdx , s.category , s.member , s.startYmd , s.endYmd , s.contents , u1.userName regUserName , s.created , u2.userName uptUserName , s.modified
+		FROM dbo.e_schedule s
+		LEFT JOIN dbo.e_cust c ON c.comCode = (select comCode from UF_ErpOperate('')) AND c.custCode = s.comCode
+		LEFT JOIN dbo.e_user u1 ON u1.comCode = s.comCode AND u1.userId = s.regUserId
+		LEFT JOIN dbo.e_user u2 ON u2.comCode = s.comCode AND u2.userId = s.uptUserId
+		where s.comCode in (SELECT comCode FROM dbo.UF_GetGroupComCode(#{logComCode}))  
+				AND s.member = #{userName}
+				AND (
+						( #{scheduleType} = 'holyCnt' AND s.category in ('휴무','시간휴무'))
+						OR ( #{scheduleType} = 'nonHolyCnt' AND s.category in ('공가','인정휴무'))
+						OR ( #{scheduleType} = 'outWorkCnt' AND s.category in ('외근','출장'))
+						OR ( #{scheduleType} = 'dutyCnt' AND s.category  = '당직')
+						OR ( #{scheduleType} = 'meetCnt' AND s.category in ('회의','내방'))
+					)
+				AND left(s.startYmd,4) = #{year}
+	</select>
+	<!-- 2024.11.13 supi 스케쥴 일자 수정
+	-->
+	<update id="uptScheduleByMemDetail" statementType="CALLABLE" parameterType="HashMap">	
+		IF('N' = dbo.UF_PermissionCheck(#{logComCode}, #{logUserId}  , 'FD016_01')) 
+		BEGIN
+			RETURN
+		END	
+		UPDATE dbo.e_schedule
+		SET  startYmd = #{startYmd} 
+			, endYmd = #{endYmd} 
+			, uptUserId = #{logUserId} 
+			, modified = GETDATE() 
+		WHERE  schIdx = #{schIdx}
+	</update>
+	<!-- 2024.11.13 supi 스케쥴 일자 수정
+	-->
+	<delete id="delScheduleByMemDetail" statementType="CALLABLE" parameterType="HashMap">	
+		IF('N' = dbo.UF_PermissionCheck(#{logComCode}, #{logUserId}  , 'FD016_01')) 
+		BEGIN
+			RETURN
+		END	
+		DELETE dbo.e_schedule 
+		WHERE  schIdx = #{schIdx}
+	</delete>
+	
+	
+</mapper>

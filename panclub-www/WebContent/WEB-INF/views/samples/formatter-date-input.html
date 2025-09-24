@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=800">
+<meta name="og:title" content="HTML5, 자바스크립트 데이터그리드 AUIGrid">
+<meta name="og:url" content="https://www.auisoft.net/">
+<meta name="og:description" content="HTML5, 자바스크립트 데이타그리드(javascript datagrid) AUISoft">
+<title>AUIGrid 데모, HTML5, 자바스크립트 데이터그리드 AUIGrid</title>
+<link href="https://www.auisoft.net/aui.ico" rel="shortcut icon" />
+
+<!-- 데모 구성용 CSS 입니다. 실제 프로젝트에서는 불필요 하니 추가할 필요 없습니다. -->
+<link href="./demo.css" rel="stylesheet">
+
+<!-- ajax 요청을 위한 스크립트입니다. -->
+<!-- jQuery 사용한다면, 해당 2개의 JS는 불필요 합니다.  -->
+<script type="text/javascript" src="./ajax.js"></script>
+<script type="text/javascript" src="./common.js"></script>
+
+<!-- AUIGrid 테마 CSS 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<!-- 원하는 테마가 있다면, 다른 파일로 교체 하십시오. -->
+<link href="../AUIGrid/AUIGrid_style.css" rel="stylesheet">
+
+<!-- AUIGrid 라이센스 파일입니다. 그리드 출력을 위해 꼭 삽입하십시오. -->
+<script type="text/javascript" src="../AUIGrid/AUIGridLicense.js"></script>
+
+<!-- 실제적인 AUIGrid 라이브러리입니다. 그리드 출력을 위해 꼭 삽입하십시오.--> 
+<script type="text/javascript" src="../AUIGrid/AUIGrid.js"></script>
+<script type="text/javascript" src="../pdfkit/AUIGrid.pdfkit.js"></script>
+
+<!-- 브라우저 다운로딩 할 수 있는 JS 추가 -->
+<script type="text/javascript" src="../export_server_samples/FileSaver.min.js"></script>
+
+<style type="text/css">
+.aui-grid-default-column {
+	text-align:left;
+}
+</style>
+
+<script type="text/javascript">
+
+// AUIGrid 생성 후 반환 ID
+var myGridID;
+
+// document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+function documentReady() {  
+	
+	// AUIGrid 그리드를 생성합니다.
+	createAUIGrid(columnLayout);
+	
+};
+
+// AUIGrid 칼럼 설정
+var columnLayout = [{
+	dataField: "field0",
+    headerText: "yyyymmdd HHMMss",
+	dataType : "date",
+	dateInputFormat : "yyyymmdd HHMMss", // 실제 데이터의 형식 지정
+	formatString : "yyyy. mm. dd t hh:MM:ss", // 실제 데이터 형식을 어떻게 표시할지 지정
+	width:180,
+	headerTooltip : {
+			show : true,
+			tooltipHtml : "입력 받은 형태는 yyyymmdd HHMMss,<br>formatString : yyyy. mm. dd t hh:MM:ss"
+	}, editRenderer : {
+		type : "CalendarRenderer",
+		showExtraDays : false, // 지난 달, 다음 달 여분의 날짜(days) 출력 안함
+		onlyCalendar : true, // 사용자 입력 불가, 즉 달력으로만 날짜입력 (기본값 : true)
+		defaultFormat : "yyyymmdd HHMMss", // 달력 선택 시 데이터에 적용되는 날짜 형식
+		showPlaceholder : true // defaultFormat 설정된 값으로 플래스홀더 표시
+	}
+}, {
+	dataField: "field1",
+    headerText: "yyyymmddHHMMss",
+	dataType : "date",
+	dateInputFormat : "yyyymmddHHMMss", // 실제 데이터의 형식 지정
+	formatString : "yyyy. mm. dd t hh:MM:ss", // 실제 데이터 형식을 어떻게 표시할지 지정
+	width:180,
+	headerTooltip : {
+			show : true,
+			tooltipHtml : "입력 받은 형태는 yyyymmddHHMMss,<br>formatString : yyyy. mm. dd t hh:MM:ss"
+	}
+}, {
+	dataField: "field2",
+    headerText: "mmddyyyyHHMMss",
+	dataType : "date",
+	width:180,
+	dateInputFormat : "mmddyyyyHHMMss", // 실제 데이터의 형식 지정
+	formatString : "yyyy. mm. dd t hh:MM:ss", // 실제 데이터 형식을 어떻게 표시할지 지정
+	headerTooltip : {
+			show : true,
+			tooltipHtml : "입력 받은 형태는 mmddyyyyHHMMss,<br>formatString : yyyy. mm. dd t hh:MM:ss"
+	}
+}, {
+	dataField: "field3",
+    headerText: "HHMMssddmmyyyy",
+	dataType : "date",
+	width:240,
+	dateInputFormat : "HHMMssddmmyyyy", // 실제 데이터의 형식 지정
+	formatString : "yyyy. mm. dd t hh:MM:ss", // 실제 데이터 형식을 어떻게 표시할지 지정
+	headerTooltip : {
+			show : true,
+			tooltipHtml : "입력 받은 형태는 HHMMssddmmyyyy,<br>formatString : yyyy. mm. dd t hh:MM:ss"
+	}
+}];
+
+// AUIGrid 를 생성합니다.
+function createAUIGrid(columnLayout) {
+	
+	var auiGridProps = {
+			enableSorting : false,
+			showRowCheckColumn : false,
+			showRowNumColumn : false,
+			editable : true
+	};
+
+	// 실제로 #grid_wrap 에 그리드 생성
+	myGridID = AUIGrid.create("#grid_wrap", columnLayout, auiGridProps);
+	
+	// 데이터 삽입
+	AUIGrid.setGridData(myGridID, gridData);
+};
+
+var gridData = [{"field0":"20220428 023447","field1":"20220428023447","field2":"04282022023447","field3":"02344728042022"},{"field0":"20220428 001721","field1":"20220428001721","field2":"04282022001721","field3":"00172128042022"},{"field0":"20220428 021615","field1":"20220428021615","field2":"04282022021615","field3":"02161528042022"},{"field0":"20220428 004454","field1":"20220428004454","field2":"04282022004454","field3":"00445428042022"},{"field0":"20220428 023224","field1":"20220428023224","field2":"04282022023224","field3":"02322428042022"}];
+
+//엑셀 내보내기(Export);
+function exportClick() {
+	
+	// 내보내기 실행
+	AUIGrid.exportToXlsx(myGridID);
+};
+
+
+//PDF 내보내기(Export), AUIGrid.pdfkit.js 파일을 추가하십시오.
+function exportPdfClick() {
+	
+	// 완전한 HTML5 를 지원하는 브라우저에서만 PDF 저장 가능( IE=10부터 가능 )
+	if(!AUIGrid.isAvailabePdf(myGridID)) {
+		alert("PDF 저장은 HTML5를 지원하는 최신 브라우저에서 가능합니다.(IE는 10부터 가능)");
+		return;
+	}
+	
+	// 내보내기 실행
+	AUIGrid.exportToPdf(myGridID, {
+		// 폰트 경로 지정
+		fontPath : "../pdfkit/jejugothic-regular.ttf"
+	});
+};
+</script>
+
+</head>
+<body>
+
+<div id="main">
+	<div class="desc">
+		<p>그리드가 날짜를 파싱하지 못할 때 해당 날짜의 형식이 어떤 형태인지를 지정해야 합니다.</p>
+		<p>dateInputFormat 을 설정하여 그리드에 해당 형식이 어떤 형태인지를 설정하십시오.</p>
+		<p>예로 설정된 데이터의 값이 "12122012 121530" 이와 같을 때 년월일 시분초를 명시해줘야 알 수 있습니다.<p>
+		<P>해당 데이터 값이 12월 12일 2012년 12시 15분 30초를 뜻한다면 "mmddyyyy HHMMss" 를 설정하십시오.</P>
+		<p>참고 : 해당 기능은 버전 3.0.11.10 에서 완전히 지원합니다.</p>
+		<p><span class="btn" onclick="exportClick()">엑셀(xlsx)로 저장</span>
+		<span class="btn"  onclick="exportPdfClick()">PDF로 저장</span></p>
+	</div>
+	<div>
+		<!-- 에이유아이 그리드가 이곳에 생성됩니다. -->
+		<div id="grid_wrap" style="width:1200px; height:220px; margin:0 auto;"></div>
+	</div>
+</div>
+<div id="footer">
+     <div class="copyright">
+        <p>Copyright ©2022 AUISoft </p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@page import="java.net.URLDecoder"%>
+<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=no;" />
+<!doctype html>
+
+<html>
+<head> 
+ <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+ 
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
+<link href="/resources/dist/css/tabler.css" rel="stylesheet" />
+<link href="/resources/panMobile/css/mobile.css?ver=1.0621.4" rel="stylesheet" />
+</head>
+<body class="body" style="overscroll-behavior-y:contain;">
+	
+ 	<div class ="cDiv_title">
+ 		<button   onclick="pageMove('back')">
+ 		<img src="data:image/svg+xml,%3Csvg%20%20xmlns=%22http://www.w3.org/2000/svg%22%20%20width=%2224%22%20%20height=%2224%22%20%20viewBox=%220%200%2024%2024%22%20%20fill=%22none%22%20%20stroke=%22currentColor%22%20%20stroke-width=%222%22%20%20stroke-linecap=%22round%22%20%20stroke-linejoin=%22round%22%20%20class=%22icon%20icon-tabler%20icons-tabler-outline%20icon-tabler-arrow-big-left%22%3E%3Cpath%20stroke=%22none%22%20d=%22M0%200h24v24H0z%22%20fill=%22none%22/%3E%3Cpath%20d=%22M20%2015h-8v3.586a1%201%200%200%201%20-1.707%20.707l-6.586%20-6.586a1%201%200%200%201%200%20-1.414l6.586%20-6.586a1%201%200%200%201%201.707%20.707v3.586h8a1%201%200%200%201%201%201v4a1%201%200%200%201%20-1%201z%22%20/%3E%3C/svg%3E">
+		</button> 
+		<h2>패킹내역조회</h2>
+		
+		<a ></a>
+ 	</div>
+ 
+	<hr>
+	
+	<div id="iDic_packingCategory">
+		<button class ="btn btn-secondary" id="iButton_packingRlList">출고</button>
+		<button id="iButton_pageInfo"  onclick="pageInfo()">
+ 			<img src="data:image/svg+xml,%3Csvg%20%20xmlns=%22http://www.w3.org/2000/svg%22%20%20width=%2224%22%20%20height=%2224%22%20%20viewBox=%220%200%2024%2024%22%20%20fill=%22none%22%20%20stroke=%22currentColor%22%20%20stroke-width=%222%22%20%20stroke-linecap=%22round%22%20%20stroke-linejoin=%22round%22%20%20class=%22icon%20icon-tabler%20icons-tabler-outline%20icon-tabler-zoom-question%22%3E%3Cpath%20stroke=%22none%22%20d=%22M0%200h24v24H0z%22%20fill=%22none%22/%3E%3Cpath%20d=%22M10%2010m-7%200a7%207%200%201%200%2014%200a7%207%200%201%200%20-14%200%22%20/%3E%3Cpath%20d=%22M21%2021l-6%20-6%22%20/%3E%3Cpath%20d=%22M10%2013l0%20.01%22%20/%3E%3Cpath%20d=%22M10%2010a1.5%201.5%200%201%200%20-1.14%20-2.474%22%20/%3E%3C/svg%3E">
+		</button> 
+	</div>
+	<hr>
+ 	<div class="cDiv_basket">
+			<table  id="iTable_basket">  
+				<tr id="iTr_basketItemHeader" >  
+					<td class="cTd_basket cWidth25vw cFont13p cTd_baket_type1" scope="col">일자|상태</th>
+					<td class="cTd_basket cWidth30vw cFont13p cTd_baket_type1" scope="col">주문업체</th> 
+					<td class="cTd_basket cWidth20vw cFont13p cTd_baket_type1" scope="col">아이템수</th> 
+					<td class="cTd_basket cWidth20vw cFont13p cTd_baket_type1" scope="col">요청번호</th> 
+				</tr> 
+			</table>
+	</div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/inko@1.1.0/inko.min.js"> </script>
+<script type="text/javascript" src="/resources/pan/js/barcodeJS.js?ver=1.0621.4"></script>  
+<script type="text/javascript" src="/resources/panMobile/js/packingList.js?ver=6.0621.4"></script>  
+</html>

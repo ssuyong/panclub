@@ -1,0 +1,398 @@
+* {
+    font-family: 'Hahmlet-Regular';
+}
+
+@font-face {
+    font-family: 'Hahmlet-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/Hahmlet-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	position: relative;
+}
+
+#wrapper {
+	height: 100%;
+	padding-bottom: 50px;
+}
+
+.title {
+	position: relative;
+	text-align: center;
+	margin: 0px 50px;
+	padding-top: 30px;
+	border-bottom: 1px solid black;
+}
+
+.title h1 {
+	margin-bottom: 50px;
+}
+
+.date {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin-right: 80px;
+}
+
+.date label {
+	display: inline-block;
+	margin-right: 5px;
+	margin-bottom: 0px;
+	font-size: 11px;
+}
+.date .dateLabel{
+	text-align: right;
+	display: inline-block;
+	width: 120px;
+}
+
+.date input {
+	width: 140px;
+	border: none;
+	margin-right: 20px;
+	padding-left: 5px;
+	font-size: 11px;
+}
+.tableDiv{
+	margin: 0 auto;
+}
+
+table.type03 {
+	border-collapse: separate;
+	border-spacing: 1px;
+	text-align: left;
+	line-height: 1;
+	border-top: 1px solid #ccc;
+	margin: 0px auto;
+}
+
+table.type03 th {
+	width: 90px;
+	padding: 5px;
+	font-weight: bold;
+	vertical-align: top;
+	border-bottom: 1px solid #ccc;
+	font-size:13px !important;
+	
+}
+
+table.type03 td {
+	width: 400px;
+	padding: 6px;
+	vertical-align: center;
+	border-bottom: 1px solid #ccc;
+	font-size: 16px!important;
+}
+
+.th {
+	background-color: #EEE !important;
+	width: 120px !important
+	; 
+}
+
+input:disabled {
+  background: none;
+  color: black;
+}
+
+
+.container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin: 0px 50px;
+	align-items: center;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.quotation, .company {
+	display: inline-block;
+	width: 45%;
+}
+
+.container .contLabel {
+	text-align: right;
+	display: inline-block;
+	width: 120px;
+	padding-right: 40px;
+	padding-bottom: 5px;
+	min-width: 118px;
+}
+
+.container input {
+	text-align: left;
+	display: inline-block;
+	width: auto;
+	border: none;
+	font-size: 16px;
+}
+
+.totalBox {
+	height: 20px;
+	/* background-color: #EEE;
+	border: 1px solid #c8c8c8; */
+	margin: 0px 50px;
+	/* height: 50px; */
+	position: relative;
+}
+
+.totalPrice {
+	display: flex;
+	height:100%;
+	width: 1000px;
+	justify-content: center;
+	align-items: center;
+	margin: 0 auto;
+}
+
+.totalPrice h4, .totalPrice input {
+	margin: 0;
+	font-weight: bold;
+	text-align: center;
+}
+
+.totalPrice input {
+	/* background-color: #EEE; */
+	width: 300px;
+	text-align: right;
+	font-size: 18px;
+}
+
+.totalPrice span {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.totalPrice h4 {
+	font-size: 16px;
+	width:auto;
+
+	/*   padding-right: 200px; */
+}
+
+.totalPrice input {
+
+	border: none;
+	 -webkit-mask-box-image-width: auto;
+
+	
+}
+
+.quotation {
+	padding-right: 6px;
+	margin-left: 100px;
+}
+
+.quotation .cust {
+	padding-bottom: 20px;
+	padding-top: -20px;
+	
+}
+
+.quotation .cust input {
+	margin-right: 80px;
+	font-size: 20px;
+	font-weight: bold;
+	width: 350px;
+	text-align: center;
+	
+}
+
+.quotation .cust span {
+	margin: 0;
+	margin-left: -50px;
+}
+
+.container .totalPrice {
+	margin-left: auto;
+	width: 200px;
+	height: 100px;
+}
+
+.table {
+	margin: 20px 50px;
+	*height: 300px;
+}
+
+.divTable {
+	display: table;
+	width: 100%;
+}
+
+.divTableRow {
+	display: table-row;
+	text-align: center;
+}
+
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+	border-top: 1px solid #c8c8c8;
+}
+
+.divTableCell, .divTableHead, .divTableCell1, .divTableCell2,
+	.divTableCell3, .divTableCell4, .divTableCell8, .divTableCell5,
+	.divTableCell6 {
+	/* border-top:1px solid  #C8C8C8; */
+	border-bottom: 1px solid #C8C8C8;
+	border-right: 1px solid #C8C8C8;
+	/* 	border-right: 0.8px solid black; */
+	display: table-cell;
+	padding: 3px 3px;
+	height: 30px;
+	vertical-align: middle;
+}
+
+.divTableCellHeading {
+	border-top: 1px solid #C8C8C8;
+}
+
+.divTableCellLft {
+	border-left: 1px solid #C8C8C8;
+}
+
+
+.divTableHeading {
+	background-color: #EEE;   
+	border-bottom: 1px solid black;
+	display: table-header-group;
+	font-weight: bold;
+	text-align: center;
+}
+.divTableHeading div{
+	border-top: 1px solid  #C8C8C8;
+	text-align: center !important;
+}
+.divTablePartNo {
+		text-align: left !important;
+	}
+	.divTableCellLeft{
+	text-align: left !important;
+	}
+	.priceCell, .divTableCellRight {
+		text-align: right !important;
+	}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.balanceCell{
+	background-color: #EEE;
+}
+.finalCell{
+	font-weight: bold;	
+}
+
+.divTableBody {
+	display: table-row-group;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+}
+
+.sum {
+	display: flex;
+	flex-direction: column;
+	margin-top: 30px;
+/* 	margin-right: 100px; */
+}
+
+.sum div {
+	display: flex;
+	align-self: flex-end;
+	margin-bottom: 10px;
+	position: relative;
+}
+
+.sum label {
+	min-width: 180px;
+	margin-right: 10px;
+	font-size: 16px;
+}
+
+.sum .tax {
+	align-self: flex-end;
+	position: relative;
+}
+
+.sum input {
+	padding: 0;
+	margin-bottom: 0x;
+	margin-left: -50px;
+	border: none;
+	font-size: 18px;
+	width: 150px;
+	text-align: right;
+}
+
+.sum .tax::after {
+	content: "";
+	position: absolute;
+	left: calc(0px + 0px); /* label width + label margin */
+	width: 100%;
+	height: 1px;
+  background-color: black;
+	bottom: -5px;
+}
+
+.sum .total {
+	padding-top: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+.sum #total, #total2{
+	font-weight: bold;
+}
+
+footer {
+	color: #333;
+	padding: 20px;
+	text-align: left;
+	border-top: 1px solid #ccc;
+	font-size: 18px !important;
+	width: 100%;
+	height: 30px; /* 푸터의 높이를 지정합니다 */
+	position: relative;
+	transform:  translateY(0%);
+}
+.memo{
+		font-size: 13px;
+	
+}
+
+.info{
+	margin-left: 250px;
+	margin-top:-50px;
+	height:30px;
+	display: flex;
+	 align-items: center;
+}
+.info  input {
+	width: 120px;
+	border: none;
+	margin-right: 20px;
+	padding-left: 5px;
+
+}
+
+.totalRow{
+	border-top: 1px solid black !important;
+	border-bottom: 1px solid black !important;
+	background-color: #EEE;
+
+}
+
+.divTableCellLftt {
+	 border-left: none important;
+}
+
+
+/* information{
+	margin: 0px 30px;
+} */

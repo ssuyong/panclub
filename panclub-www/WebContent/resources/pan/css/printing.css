@@ -1,0 +1,325 @@
+ @page {
+	size: A4;
+	margin: 0;
+
+	}
+
+@media print {
+	@page {
+		margin: 30px;
+	} /* */
+ 	/* @page :first {
+		margin: 0cm 1cm;
+	} */
+
+#wrapper{
+	padding-top: 50px;
+}
+	title{ 
+	display:none;}
+	.page {
+	
+	 -webkit-print-color-adjust: exact !important;
+/* 		margin-bottom: 50px;
+margin-top: 50px; */
+
+		border: initial;
+		width: initial;
+		min-height: initial;
+		box-shadow: initial;
+		background: initial;
+		page-break-after: always;
+	}
+
+	.container{
+	width: 90%;
+	display: flex;
+	/* align-items: flex-start; */
+	
+	}
+	
+	.information{
+	width: 90%;
+	display: flex;
+	height: 30%!important;
+	/* align-items: flex-start; */
+	
+	}
+	.quotation, .company {
+		
+		width: 46%;
+		
+	}
+	.quotation{
+		margin-left: -10px;
+	}
+	
+	.cust{
+	margin-left: -60px;
+	}
+	.cust input{
+	text-align: center;
+	padding-left: 40px;
+	}
+
+
+/* 	.tableDiv{
+	font-size: 11px;
+} */
+
+	.divTable {
+		display: table;
+		width: 100%;
+		margin: 0 auto;
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+
+	
+	.date{
+	margin-left: 500px;
+	margin-top: -45px!important;
+	}
+	.sum{
+	margin-top: 50px;
+	page-break-inside: avoid !important;
+	}
+/* 	.sum .tax {
+		border-bottom: 1px solid black;
+	} */
+.tableDiv{
+		page-break-inside: avoid !important;
+}
+	.divTableRow {
+		page-break-inside: avoid !important;
+	}
+	.divTableCell{
+	page-break-inside: avoid !important;
+	}
+	.divTableCellLft {
+	border-left: 1px solid #C8C8C8;
+}
+ td{
+	vertical-align: middle !important;
+} 
+.th {
+	background-color: #EEE !important;; 
+	width:200px!important;
+	; 
+}
+
+footer {
+	color: #333;
+	font-size: 20px !important;
+	page-break-inside: avoid !important;
+	/* margin-top: -150px;
+	page-break-inside: avoid;
+	page-break-after:avoid !important; */
+
+}
+
+/* #last{
+		page-break-after:avoid !important;
+} */
+
+/*  .page-break {
+    page-break-after: always;
+  } */
+
+}
+/*
+	.table {
+       width: 100%;
+       max-width: 100%;
+       margin-bottom: 1rem;
+}
+
+ header{
+ margin:0 auto;
+ }
+	.title {
+		width:100%;
+	}
+	.title h1{
+		margin-left: -102px;
+	}
+	.date label, input {
+		font-size: 8px !important;
+	}
+	
+	.date{
+		float:right;
+	}
+	.container {
+		height: 80px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		margin: 30px
+	margin-top: 50px;
+	margin-left: 100px;
+	}
+	.container div {
+		margin-bottom: 5px;
+	}
+	.quotation, .company {
+		display: inline-block;
+		width: 45%;
+		height: 50px;
+	}
+	.container input {
+		display: inline-block;
+		width: 140px;
+		font-size: 11px;
+		margin-bottom: 5px; add this line
+		vertical-align: middle; add this line
+		margin-left: -10px;
+	}
+	.quotation {
+		font-size: 10.5px;
+		line-height: 1;
+		margin-top: -70px;
+		height: 50px;
+		margin-left: -25px;
+	}
+
+	cust
+	.quotation .cust {
+		display: flex;
+		  justify-content: space-between;
+		align-items: center;
+		  margin-top: -500px;
+		margin-top: 43px;
+		margin-left: 250px;
+		font-size: 11px;
+	}
+	.cust input {
+		display: inline-block;
+		  vertical-align: middle;
+		font-size: 12px !important;
+		padding-left:25px;
+		text-align: center;
+		width: 100px !important;
+		height: 20px !important;
+		margin-left: -180px;
+		margin-bottom: -15px;
+	}
+	.cust span {
+		display: inline-block;
+		font-size: 11px;
+		margin-left: -10px;
+		padding-top: 15px;
+	}
+	.container .contLabel {
+		text-align: right;
+		display: inline-block;
+		width: 40px;
+		vertical-align: middle;
+		margin-left: -10px;
+	}
+
+	company
+	.company {
+		font-size: 11px;
+		text-align: right;
+	}
+	.company div {
+		margin-bottom: 5px;
+	}
+	.tableDiv {
+		width: 350px;
+		margin-left: -100px;
+		margin-right: -10px; adjust this value as needed
+		padding-right: 0px; adjust this value as needed
+	}
+	table.type03 {
+		float: right;
+		width: 90%;
+		max-width: 90%;
+		margin-bottom: 1rem;
+		margin-right: 0;
+		padding-right: 0;
+		font-size: 11px;
+		padding: 0px;
+	}
+	.quotation {
+		display: inline-block;
+		font-size: 11px;
+		  margin-left: -30px;
+  margin-top: -20px;
+		padding: 0px;
+		margin-bottom: 200px;
+		line-height: 1;
+	}
+
+	total
+	.totalBox {
+		height: 40px;
+		margin: 0px 50px;
+		margin-top: 70px;
+		margin-left: 65px;
+		width: 600px;
+	}
+	.totalBox input {
+		width: auto;
+	}
+	.totalBox input, span, h4 {
+		font-size: 12px !important;
+	}
+
+	부품테이블
+	.table {
+		width: 95%;
+		margin: 0px auto;
+		margin-top: 30px;
+	}
+	.divTable {
+		display: table;
+		width: 100%;
+		margin: 0 auto;
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+	.divTableHeading {
+		display: table-header-group;
+		font-size: 11px;
+	}
+	
+	.divTableCell {
+		display: table-cell;
+		font-size: 12px;
+		padding: 5px 2px;;
+		text-align: center;
+	}
+	.divTablePartNo {
+		text-align: left;
+	}
+	.priceCell {
+		text-align: right;
+	}
+	sum
+	.sum {
+		margin-right: 50px;
+		margin-bottom: -10px;
+		height: 50px;
+	}
+	.sum label, input {
+		font-size: 11.5px !important;
+	}
+	.sum .tax {
+		border-bottom: 1px solid black;
+	}
+	footer {
+		background-color: #f5f5f5;
+		color: #333;
+		padding: 20px;
+		text-align: left;
+		border-top: 1px solid #ccc;
+		font-size: 11px !important;
+		position: fixed;
+	bottom: 0;
+	}
+	span {
+		font-size: 11px !important;
+	}
+} */

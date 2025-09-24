@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.panclub.dao.IStatsDao">
+
+	<!-- 카윈 주문진행현황 조회 -->					
+	<select id="cwOrdProgList" statementType="CALLABLE" parameterType="HashMap" resultType="cwOrdProg">
+		{ CALL panCW.dbo.up_ordProg (
+			#{workingType}, #{sYmd1},	#{eYmd1},
+			#{logComCode}, #{logUserId}
+		)}	
+	</select>
+	
+	
+	<!-- 거래처별 매출 -->					
+	<select id="custSalesRankList" statementType="CALLABLE" parameterType="HashMap" resultType="custSalesRank">
+		{ CALL panErp.dbo.up_custSalesRankList (
+			#{workingType}, #{page},	#{qty},	 #{orderBy},	
+			#{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId}
+			,#{custSalesRank.custCode}
+		)}
+	</select>	
+
+	<!-- 주문분석 
+	2023.10.10 hsg - branchCode, carNo 추가-->					
+	<select id="assaySalesList" statementType="CALLABLE" parameterType="HashMap" resultType="assaySales">
+		{ CALL panErp.dbo.up_assaySalesList (
+			#{workingType}, #{ymdIgnoreYN}, #{sYmd1},	#{eYmd1}, #{sYmd2},	#{eYmd2},
+			#{logComCode}, #{logUserId}	,#{assaySales.custCode},#{assaySales.branchCode},#{assaySales.carNo}
+		)}
+	</select>	
+		
+		
+	<!-- 보고서 탭별 데이터 받아오는 통신
+	2023.12.05 supi  추가
+	2023.12.22 hsg - WITH(NOLOCK) 추가 -->	
+	<select id="stockGetReport" statementType="CALLABLE" parameterType="HashMap" resultType="stockreport">
+	 
+		SELECT a.tab , a.category , a.item ,  a.qty , a.price , a.price2 , a.yymmdd, a.reason
+		FROM panErp.dbo.s_stockReport_d a WITH(NOLOCK)
+		WHERE a.tab = #{tab} AND #{yymm} = left(a.yymmdd,4)
+		ORDER BY a.yymmdd 
+	</select>	
+	<!-- 보고서 탭4(출고상세) 상세페이지 품목 가져오는 통신
+	2023.12.05 supi 추가 ==> 클릭한 금액(셀)의 카테고리와 날짜를 받아서 그 날의 상세 출고데이터를 받아오는 통신
+	-->	
+	<select id="stockReportT4Detail" statementType="CALLABLE" parameterType="HashMap" resultType="rlReportDetailItem">
+	 
+		{ CALL panErp.dbo.up_stock_reportRlDetail (
+			#{comCode}, #{yyyymmdd} , #{isPartMall}
+		)}
+	</select>	
+	<!--   월간 출고,입고,주문(증감)현황 데이터 조회 
+			2023.12.14 supi ==> 매개변수 컴코드는 로그 남기는 용도이며 실질적으로 해달 월의 데이터를 조회하는 통신
+	--> 
+	<select id="sIncReport" statementType="CALLABLE" parameterType="HashMap" resultType="sIncReportData">
+	 
+		{ CALL panErp.dbo.up_sIncReport (
+			#{logComCode}, #{sYmd1} , #{eYmd1} 
+		)}
+	</select>	
+	
+	<!--  창고별재고현황 2023.12.22 hsg 
+	2024.02.27 hsg - consignViewYN 추가--> 
+	<select id="storStockRpt" statementType="CALLABLE" parameterType="HashMap" resultType="storage">	 
+		{ CALL panErp.dbo.up_storageList (
+		#{workingType},	#{logComCode}, #{logUserId}
+		,#{storage.storageCode}, #{storage.storageName}, #{storage.storType}
+		,#{storage.validYN} ,#{storage.rlStandByYN} ,#{storage.workableYN}	,#{storage.consignYN}
+		,#{storage.storCodeMulti}  ,#{storage.checkType}, #{storage.consignViewYN} 
+		)}
+	</select>	
+	
+	<!--   월간 위탁재고 판매현황 데이터 조회 
+			2024.01.11 supi ==> 매개변수 기간 사이의 위탁재고 판매의 데이터를 조회하는 통신
+	--> 
+	<select id="outRlReport" statementType="CALLABLE" parameterType="HashMap" resultType="outRlReportData">
+		{ CALL panErp.dbo.up_outRlReport (
+			#{logComCode}, #{sYmd1} , #{eYmd1} 
+		)}
+	</select>
+	
+	<!--   월간 출고,입고,주문(증감)현황 데이터 조회 
+			//2024.01.15 supi 거래처별 출고,입고,주문 거래량 데이터 받아오는 통신
+	--> 
+	<select id="sCustReport" statementType="CALLABLE" parameterType="HashMap" resultType="sCustReportData">
+		{ CALL panErp.dbo.up_sCustReport (
+			#{logComCode}, #{logUserId}, #{sYmd1} , #{eYmd1} ,#{custComCode} , #{comCode}
+		)}
+	</select>	
+	<!--   거래처별 청구 현황 조회
+			//2024.01.17 supi 거래처별 청구 현황 통신, 날짜별, 거래처,업체, 청구상태 매개변수
+	--> 
+	<select id="sClReport" statementType="CALLABLE" parameterType="HashMap" resultType="sClReportData">
+		{ CALL panErp.dbo.up_sClReport (
+			#{logComCode}, #{logUserId}, #{sYmd1} , #{eYmd1} ,#{custComCode} , #{comCode} , #{procStep}
+		)}
+	</select>	
+	<!--   2024.02.19 supi 위탁재고 사용현황
+		   2024.06.18 supi 2그린주문(창고사용)에서 팬오토제외여부 파라미터 추가
+	--> 
+	<select id="conStockRpt" statementType="CALLABLE" parameterType="HashMap" resultType="conStockRpt">
+		{ CALL panErp.dbo.up_conStockRpt (
+			#{workingType},#{logComCode}, #{logUserId} ,#{ymdIgnoreYN} , #{sYmd1} , #{eYmd1}
+			, #{consignCustCode}  , #{orderCustCode} , #{rcvCustCode} 
+			, #{itemId} , #{itemNo} , #{itemName} ,#{pIgnoreYN}
+			
+		)}
+	</select>	
+	<!--   2024.03.18 supi 통계업데이트
+	--> 
+	<select id="statisticsUpdate" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.UMP_STATISTICS_UPDATE (
+			'',#{logComCode}, #{logUserId}  
+			
+		)}
+	</select>	
+	
+	<!--   
+	2024.04.03 hsg -부품(재고)검색순위
+	--> 
+	<select id="stockSrchRnk" statementType="CALLABLE" parameterType="HashMap" resultType="stockSrchLog">
+		{ CALL panErp.dbo.up_stockSrchLog (
+			#{workingType},#{logComCode}, #{logUserId} , #{startYmSerch} , #{endYmSerch},#{serchItem}
+		)}
+	</select>	
+	
+	<!--   
+	2024.04.04 hsg -부품주문순위
+	--> 
+	<select id="itemOrdRnk" statementType="CALLABLE" parameterType="HashMap" resultType="orderStats">
+		{ CALL panErp.dbo.up_orderStats (
+			#{workingType},#{logComCode}, #{logUserId} , #{startYmSerch} , #{endYmSerch},#{serchItem}, #{makerCode}, #{centerPrice}
+		)}
+	</select>
+	
+	<!--   입금,출금 현황 데이터 조회 
+			2024.04.24 yoonsang ==> 매개변수 컴코드는 로그 남기는 용도이며 실질적으로 해달 월의 데이터를 조회하는 통신
+	--> 
+	<select id="dpWdRpt" statementType="CALLABLE" parameterType="HashMap" resultType="dpWdReportData">
+	 
+		{ CALL panErp.dbo.up_dpWdReport (
+			#{logComCode}, #{sYmd1} , #{eYmd1}	,#{exceptCustYN}
+		)}
+	</select>	
+	
+	<!--   2024.09.24 yoonsang -출고/입금,입고/출금 현황 
+		 매개변수 컴코드는 로그 남기는 용도이며 실질적으로 해달 월의 데이터를 조회하는 통신
+	--> 
+	<select id="rlDpWhWdRpt" statementType="CALLABLE" parameterType="HashMap" resultType="rlDpWhWdReportData">
+	 
+		{ CALL panErp.dbo.up_rlDpWhWdReport (
+			#{logComCode}, #{sYmd1} , #{eYmd1}	,#{exceptCustYN}
+		)}
+	</select>	
+	<!--   2024.11.08 supi 기간별 담당자 처리현황 견적,주문,발주,입고,출고
+	--> 
+	<select id="mdStaffWorkRpt" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_mdStaffWorkRpt (
+			#{workingType}, #{sYmd} , #{eYmd}	,#{logComCode} , #{logUserId}
+		)}
+	</select>	
+	<!--   2024.11.08 supi 기간별 업체별 처리현황 발주 입고 반입
+	--> 
+	<select id="mdCustWorkRpt" statementType="CALLABLE" parameterType="HashMap" resultType="HashMap">
+		{ CALL panErp.dbo.up_mdCustWorkRpt (
+			#{workingType}, #{sYmd} , #{eYmd}	,#{logComCode} , #{logUserId}
+		)}
+	</select>	
+</mapper>

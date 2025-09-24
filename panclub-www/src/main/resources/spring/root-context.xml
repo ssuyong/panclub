@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- 함승구: 사용할 패키지 추가 -->
+	<context:component-scan
+		base-package="kr.co.panclub.service"></context:component-scan>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.microsoft.sqlserver.jdbc.SQLServerDriver"></property>
+
+		<!-- 테스트 또는 운영 이냐에 따라 아래 주석 풀어줘야 -->
+
+	    
+	    
+ 
+ 		<!-- 테스트 -->
+ 		<!-- <property name="url" value="jdbc:sqlserver://192.168.0.19:1433;databasename=panerp;logintimeout=65000;sockettimeout=65000;encrypt=true;trustservercertificate=true"></property> -->
+ 		
+ 	    
+ 	    <!-- 포카 운영 -->
+ 	    <!-- <property name="url" value="jdbc:sqlserver://58.229.184.138:1433;DatabaseName=panErp;loginTimeout=30000;socketTimeout=30000;encrypt=true;trustServerCertificate=true"></property> 
+ 	     -->
+ 	    <!-- 팬클럽 운영 -->
+ 	    <property name="url" value="jdbc:sqlserver://222.239.254.244:21486;databasename=panerp;logintimeout=30000;sockettimeout=60000;encrypt=true;trustservercertificate=true"></property> 
+ 	    
+ 	    
+	    <property name="username" value="pan_mall" />	   
+	    <!-- <property name="password" value="pan@mall!A" /> -->
+	    <property name="password" value="pan@mall0320!A" />
+	    
+
+	     
+	</bean>
+
+
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="typeAliasesPackage"
+			value="kr.co.panclub.model"></property>
+		<property name="mapperLocations"
+			value="classpath:kr/co/panclub/dao/mapper/**/*.xml">
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	  <!--   <context:annotation-config/>
+		<bean class="org.springframework.session.jdbc.config.annotation.web.http.JdbcHttpSessionConfiguration"/>	    
+ -->
+	<!-- 함승구:메일보내기 -->
+	<bean id="mailSender"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<!-- 메일나라 계정으로 보낼 경우 -->
+		<property name="host" value="mail.zerocorp.co.kr" />
+		<property name="port" value="25" />
+		<property name="username" value="sgham@panauto.co.kr" />
+		<property name="password" value="0541104@halla" />
+
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="memberDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IMemberDao"></property>
+	</bean>
+
+	<bean id="baseDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IBaseDao"></property>
+	</bean>
+
+	<bean id="bizDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IBizDao"></property>
+	</bean>
+
+	<bean id="orderDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IOrderDao"></property>
+	</bean>
+
+	<bean id="logisDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.ILogisDao"></property>
+	</bean>
+			
+	<bean id="statsDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IStatsDao"></property>
+	</bean>
+
+	<bean id="clubDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IClubDao"></property>
+	</bean>
+
+	<bean id="adjDao"
+		class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="mapperInterface"
+			value="kr.co.panclub.dao.IAdjDao"></property>
+	</bean>
+		
+</beans>
