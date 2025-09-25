@@ -14,7 +14,7 @@
 
 		<!-- ** 중요 : ssl 적용 서버에 올릴 war 만들때는 이거 주석 풀어줘야 함 
 		2024.10.24 hsg - Nginx 에서는 주석으로 놔둬도 됨-->
-    	<intercept-url pattern="/" requires-channel="https" access="permitAll" />     
+    	<intercept-url pattern="/" requires-channel="https" access="permitAll" />
 
 
 
